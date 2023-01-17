@@ -15,6 +15,7 @@ run_app <- function(
   ...
 ) {
   devtools::load_all()
+  setwd(here::here())
   with_golem_options(
     app = shinyApp(
       ui = app_ui,
