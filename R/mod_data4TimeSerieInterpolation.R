@@ -48,6 +48,7 @@ mod_data4TimeSerieInterpolation_server <- function(id){
     data_for_interpolation<- reactive({
 
       if(!extension_fichier()){
+        shinyFeedback::hideFeedback("dataInput")
         shinyFeedback::feedbackWarning(
           "dataInput", !extension_fichier(),
           paste0(
@@ -76,15 +77,16 @@ mod_data4TimeSerieInterpolation_server <- function(id){
 
       # s'assurer que le fichier importer n'est pas vide
       testNotEmptySheet<- reactive({  nrow(data_loaded()) != 0 })
-      shinyFeedback::hideFeedback("dataInput")
-      shinyFeedback::feedbackWarning(
-        "dataInput", !testNotEmptySheet(),
-        paste0(
-          "Fichier Incorrect !!"
-        )
-      )
       # shinyalert
       if(!testNotEmptySheet()){
+        shinyFeedback::hideFeedback("dataInput")
+        shinyFeedback::feedbackWarning(
+          "dataInput", !testNotEmptySheet(),
+          paste0(
+            "Fichier Incorrect !!"
+          )
+        )
+
         shinyalert::shinyalert(
           "Erreur Chargement !!",
           paste(
@@ -96,15 +98,16 @@ mod_data4TimeSerieInterpolation_server <- function(id){
       # validation du nom de la première colonne
       req(testNotEmptySheet())
       colonne_1st<- names(data_loaded())[1] == "Station_ID"
-      shinyFeedback::hideFeedback("dataInput")
-      shinyFeedback::feedbackWarning(
-        "dataInput", !colonne_1st,
-        paste0(
-          "Codage Fichier Incorrect !"
-        )
-      )
       # alert
       if(!colonne_1st){
+        shinyFeedback::hideFeedback("dataInput")
+        shinyFeedback::feedbackWarning(
+          "dataInput", !colonne_1st,
+          paste0(
+            "Codage Fichier Incorrect !"
+          )
+        )
+
         shinyalert::shinyalert(
           "Erreur Chargement !!",
           paste(
@@ -117,15 +120,16 @@ mod_data4TimeSerieInterpolation_server <- function(id){
       # validation de la correspondance entre les noms de stations des 1ère et 4ème lignes
       req(colonne_1st)
       first_4th_cols_test<- test_match_order(names(data_loaded())[-1], as.vector(t(data_loaded()[4,][-1])))
-      shinyFeedback::hideFeedback("dataInput")
-      shinyFeedback::feedbackWarning(
-        "dataInput", !first_4th_cols_test,
-        paste0(
-          "Codage Fichier Incorrect !"
-        )
-      )
       # alert
       if(!first_4th_cols_test){
+        shinyFeedback::hideFeedback("dataInput")
+        shinyFeedback::feedbackWarning(
+          "dataInput", !first_4th_cols_test,
+          paste0(
+            "Codage Fichier Incorrect !"
+          )
+        )
+
         shinyalert::shinyalert(
           "Erreur Chargement !!",
           paste(
@@ -137,15 +141,16 @@ mod_data4TimeSerieInterpolation_server <- function(id){
       # validation des noms des 3 premières lignes
       req(first_4th_cols_test)
       lonlat_test<- test_match_order(data_loaded()[[1]][c(1,2)], c("Longitude", "Latitude"))
-      shinyFeedback::hideFeedback("dataInput")
-      shinyFeedback::feedbackWarning(
-        "dataInput", !lonlat_test,
-        paste0(
-          "Codage Fichier Incorrect !"
-        )
-      )
       # alert
       if(!lonlat_test){
+        shinyFeedback::hideFeedback("dataInput")
+        shinyFeedback::feedbackWarning(
+          "dataInput", !lonlat_test,
+          paste0(
+            "Codage Fichier Incorrect !"
+          )
+        )
+
         shinyalert::shinyalert(
           "Erreur Chargement !!",
           paste(
@@ -159,15 +164,15 @@ mod_data4TimeSerieInterpolation_server <- function(id){
       # validation des noms des 3 premières lignes
       req(lonlat_test)
       colonne_date<- data_loaded()[[1]][4] == "Date"
-      shinyFeedback::hideFeedback("dataInput")
-      shinyFeedback::feedbackWarning(
-        "dataInput", !colonne_date,
-        paste0(
-          "Codage Fichier Incorrect !"
-        )
-      )
       # alert
       if(!colonne_date){
+        shinyFeedback::hideFeedback("dataInput")
+        shinyFeedback::feedbackWarning(
+          "dataInput", !colonne_date,
+          paste0(
+            "Codage Fichier Incorrect !"
+          )
+        )
         shinyalert::shinyalert(
           "Erreur Chargement !!",
           paste(
@@ -188,16 +193,16 @@ mod_data4TimeSerieInterpolation_server <- function(id){
           )
         ))
       })
-
-      shinyFeedback::hideFeedback("dataInput")
-      shinyFeedback::feedbackWarning(
-        "dataInput", format_date(),
-        paste0(
-          "Format Date Incorrect !"
-        )
-      )
       # alert
       if(format_date()){
+        shinyFeedback::hideFeedback("dataInput")
+        shinyFeedback::feedbackWarning(
+          "dataInput", format_date(),
+          paste0(
+            "Format Date Incorrect !"
+          )
+        )
+
         shinyalert::shinyalert(
           "Erreur Chargement !!",
           paste(
@@ -211,15 +216,16 @@ mod_data4TimeSerieInterpolation_server <- function(id){
       req(!format_date())
       data_test_date <- dplyr::mutate(data_loaded()[-c(3,4),-1], across(1:ncol(data_loaded())-1, as.numeric, .names = "{.col}"))
       data_type_columns<- sum(sapply(data_test_date, is.numeric))==ncol(data_loaded())-1
-      shinyFeedback::hideFeedback("dataInput")
-      shinyFeedback::feedbackWarning(
-        "dataInput", !data_type_columns,
-        paste0(
-          "Colonnes Non Numériques !"
-        )
-      )
       # alert
       if(!data_type_columns){
+        shinyFeedback::hideFeedback("dataInput")
+        shinyFeedback::feedbackWarning(
+          "dataInput", !data_type_columns,
+          paste0(
+            "Colonnes Non Numériques !"
+          )
+        )
+
         shinyalert::shinyalert(
           "Erreur Chargement !!",
           paste(
@@ -233,15 +239,16 @@ mod_data4TimeSerieInterpolation_server <- function(id){
       # tester le nombre de lignes
       req(data_type_columns)
       test_nb_row<- nrow(data_loaded()) <= 3660
-      shinyFeedback::hideFeedback("dataInput")
-      shinyFeedback::feedbackWarning(
-        "dataInput", !test_nb_row,
-        paste0(
-          "Limite (3660 lignes) dépassée !"
-        )
-      )
       # alert
       if(!test_nb_row){
+        shinyFeedback::hideFeedback("dataInput")
+        shinyFeedback::feedbackWarning(
+          "dataInput", !test_nb_row,
+          paste0(
+            "Limite (3660 lignes) dépassée !"
+          )
+        )
+
         shinyalert::shinyalert(
           "Erreur Chargement !!",
           paste(
@@ -255,6 +262,7 @@ mod_data4TimeSerieInterpolation_server <- function(id){
 
       # return
       if(test_nb_row){
+        shinyFeedback::hideFeedback("dataInput")
         shinyFeedback::feedbackSuccess(
           "dataInput", test_nb_row,
           paste0(
