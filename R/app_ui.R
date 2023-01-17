@@ -105,9 +105,65 @@ app_ui <- function(request) {
                                          # Module
                                          mod_time_serie_interpolation_result_exportation_ui("time_serie_interpolation_result_exportation_1")
                                        )#tabPanel
-                                     )
-                                   )
-                          )
+                                     ) # tabsetPanel
+                                   ) # mainPannel
+                          ), #tabPanel
+
+                          tabPanel(h4("Carte Interpolation Uni_Période"),
+
+                                   sidebarPanel(
+                                     style="position:fixed;width:25%;height:90vh;overflow-y:auto;",
+
+                                     # logos
+                                     # logoUI(),
+
+                                     h3(
+                                       "Carte Interpolation Uni_Période",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     #==================================================================#
+                                     # INPUTS
+                                     h3("Données", style = "color:#3474A7"),
+                                     # limtes bassin versa,nt
+                                     mod_loading_VectorFile_ui("loading_VectorFile_2"),
+                                     # stations
+                                     mod_data4TimeSerieInterpolation_ui("data4TimeSerieInterpolation_2"),
+
+                                     tags$hr(style="border-color:gray;"),
+
+                                     br(),br(), br(),br()
+
+                                     #==================================================================#
+                                   ),
+
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # Module
+                                         mod_showData4TimeSerieInterpolation_ui("showData4TimeSerieInterpolation_2")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Interpolation|Cartographie", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # Module
+                                         mod_unique_periode_time_serie_interpolation_map_ui("unique_periode_time_serie_interpolation_map_1")
+                                       ),#tabPanel
+                                       # tabPanel(
+                                       #   div("Visualisation", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                       #   # Module
+                                       #   mod_ShowTemporalInterpolationResults_ui("ShowTemporalInterpolationResults_1")
+                                       # ),#tabPanel
+                                       # tabPanel(
+                                       #   div("Exportation", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                       #   # Module
+                                       #   mod_time_serie_interpolation_result_exportation_ui("time_serie_interpolation_result_exportation_1")
+                                       # )#tabPanel
+                                     ) # tabsetPanel
+                                   ) # mainPannel
+                          ) #tabPanel
                )
     )
   )

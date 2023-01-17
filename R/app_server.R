@@ -6,7 +6,7 @@
 #' @noRd
 app_server <- function(input, output, session) {
 
-  # |||||||||||||||||||||||||||||||||||||VALEU MOYENNE D'UN BASSIN
+  # |||||||||||||||||||||||||||||||||||||VALEUR MOYENNE D'UN BASSIN
   # limites bassin versant
   limites_bv_time_serie_interpolation <- mod_loading_VectorFile_server("loading_VectorFile_1")
   # données
@@ -50,5 +50,37 @@ app_server <- function(input, output, session) {
       time_serie_interpolation_result$spline_output_df(),
       time_serie_interpolation_result$thiessen_output_df()
     )
+  })
+
+  # ||||||||||||||||||||||||||||||||||||| INERPOLATION VALEUR MOYENNE
+  # limites bassin versant
+  limites_unique_bv_time_serie_map_interpolation <- mod_loading_VectorFile_server("loading_VectorFile_2")
+  # données
+  data4UniquePeriodeTimeSerieInterpolationMap <- mod_data4TimeSerieInterpolation_server("data4TimeSerieInterpolation_2")
+
+  # events trigger
+  time_serie_interpolation_map__events_trigger <- reactive({
+    list(
+      limites_unique_bv_time_serie_map_interpolation$limite_bassin_versant(),
+      data4UniquePeriodeTimeSerieInterpolationMap$data_for_time_serie_interpolation()
+    )
+  })
+
+
+  observeEvent(time_serie_interpolation_map__events_trigger(), {
+    # showing and getting data
+    readyData4UniquePeriodeTimeSerieInterpolationMap <- mod_showData4TimeSerieInterpolation_server(
+      "showData4TimeSerieInterpolation_2",
+      data4UniquePeriodeTimeSerieInterpolationMap$data_for_time_serie_interpolation(),
+      limites_unique_bv_time_serie_map_interpolation$limite_bassin_versant()
+    )
+    # options du graphique
+    mod_unique_periode_time_serie_interpolation_map  <-
+      mod_unique_periode_time_serie_interpolation_map_server(
+        "unique_periode_time_serie_interpolation_map_1",
+        limites_unique_bv_time_serie_map_interpolation$limite_bassin_versant(),
+        readyData4UniquePeriodeTimeSerieInterpolationMap$stations_for_time_serie_interpolation(),
+        readyData4UniquePeriodeTimeSerieInterpolationMap$data_for_time_serie_interpolation()
+      )
   })
 }
