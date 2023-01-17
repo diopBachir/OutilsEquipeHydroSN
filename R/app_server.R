@@ -5,8 +5,6 @@
 #' @import shiny
 #' @noRd
 
-devtools::load_all()
-
 app_server <- function(input, output, session) {
 
   # |||||||||||||||||||||||||||||||||||||VALEUR MOYENNE D'UN BASSIN

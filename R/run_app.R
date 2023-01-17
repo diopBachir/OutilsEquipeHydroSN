@@ -14,6 +14,7 @@ run_app <- function(
   uiPattern = "/",
   ...
 ) {
+  devtools::load_all()
   with_golem_options(
     app = shinyApp(
       ui = app_ui,
