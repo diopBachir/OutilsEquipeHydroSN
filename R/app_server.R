@@ -6,10 +6,7 @@
 #' @noRd
 
 devtools::load_all()
-<<<<<<< HEAD
 
-=======
->>>>>>> ca4c5f424f8b8cc20a278334b63e40182e3b1121
 app_server <- function(input, output, session) {
 
   # |||||||||||||||||||||||||||||||||||||VALEUR MOYENNE D'UN BASSIN
