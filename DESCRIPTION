@@ -37,6 +37,7 @@ Imports:
     ipc,
     leaflet,
     lubridate,
+    magrittr,
     modifiedmk,
     naniar,
     progress,
