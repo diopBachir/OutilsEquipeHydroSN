@@ -7,6 +7,8 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
+#'  @import dplyr
+#'
 mod_data_4_multiperiode_interpolation_map_ui <- function(id){
   ns <- NS(id)
   tagList(
