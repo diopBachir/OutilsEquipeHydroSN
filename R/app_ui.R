@@ -150,17 +150,58 @@ app_ui <- function(request) {
                                          div("Interpolation|Cartographie", style = "color:#3474A7;family:Georgia;font-size:130%"),
                                          # Module
                                          mod_unique_periode_time_serie_interpolation_map_ui("unique_periode_time_serie_interpolation_map_1")
-                                       ),#tabPanel
-                                       # tabPanel(
-                                       #   div("Visualisation", style = "color:#3474A7;family:Georgia;font-size:130%"),
-                                       #   # Module
-                                       #   mod_ShowTemporalInterpolationResults_ui("ShowTemporalInterpolationResults_1")
-                                       # ),#tabPanel
-                                       # tabPanel(
-                                       #   div("Exportation", style = "color:#3474A7;family:Georgia;font-size:130%"),
-                                       #   # Module
-                                       #   mod_time_serie_interpolation_result_exportation_ui("time_serie_interpolation_result_exportation_1")
-                                       # )#tabPanel
+                                       )
+                                     ) # tabsetPanel
+                                   ) # mainPannel
+                          ), #tabPanel
+
+                          tabPanel(h4("Carte Interpolation MultiPériode"),
+
+                                   sidebarPanel(
+                                     style="position:fixed;width:25%;height:90vh;overflow-y:auto;",
+
+                                     # logos
+                                     # logoUI(),
+
+                                     h3(
+                                       "Carte Interpolation MultiPériode",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     #==================================================================#
+                                     # INPUTS
+                                     h3("Données", style = "color:#3474A7"),
+                                     # limtes bassin versa,nt
+                                     mod_loading_VectorFile_ui("loading_VectorFile_3"),
+                                     # stations
+                                     mod_data_4_multiperiode_interpolation_map_ui("data_4_multiperiode_interpolation_map_1"),
+
+                                     tags$hr(style="border-color:gray;"),
+
+                                     br(),br(), br(),br()
+
+                                     #==================================================================#
+                                   ),
+
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # Module
+                                         mod_showData4MultiperiodeTimeSerieInterpolation_ui("showData4MultiperiodeTimeSerieInterpolation_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Interpolation||Recodage", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # Module
+                                         mod_multivariate_interpolation_data_preparation_ui("multivariate_interpolation_data_preparation_1")
+                                       ),
+                                       tabPanel(
+                                         div("Cartographie", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # Module
+                                         mod_multiperiode_periode_time_serie_interpolation_map_ui("multiperiode_periode_time_serie_interpolation_map_1")
+                                       )
                                      ) # tabsetPanel
                                    ) # mainPannel
                           ) #tabPanel

@@ -1,4 +1,4 @@
-#' showData4TimeSerieInterpolation UI Function
+#' showData4MultiperiodeTimeSerieInterpolation UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_showData4TimeSerieInterpolation_ui <- function(id){
+mod_showData4MultiperiodeTimeSerieInterpolation_ui <- function(id){
   ns <- NS(id)
   tagList(
     fluidRow(align="center",
@@ -36,14 +36,13 @@ mod_showData4TimeSerieInterpolation_ui <- function(id){
     tags$hr(style="border-color:gray;"),
 
     dataTableOutput(ns("used_time_serie_interpolation_data"))
-
   )
 }
 
-#' showData4TimeSerieInterpolation Server Functions
+#' showData4MultiperiodeTimeSerieInterpolation Server Functions
 #'
 #' @noRd
-mod_showData4TimeSerieInterpolation_server <- function(id, interpolation_data, bassin){
+mod_showData4MultiperiodeTimeSerieInterpolation_server <- function(id, interpolation_data, bassin){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
@@ -60,56 +59,38 @@ mod_showData4TimeSerieInterpolation_server <- function(id, interpolation_data, b
     # getting data
     interpolation_data_fn <- reactive({
       req(interpolation_data)
-      dplyr::mutate(
-        interpolation_data[-c(1:4),],
-        dplyr::across(-1, as.numeric, .names = "{.col}")
-      ) %>%
-        dplyr::rename(Date = 1)
+      interpolation_data %>%
+        dplyr::mutate(
+          dplyr::across(-1, as.numeric, .names = "{.col}")
+        ) %>%
+        dplyr::rename(Station = 1)
     })
 
     ## Summarising data
     stats_summary<-reactive({
       req(interpolation_data_fn())
       interpolation_data_fn() %>%
-        dplyr::select(-Date) %>%
+        dplyr::select(-c(Station, Longitude, Latitude)) %>%
         tidyr::pivot_longer(
-          1:ncol(interpolation_data_fn())-1, names_to = "Station", values_to = "Valeur"
-        )  %>%
-        dplyr::group_by(Station) %>%
+          1:(ncol(interpolation_data_fn())-3), names_to = "Variable", values_to = "Valeur"
+        ) %>%
+        dplyr::group_by(Variable) %>%
         dplyr::summarise(
           Min. = min(Valeur, na.rm = T), Quart1 = quantile(Valeur, .25),
           Médianne = median(Valeur), Quart3 = quantile(Valeur, .75),
           Moyenne = mean(Valeur), Max = max(Valeur),
           "Ecart type" = sd(Valeur)
-        )  %>%
+        ) %>%
         dplyr::mutate(
           dplyr::across(tidyselect::where(is.numeric), ~round(., 2), .names = "{.col}")
         )
     })
 
-    ## mean period data
-    meanPeriod<- reactive({
-      req(interpolation_data_fn())
-
-      interpolation_data_fn() %>%
-        dplyr::select(-Date) %>%
-        tidyr::pivot_longer(
-          1:ncol(interpolation_data_fn())-1, names_to = "Station", values_to = "Valeur"
-        ) %>%
-        dplyr::group_by(Station) %>%
-        dplyr::summarise(
-          Moyenne = mean(Valeur)
-        ) %>%
-        tidyr::pivot_wider(names_from = Station, values_from = Moyenne)
-    })
-
     # show all time serie dataset
     observeEvent(ignoreInit = TRUE, ignoreNULL = TRUE, input$showStudyArea, {
       req(interpolation_data, bassin)
-      stations <- interpolation_data[c(1,2),] %>%
-        dplyr::rename(Station = 1) %>%
-        transpose_df() %>%
-        dplyr::mutate(across(-1, as.numeric, .names = "{.col}"))
+      stations <- interpolation_data[c(1,2,3)] %>%
+        dplyr::rename(Station = 1)
 
       # Notification
       id <- showNotification(
@@ -136,9 +117,9 @@ mod_showData4TimeSerieInterpolation_server <- function(id, interpolation_data, b
     })
 
     # show all time serie dataset
-    event_trigger <- reactive({list(input$showDataset, interpolation_data)}) # events trigger
+    event_trigger <- reactive({list(input$showDataset, interpolation_data_fn())}) # events trigger
     observeEvent(event_trigger(), {
-      req(interpolation_data)
+      req(interpolation_data_fn())
 
       # Notification
       id <- showNotification(
@@ -147,8 +128,8 @@ mod_showData4TimeSerieInterpolation_server <- function(id, interpolation_data, b
       on.exit(removeNotification(id), add = TRUE)
 
       output$used_time_serie_interpolation_data <- renderDataTable({
-        req(interpolation_data)
-        interpolation_data
+        req(interpolation_data_fn())
+        interpolation_data_fn()
       })
     })
 
@@ -171,15 +152,17 @@ mod_showData4TimeSerieInterpolation_server <- function(id, interpolation_data, b
     #return
     return(
       list(
-        data_for_time_serie_interpolation = reactive({ interpolation_data_fn() }),
+        data_for_time_serie_interpolation = reactive({
+          req(interpolation_data_fn())
+          interpolation_data_fn() %>%
+            dplyr::select(-c(2,3))
+        }),
         stations_for_time_serie_interpolation = reactive({
           req(interpolation_data)
-          interpolation_data[c(1,2),] %>%
+          interpolation_data[c(1,2,3)] %>%
             dplyr::rename(Station = 1) %>%
-            transpose_df() %>%
             dplyr::mutate(across(-1, as.numeric, .names = "{.col}"))
-        }),
-        mean_periode_data = reactive({ meanPeriod() })
+        })
       )
     )
 
@@ -187,7 +170,7 @@ mod_showData4TimeSerieInterpolation_server <- function(id, interpolation_data, b
 }
 
 ## To be copied in the UI
-# mod_showData4TimeSerieInterpolation_ui("showData4TimeSerieInterpolation_1")
+# mod_showData4MultiperiodeTimeSerieInterpolation_ui("showData4MultiperiodeTimeSerieInterpolation_1")
 
 ## To be copied in the server
-# mod_showData4TimeSerieInterpolation_server("showData4TimeSerieInterpolation_1")
+# mod_showData4MultiperiodeTimeSerieInterpolation_server("showData4MultiperiodeTimeSerieInterpolation_1")

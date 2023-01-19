@@ -1,4 +1,4 @@
-#' unique_periode_time_serie_interpolation_map UI Function
+#' multiperiode_periode_time_serie_interpolation_map UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_unique_periode_time_serie_interpolation_map_ui <- function(id){
+mod_multiperiode_periode_time_serie_interpolation_map_ui <- function(id){
   ns <- NS(id)
   tagList(
     tags$head(tags$style(type="text/css", '
@@ -64,16 +64,18 @@ mod_unique_periode_time_serie_interpolation_map_ui <- function(id){
 
 
     fluidRow(align="center",
-             column(2, actionButton(ns("north"), label = div(tags$strong("Flèche Nord"), style="font-size:75%;text-align:center"), icon = icon("compass"), width = "100%")),
-             column(2, actionButton(ns("scale"), label =  div(tags$strong("Barre D'échelle"), style="font-size:75%;text-align:center"), icon = icon("barcode"), width = "100%")),
-             column(2, actionButton(ns("layers"), label =  div(tags$strong("Couches"), style="font-size:75%;text-align:center"), icon = icon("layer-group"), width = "100%")),
-             column(2, actionButton(ns("colorbar"), label =  div(tags$strong("Légende"), style="font-size:75%;text-align:center"), icon = icon("elementor"), width = "100%")),
-             column(2, actionButton(ns("legendtheme"), label =  div(tags$strong("Theme Légende"), style="font-size:75%;text-align:center"), icon = icon("affiliatetheme"), width = "100%")),
-             column(2, actionButton(ns("axistheme"), label =  div(tags$strong("Theme Axes"), style="font-size:75%;text-align:center"), icon = icon("affiliatetheme"), width = "100%"))
+             column(3, actionButton(ns("north"), label = div(tags$strong("Flèche Nord"), style="font-size:85%;"), icon = icon("compass"), width = "100%")),
+             column(3, actionButton(ns("scale"), label =  div(tags$strong("Barre D'échelle"), style="font-size:85%;"), icon = icon("barcode"), width = "100%")),
+             column(3, actionButton(ns("layers"), label =  div(tags$strong("Couches"), style="font-size:85%;"), icon = icon("layer-group"), width = "100%")),
+             column(3, actionButton(ns("colorbar"), label =  div(tags$strong("Légende"), style="font-size:85%;"), icon = icon("elementor"), width = "100%")),
+             column(3, actionButton(ns("legendtheme"), label =  div(tags$strong("Theme Légende"), style="font-size:85%;"), icon = icon("affiliatetheme"), width = "100%")),
+             column(3, actionButton(ns("axistheme"), label =  div(tags$strong("Theme Axes"), style="font-size:85%;"), icon = icon("affiliatetheme"), width = "100%")),
+             column(3, actionButton(ns("facettheme"), label =  div(tags$strong("Theme Facets"), style="font-size:85%;"), icon = icon("affiliatetheme"), width = "100%")),
+             column(3, actionButton(ns("axisoverride"), label =  div(tags$strong("Overriding des Axes"), style="font-size:85%;"), icon = icon("exchange"), width = "100%"))
     ),
     tags$hr(style="border-color:gray;"),
     fluidRow(align = "center",
-             column(3, dipsaus::actionButtonStyled(ns("idw"), span("Interpolation", id=ns("idwAnimate")), icon = icon("itercom"), class= "", type="primary")),
+             column(3, dipsaus::actionButtonStyled(ns("load"), span("Charger Options", id=ns("loadAnimate")), icon = icon("map"), class= "", type="primary")),
              column(3, dipsaus::actionButtonStyled(ns("map"), span("Cartographie", id=ns("mapAnimate")), icon = icon("map"), class= "", type="primary")),
              column(3, downloadButton(ns("exportPlotJPEG"), label="JPEG", icon = icon("download"), class = "btn btn-info")),
              column(3, downloadButton(ns("exportPlotSVG"), label="SVG", icon = icon("download"), class = "btn btn-info"))
@@ -81,17 +83,19 @@ mod_unique_periode_time_serie_interpolation_map_ui <- function(id){
     tags$hr(style="border-color:gray;"),
 
     fluidRow(align = "center",
-      column(6,  uiOutput(ns("isolinesCheckBoxGroup"), width="100%")),
-      column(6,  uiOutput(ns("barLegendRoundingSlider"), width="100%")),
-      column(12, plotOutput(ns("interpolationResult"), width="100%"))
-    )
+             column(12,  uiOutput(ns("mapOptions"), width="100%")),
+             column(12, uiOutput(ns("isolinesCheckBoxGroup"), width="100%")),
+             column(12, shinycssloaders::withSpinner(plotOutput(ns("interpolationResult"), width="100%")))
+    ),
+
+    tags$hr(style="border-color:gray;"),
   )
 }
 
-#' unique_periode_time_serie_interpolation_map Server Functions
+#' multiperiode_periode_time_serie_interpolation_map Server Functions
 #'
 #' @noRd
-mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, stations, interpolationData){
+mod_multiperiode_periode_time_serie_interpolation_map_server <- function(id, bassin, donnees){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
@@ -106,16 +110,18 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
     colorbarOptions <- reactiveValues()
     legendThemeOptions <- reactiveValues()
     axisThemeOptions <- reactiveValues()
+    facetThemeOptions <- reactiveValues()
+    axisOverridingCode <- reactiveValues()
 
     # Légende ---------------------------------------------------------------------------------------------------------------------------|
     # initial options
     northOptions$northArrowLocation <- "tl"
     northOptions$northArrowWidth <- 1.5
     northOptions$northArrowHeight <- 1.5
-    northOptions$northArrowPadx <- -.25
+    northOptions$northArrowPadx <- -.45
     northOptions$northArrowPady <- .25
 
-    observeEvent(input$north, {
+    observeEvent(ignoreInit = T, ignoreNULL = T, input$north, {
       # beepr::beep("data/mixkit-explainer-video-game-alert-sweep-236.wav")
       showModal(modalDialog(
         tags$h3('Manipulation De La Flèche Nord De la Carte', style="color:#3474A7;family:Georgia;text-align:center;"),
@@ -138,7 +144,7 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
       ))
     })
     # only store the information if the user clicks submit
-    observeEvent(input$submitLeg, {
+    observeEvent(ignoreInit = T, ignoreNULL = T, input$submitLeg, {
       #beepr::beep("data/mixkit-mouse-click-close-1113.wav")
       northOptions$northArrowLocation <-  input$northArrowLocation
       northOptions$northArrowWidth <-  input$northArrowWidth
@@ -156,7 +162,7 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
     scaleOptions$scaleTextCex <- 1.15
     scaleOptions$scaleStyle <- "ticks"
 
-    observeEvent(input$scale, {
+    observeEvent(ignoreInit = T, ignoreNULL = T, input$scale, {
       # beepr::beep("data/mixkit-explainer-video-game-alert-sweep-236.wav")
       showModal(modalDialog(
         tags$h3("Manipulation De La Barre D'échelle De la Carte", style="color:#3474A7;family:Georgia;text-align:center;"),
@@ -182,7 +188,7 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
 
     })
     # only store the information if the user clicks submit
-    observeEvent(input$submitScale, {
+    observeEvent(ignoreInit = T, ignoreNULL = T, input$submitScale, {
       #beepr::beep("data/mixkit-mouse-click-close-1113.wav")
       scaleOptions$scaleWidthHint <- input$scaleWidthHint
       scaleOptions$scaleTickHeight <- input$scaleTickHeight
@@ -194,19 +200,19 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
 
     # Couches -----------------------------------------------------------------------------------------------------------------|
     # init options
-    layersOptions$bvContSize <- 1.40
+    layersOptions$bvContSize <- 1.20
     layersOptions$IsolineSize <- .80
     layersOptions$IsolineFontSize <- 3.5
     layersOptions$IsolineLabelNudgeX <- 0
     layersOptions$IsolineLabelNudgeY <- 0
-    layersOptions$IsolineLabelAlpha <- .35
+    layersOptions$IsolineLabelAlpha <- .4
     layersOptions$bvContColor <- "black"
     layersOptions$IsolineColor <- "black"
     layersOptions$IsolineType <- "2"
     layersOptions$IsolineLabelColor <- 'black'
     layersOptions$IsolineLabelFill <- "gray"
 
-    observeEvent(input$layers, {
+    observeEvent(ignoreInit = T, ignoreNULL = T, input$layers, {
       # beepr::beep("data/mixkit-explainer-video-game-alert-sweep-236.wav")
       showModal(modalDialog(
         tags$h3("Manipulation Des Couches De la Carte", style="color:#3474A7;family:Georgia;text-align:center;"),
@@ -244,7 +250,7 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
 
     })
     # only store the information if the user clicks submit
-    observeEvent(input$submitLayers, {
+    observeEvent(ignoreInit = T, ignoreNULL = T, input$submitLayers, {
       #beepr::beep("data/mixkit-mouse-click-close-1113.wav")
       layersOptions$bvContSize <- input$bvContSize
       layersOptions$IsolineSize <- input$IsolineSize
@@ -263,7 +269,7 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
     # Barre de légende -----------------------------------------------------------------------------------------------------------------|
     # init options
     colorbarOptions$barHeight <- 1.1
-    colorbarOptions$barWidth <- 30
+    colorbarOptions$barWidth <- 35
     colorbarOptions$barTitleHjust <- .5
     colorbarOptions$barTitleVjust <- .5
     colorbarOptions$barTicksLineWidth <- .7
@@ -276,7 +282,7 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
     colorbarOptions$barTitleLoc <- "top"
     colorbarOptions$barTicksColor <- "gray"
 
-    observeEvent(input$colorbar, {
+    observeEvent(ignoreInit = T, ignoreNULL = T, input$colorbar, {
       showModal(modalDialog(
         tags$h3("Manipulation De La Barre De Légende [Echelle Numérique]", style="color:#3474A7;family:Georgia;text-align:center;"),
         fluidRow(
@@ -305,7 +311,7 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
 
     })
     # only store the information if the user clicks submit
-    observeEvent(input$submitColorBar, {
+    observeEvent(ignoreInit = T, ignoreNULL = T, input$submitColorBar, {
       #beepr::beep("data/mixkit-mouse-click-close-1113.wav")
       colorbarOptions$barHeight <- input$barHeight
       colorbarOptions$barWidth <- input$barWidth
@@ -334,15 +340,18 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
     legendThemeOptions$legTextMarginL <- 0
     legendThemeOptions$legMarginT <- 0
     legendThemeOptions$legMarginR <- 0
-    legendThemeOptions$legMarginB <- .1
+    legendThemeOptions$legMarginB <- .05
     legendThemeOptions$legMarginL <- 0
     legendThemeOptions$legDir <- "horizontal"
     legendThemeOptions$LegTextColor <- "black"
+    legendThemeOptions$legPosType <- "Côté"
+    legendThemeOptions$legPosXcoord <- .5
+    legendThemeOptions$legPosYcoord <- .5
     legendThemeOptions$legLoc <- "bottom"
     legendThemeOptions$legPalette <- "temperature"
     legendThemeOptions$legTitleName <- "Variable Interpolée (unité)"
 
-    observeEvent(input$legendtheme, {
+    observeEvent(ignoreInit = T, ignoreNULL = T, input$legendtheme, {
       showModal(modalDialog(
         tags$h3("Configuration Du Thème De La Légende", style="color:#3474A7;family:Georgia;text-align:center;"),
         fluidRow(
@@ -362,10 +371,15 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
           column(4, sliderInput(ns("legMarginB"), label = "Marge Inférieure De La Légende", min = -5, max = 5, value = legendThemeOptions$legMarginB, step = .01, width = "100%")),
           column(4, selectInput(ns("LegTextColor"), label = "Couleur Des Etiquettes", choices = colors(), selected = legendThemeOptions$LegTextColor, width = "100%"))
         ),
+
         fluidRow(
           column(4,selectInput(ns("legPalette"), label = "Palette de Couleur", choices = c("Température" = "temperature", "Blues" = "blues"), selected = legendThemeOptions$legPalette, width = "100%")),
-          column(4,sliderInput(ns("legMarginL"), label = "Marge Gauche De La Légende", min = -5, max = 5, value = legendThemeOptions$legMarginL, step = .01, width = "100%")),
+          column(4, selectInput(ns("legPosType"), label = "Type De Positionnement de La Légende",  choices = c("Côté", "Coordonnées"), selected = legendThemeOptions$legPosType)),
           column(4,selectInput(ns("legLoc"), label = "Position De La Légende", choices = c("En Haut"="top", "En Bas"="bottom", "A Gauche"="left", "A Droite"="right"), selected = legendThemeOptions$legLoc, width = "100%")),
+
+          column(4, sliderInput(ns("legMarginL"), label = "Marge Gauche De La Légende", min = -5, max = 5, value = legendThemeOptions$legMarginL, step = .01, width = "100%")),
+          column(2, sliderInput(ns("legPosXcoord"), label = "Coordonnées X",  min = 0, max = 1, step = .01, value =  legendThemeOptions$legPosXcoord)),
+          column(2, sliderInput(ns("legPosYcoord"), label = "Coordonnées Y",  min = 0, max = 1, step = .01, value = legendThemeOptions$legPosYcoord)),
 
           column(12,textInput(ns("legTitleName"), label = "Titre De La Légende", value = legendThemeOptions$legTitleName, placeholder = "Titre légende...", width = "100%")),
         ),
@@ -378,7 +392,7 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
 
     })
     # only store the information if the user clicks submit
-    observeEvent(input$submitLegendTheme, {
+    observeEvent(ignoreInit = T, ignoreNULL = T, input$submitLegendTheme, {
       #beepr::beep("data/mixkit-mouse-click-close-1113.wav")
       legendThemeOptions$legTitleAngle <- input$legTitleAngle
       legendThemeOptions$legTexAngle <- input$legTexAngle
@@ -393,6 +407,9 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
       legendThemeOptions$legMarginL <- input$legMarginL
       legendThemeOptions$legDir <- input$legDir
       legendThemeOptions$LegTextColor <- input$LegTextColor
+      legendThemeOptions$legPosType <- input$legPosType
+      legendThemeOptions$legPosXcoord <- input$legPosXcoord
+      legendThemeOptions$legPosYcoord <- input$legPosYcoord
       legendThemeOptions$legLoc <- input$legLoc
       legendThemeOptions$legPalette <- input$legPalette
       legendThemeOptions$legTitleName <- input$legTitleName
@@ -405,7 +422,7 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
     axisThemeOptions$axisTextColor <- "black"
     axisThemeOptions$yAxisTextSize <- 12
 
-    observeEvent(input$axistheme, {
+    observeEvent(ignoreInit = T, ignoreNULL = T, input$axistheme, {
       # beepr::beep("data/mixkit-explainer-video-game-alert-sweep-236.wav")
       showModal(modalDialog(
         tags$h3("Configuration Du Thème Des Etiquettes Des Axes", style="color:#3474A7;family:Georgia;text-align:center;"),
@@ -423,7 +440,7 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
 
     })
     # only store the information if the user clicks submit
-    observeEvent(input$submitAxisTheme, {
+    observeEvent(ignoreInit = T, ignoreNULL = T, input$submitAxisTheme, {
       #beepr::beep("data/mixkit-mouse-click-close-1113.wav")
       axisThemeOptions$xAxisTextSize <- input$xAxisTextSize
       axisThemeOptions$axisTextColor <- input$axisTextColor
@@ -431,243 +448,268 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
       removeModal()
     })
 
-    #||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
-    #||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
-    #||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
-    #| CARTOGRAPHIE
-    # mise en place~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
-    bv_wgs84<- reactive({
-      shiny::req(bassin)
-      bassin
-    })
+    # Theme Des Facets -----------------------------------------------------------------------------------------------------------------|
+    # init options
+    facetThemeOptions$stripTextSize <- 13
+    facetThemeOptions$stripTextMarginB <- 2
+    facetThemeOptions$stripTextMarginT <- 0
+    facetThemeOptions$stripTextMarginL <- 0
+    facetThemeOptions$stripTextMarginR <- 0
+    facetThemeOptions$stripTextMarginUnit <- "pt"
 
-    # gridded cell points in WGS84-4326 proj
-    station.in.wgs84<-  reactive(({
-      shiny::req(stations)
-      prec_grid_georef(stations, "+init=epsg:4326")[[1]]
-    }))
-
-
-    # Interpolation data georeferenced in UTM
-    interpolationData.WGS<- reactive({
-      shiny::req(meanPeriod(), station.in.wgs84())
-      # shiny::req(interpolationData, station.in.wgs84())
-      data_cleaning(meanPeriod(), station.in.wgs84())
-    })
-
-    ## Summarising data
-    meanPeriod<- reactive({
-      shiny::req(interpolationData)
-      transpose_df(
-        interpolationData %>%
-          dplyr::select(-Date) %>%
-          tidyr::pivot_longer(
-            1:ncol(interpolationData)-1, names_to = "Station", values_to = "Valeur"
-          ) %>%
-          dplyr::group_by(Station) %>%
-          dplyr::summarise(
-            Moyenne = mean(Valeur)
-          ) %>%
-          dplyr::mutate(
-            dplyr::across(tidyselect::where(is.numeric), ~round(., 2), .names = "{.col}")
-          )
-      ) %>%
-        dplyr::rename(Station = 1) %>%
-        dplyr::mutate(across(-1, as.numeric, .names = "{.col}"))
-
-    })
-
-    # interpolation et nettoyage ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
-    cleanData<- reactiveVal()
-
-    observeEvent(ignoreInit = T, ignoreNULL = T,  input$idw,  {
-      #beepr::beep("data/mixkit-mouse-click-close-1113.wav")
-
-      shiny::req(station.in.wgs84(), interpolationData.WGS())
-
-      # setting buttons with shinyjs
-      shinyjs::addClass(id = "idwAnimate", class = "loading dots")
-      shinyjs::disable("idw")
-
-      # Notification
-      id <- showNotification(
-        "Traitement en cours ...", duration = NULL, closeButton = FALSE
-      )
-      on.exit(removeNotification(id), add = TRUE)
-
-      #------------------------------------------------------------------------------#
-      # GRILLE D4INTERPOLATION
-
-      # definition of WGS84 (epsg:4326):
-      wgs84 <- sp::CRS("+proj=longlat +ellps=WGS84")
-
-      #------------------------------------------------------------------------------#
-      # interpolation mask contour from sf to spdf (SpatialPolygonsDataFrame):
-      bv_sp <- sf::as_Spatial(bassin)
-      # convert spatial layers from sf object to the Spatial Polygon Data Frame (SPDF)
-      sp::proj4string(bv_sp)<-wgs84
-
-      #------------------------------------------------------------------------------#
-      # define the grid:
-      grd <- as.data.frame(sp::spsample(bv_sp, "regular", n = 20000))
-      names(grd)       <- c("X", "Y")
-      sp::coordinates(grd) <- c("X", "Y")
-      sp::gridded(grd)     <- TRUE  # Create SpatialPixel object
-      sp::fullgrid(grd)    <- TRUE  # Create SpatialGrid object
-      sp::proj4string(grd) <- wgs84
-
-      #grd_bu <- grd # backup the grid (we use it later again)
-      #------------------------------------------------------------------------------#
-
-      # conversion en objet data.frame
-      prec.df<- interpolationData.WGS()@data
-
-      #---------------------------------------------------------------------------#
-      gridded.points<- sf::as_Spatial(sf::st_transform(sf::st_as_sf(interpolationData.WGS()), 4326))
-      grd<- sf::as_Spatial(sf::st_transform(sf::st_as_sf(grd), 4326))
-
-      # interpolation sur toutes les pas de temps
-      list.idw <- colnames(prec.df)[-1] %>%
-        purrr::set_names() %>%
-        purrr::map(
-          ., ~ gstat::idw(
-            stats::as.formula(paste(.x, "~ 1")),
-            locations = gridded.points, newdata = grd
-          )
-        )
-
-      # isolines
-      cont<- as.data.frame(list.idw)  %>%
-        dplyr::rename(x= db_Moyenne.coords.x1, y= db_Moyenne.coords.x2, var1.pred=db_Moyenne.var1.pred)  %>%
-        dplyr::select(-c(4, 5))
-      cont.raster<- raster::rasterFromXYZ(cont)
-      cont.raster.mask<-  raster::mask(cont.raster, bassin)
-      cont.raster.mask.fn<-  sf::st_as_sf(raster::rasterToContour(cont.raster.mask))
-      sf::st_crs(cont.raster.mask.fn)<- 4326
-
-      # transformation du résultat en tibble
-      idw.output<-
-        as.data.frame(list.idw) %>%
-        tibble::as_tibble() %>%
-        dplyr::select(1, 2, tidyselect::ends_with("var1.pred"))
-      # renommage des colonnes
-      names(idw.output)<- c(
-        "Longitude", "Latitude", stringr::str_replace(names(prec.df)[-1], "db_", "")
-      )
-
-      idw.output.sf<- idw.output %>%
-        #* transformation en objet sf
-        sf::st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326) %>%
-        #* selection des pixels à l'intérieur du contour du bassin
-        sf::st_filter(bassin)
-
-      idw.output.df<- idw.output.sf %>%
-        #* transformation en tibble
-        tibble::tibble() %>%
-        #* suppression de la colonne {geometry}
-        dplyr::select(-geometry) %>%
-        cbind(sf::st_coordinates(idw.output.sf)) %>%
-        dplyr::rename(longitude = X, latitude = Y)
-
-      #-----------------------------------------------------------------------------------#
-      # # Button settings
-      shinyjs::enable("idw")
-      shinyjs::removeClass(id = "idwAnimate", class = "loading dots")
-
-      # return
-      cleanData(list(idw.output.df, cont.raster.mask.fn))
-
-      # confirmation
-      # # beepr::beep("data/mixkit-explainer-video-game-alert-sweep-236.wav")
+    observeEvent(ignoreInit = T, ignoreNULL = T, input$facettheme, {
+      # beepr::beep("data/mixkit-explainer-video-game-alert-sweep-236.wav")
       showModal(modalDialog(
-        tags$h3("Résultats De L'Interpolation [Méthode Utilisée : IDW]", style="color:#3474A7;family:Georgia;text-align:center;"),
-        # Résumé de l'interpolation
-        fluidRow(align = "left",
-                 column(12, h4(
-                   "Résultats de l'Interpolation || Résumé Statistique",
-                   style=paste0(
-                     "color:#3474A7;text-align:left;font-family:Georgia;background-color:lightgray;"
-                   )
-                 )),
-                 column(12, shinycssloaders::withSpinner(verbatimTextOutput(ns("summaryResult")), type = 5))
-        ),
-        # Isolignes
-        fluidRow(align = "left",
-                 column(12, h4(
-                   "Résultats de l'Interpolation || ISOLIGNES",
-                   style=paste0(
-                     "color:#3474A7;text-align:left;font-family:Georgia;background-color:lightgray;"
-                   )
-                 )),
-                 column(12, shinycssloaders::withSpinner(verbatimTextOutput(ns("isolines")), type = 5))
+        tags$h3("Configuration Du Thème Des Facets [Box]", style="color:#3474A7;family:Georgia;text-align:center;"),
+        fluidRow(
+          column(4, sliderInput(ns("stripTextSize"), label = "Taille de Police Des Titres de Graphiques", min = 5, max = 35, value = facetThemeOptions$stripTextSize, step = 1, width = "100%")),
+          column(4, sliderInput(ns("stripTextMarginT"), label = "Marge  Supérieures Des Titres de Graphiques", min = -5, max = 5, value = facetThemeOptions$stripTextMarginT, step = .01, width = "100%")),
+          column(4, sliderInput(ns("stripTextMarginR"), label = "Marge  Supérieures Des Titres de Graphiques", min = -5, max = 5, value = facetThemeOptions$stripTextMarginR, step = .01, width = "100%")),
+          column(4, sliderInput(ns("stripTextMarginB"), label = "Marge  Supérieures Des Titres de Graphiques", min = -5, max = 5, value = facetThemeOptions$stripTextMarginB, step = .01, width = "100%")),
+          column(4, selectInput(ns("stripTextMarginUnit"), label = "Unité de Mesure Des Marges", choices = c("pt", "cm"), selected = facetThemeOptions$stripTextMarginUnit)),
+          column(4, sliderInput(ns("stripTextMarginL"), label = "Marge  Supérieures Des Titres de Graphiques", min = -5, max = 5, value = facetThemeOptions$stripTextMarginL, step = .01, width = "100%"))
         ),
         footer=tagList(
-          modalButton('Fermer', icon = icon("power-off"))
+          actionButton(ns("submitFacetsTheme"), 'Valider', class = "btn-success", icon = icon("thumbs-up")),
+          modalButton('Annuler', icon = icon("power-off"))
         ),
         size = "l"
       ))
 
-      # isohètes checkBoxGroup
-      output$isolinesCheckBoxGroup <- renderUI({
-        isohytes<- cleanData()[[2]]
-        # shiny::req(cleanData())
-        fluidRow(align="center",
-          column(12,
-                 checkboxGroupInput(
-                   ns("isolignes"), div(
-                     "Choix Des isohyètes A Afficher Dans La Carte !", class="textBoxed"
-                   ),
-                   choices = unique(isohytes$level), inline = TRUE, width = "100%",
-                   selected = unique(isohytes$level)
-                 )
-          )
-        )
-      })
-
-      # isohètes checkBoxGroup
-      output$barLegendRoundingSlider <- renderUI({
-        shiny::req(cleanData())
-        fluidRow(align="center",
-                 column(12,
-                        sliderInput(ns("barNumberRounding"), label = "Nombre de Décimales dans la Légende", min = 0, max = 10,
-                                    value =  2, step = 1, width = "100%")
-                 )
-        )
-      })
-
-      # Affichage du résult de d'interpolation
-      output$summaryResult<- renderPrint({
-        shiny::req(cleanData())
-        summary(cleanData()[[1]])
-      })
-
-      output$isolines<- renderPrint({
-        shiny::req(cleanData())
-        cleanData()[[2]]
-      })
-
+    })
+    # only store the information if the user clicks submit
+    observeEvent(input$submitFacetsTheme, {
+      #beepr::beep("data/mixkit-mouse-click-close-1113.wav")
+      facetThemeOptions$stripTextSize <- input$stripTextSize
+      facetThemeOptions$stripTextMarginB <- input$stripTextMarginB
+      facetThemeOptions$stripTextMarginT <- input$stripTextMarginT
+      facetThemeOptions$stripTextMarginL <- input$stripTextMarginL
+      facetThemeOptions$stripTextMarginR <- input$stripTextMarginR
+      facetThemeOptions$stripTextMarginUnit <- input$stripTextMarginUnit
+      removeModal()
     })
 
-    # cartographie ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~##
-    mean_period_plot_result<- eventReactive(ignoreInit = T, ignoreNULL = T, input$map, {
-      #beepr::beep("data/mixkit-mouse-click-close-1113.wav"
-      req(cleanData())
+    # Manipulation des axes -----------------------------------------------------------------------------------------------------------------|
+    # init options
+    axisOverridingCode$xbreaks <- ""
+    axisOverridingCode$ybreaks <- ""
 
-      # palette de couleurs
-      palett <- gplots::rich.colors(100, palette = colorbarOptions$legPalette, rgb = F)
+    observeEvent(ignoreInit = T, ignoreNULL = T, input$axisoverride, {
+      # beepr::beep("data/mixkit-explainer-video-game-alert-sweep-236.wav")
+      showModal(modalDialog(
+        tags$h3("Overriding des Axes du Graphique [Code R]", style="color:#3474A7;family:Georgia;text-align:center;"),
+        fluidRow(
+          column(12,  textInput(ns("xbreaks"), label = "Graduations de l'axe des Longitudes {X}", value = axisOverridingCode$xbreaks, placeholder = "x1;x2;x2;x4;...", width = "100%")),
+        ),
+        fluidRow(
+          column(12,  textInput(ns("ybreaks"), label = "Graduations de l'axe des Latitudes {Y}", value = axisOverridingCode$ybreaks, placeholder = "y1;y2;y2;y4;...", width = "100%"))
+        ),
+        footer=tagList(
+          actionButton(ns("submitAxisOverride"), 'Valider', class = "btn-success", icon = icon("thumbs-up")),
+          modalButton('Annuler', icon = icon("power-off"))
+        ),
+        size = "m"
+      ))
 
-      # plotting
+    })
+    # only store the information if the user clicks submit
+    observeEvent(input$submitFacetsTheme, {
+      #beepr::beep("data/mixkit-mouse-click-close-1113.wav")
+      axisOverridingCode$xbreaks <- input$xbreaks
+      axisOverridingCode$ybreaks <- input$ybreaks
+      removeModal()
+    })
+
+    #||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+    #||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+    #||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+    #| CARTOGRAPHIE
+
+    # to store mapping result
+    plot_redsult<- reactiveValues()
+
+    # loading Options
+    observeEvent(ignoreInit = T, ignoreNULL = T,  input$load,  {
+      req(donnees, bassin)
+
+      # niveau de zoom
+      zoomLevel<- reactive({
+        ifelse(
+          as.numeric(sf::st_area(bassin)) > 3118775314,
+          3118775314*8/as.numeric(sf::st_area(bassin)),
+          as.numeric(sf::st_area(bassin)*8/3118775314+8)
+        )
+      })
+
+      # isohètes checkBoxGroup
+      output$isolinesCheckBoxGroup <- renderUI({
+        isohytes<- future::value(donnees)[[2]]
+        # shiny::req(cleanData())
+        fluidRow(align="center",
+                 column(12,
+                        checkboxGroupInput(
+                          ns("isolignes"), div(
+                            "Choix Des isohyètes A Afficher Dans La Carte !", class="textBoxed"
+                          ),
+                          choices = unique(isohytes$level), inline = TRUE, width = "100%",
+                          selected = unique(isohytes$level)
+                        )
+                 )
+        )
+      })
+
+      # isohètes checkBoxGroup
+      output$mapOptions <- renderUI({
+        # shiny::req(cleanData())
+        fluidRow(align="center",
+                 column(4, sliderInput(ns("nrowFacets"), label = div("Nombre de Lignes des Facets", style="font-size:85%;font-family:georgia"), min = 2, max = 6, value =  2, step = 1, width = "100%")),
+                 column(4, sliderInput(ns("facetsXspacing"), label = div("Espacement Horizontale Facets", style="font-size:85%;font-family:georgia"), min = 0, max = 4, value =  0, step = .01, width = "100%")),
+                 column(4, sliderInput(ns("barNumberRounding"), label = div("Nbre de Décimales Légende", style="font-size:85%;font-family:georgia"), min = 0, max = 6, value =  2, step = 1, width = "100%")),
+                 column(4, sliderInput(ns("zoomin"), label = div("Niveau de zoom", style="font-size:85%;font-family:georgia"), min = 0, max = 10, value = 0, step = .01)),
+                 column(4, sliderInput(ns("longAdjust"), label = div("Adjustement Longitudinale", style="font-size:85%;font-family:georgia"), min = -5, max = 5, step = .001, value = 0)),
+                 column(4, sliderInput(ns("latAdjust"), label = div("Adjustement Latitudinale", style="font-size:85%;font-family:georgia"), min = -5, max = 5, step = .001, value = 0))
+        )
+      })
+    })
+
+    # mapping
+    multiperiode_map_plot<- eventReactive(ignoreInit = T, ignoreNULL = T,  input$map,  {
+      req(bassin, donnees, input$nrowFacets, input$facetsXspacing, input$barNumberRounding, input$zoomin, input$longAdjust, input$latAdjust)
+
+      # Notification
+      id <- showNotification(
+        "Traitement de la Carte ... Peut prendre un certain temps ...",
+        duration = NULL, closeButton = FALSE
+      )
+      on.exit(removeNotification(id), add = TRUE)
+
+      # data
+      bv <- bassin
+      tuiles <- future::value(donnees)[[1]]
+      isohyetes <- future::value(donnees)[[2]]
+
+
+      # gestion des entrées vecteurs
+      extract_entries<-  function(text){
+        text<-  gsub(" ", "", text)
+        split<-  strsplit(text, ";", fixed = FALSE)[[1]]
+        as.numeric(split)
+      }
+
+      # xticks  definition start ----------------------------- -------------------------------------------------------------#
+      if(axisOverridingCode$xbreaks==""){
+        x_ticks<- NA
+      } else {
+        x_ticks<- extract_entries(axisOverridingCode$xbreaks)
+      }
+      # filtrage
+      if(!anyNA(x_ticks)){
+        x_ticks_fn<- round(x_ticks, 2)
+      }else{
+        if(axisOverridingCode$xbreaks!=""){
+          # # feedbacks
+          # shinyFeedback::feedbackWarning(
+          #   "xbreaks", anyNA(x_ticks),
+          #   "Vecteur de données incorrect !"
+          # )
+          ## alert
+          shinyalert::shinyalert(
+            "Valeur incorrecte pour le champs {Graduations de l'axe des longitudes {X}} :",
+            paste0(
+              "Veillez spécifier un vecteur de nombre de la forme d'une ligne d'un fichier {CSV} avec le virgule ",
+              "comme séparateur de colonnes selon le modèle {n1;n2;n3;etc.}. Le séparateur décimal doit être ",
+              "un point virgule (et non une virgule comme le système français). Exemple Correcte: { 14;23.7;44;18.3 }"
+            )
+          )
+        }
+
+        x_ticks_fn<- round(seq(sf::st_bbox(bassin)[1], sf::st_bbox(bassin)[3], length.out=4)-.2, 2)[-1]
+
+      }
+
+
+      # yticks  definition start ----------------------------- -------------------------------------------------------------#
+      if(axisOverridingCode$ybreaks==""){
+        y_ticks<- NA
+      } else {
+        y_ticks<- extract_entries(axisOverridingCode$ybreaks)
+      }
+      # filtrage
+      if(!anyNA(y_ticks)){
+        y_ticks_fn<- round(y_ticks, 2)
+      }else{
+        if(axisOverridingCode$ybreaks!=""){
+          # # feedbacks
+          # shinyFeedback::feedbackWarning(
+          #   "ybreaks", anyNA(y_ticks),
+          #   "Vecteur de données incorrect !"
+          # )
+          ## alert
+          shinyalert::shinyalert(
+            "Valeur incorrecte pour le champs {Graduations de l'axe des latitudes {Y}} :",
+            paste0(
+              "Veillez spécifier un vecteur de nombre de la forme d'une ligne d'un fichier {CSV} avec le virgule ",
+              "comme séparateur de colonnes selon le modèle {n1;n2;n3;etc.}. Le séparateur décimal doit être ",
+              "un point virgule (et non une virgule comme le système français). Exemple Correcte: { 14;23.7;44;18.3 }"
+            )
+          )
+        }
+
+        y_ticks_fn<- round(seq(sf::st_bbox(bassin)[2], sf::st_bbox(bassin)[4], length.out=4), 2)
+
+      }
+      # xbreaks definition end ----------------------------- -------------------------------------------------------------#
+
+      # # centre de zoom
+      zoomCenter <-  c(
+        sf::st_coordinates(sf::st_point_on_surface(bv))[1] + as.numeric(input$longAdjust),
+        sf::st_coordinates(sf::st_point_on_surface(bv))[2] + as.numeric(input$latAdjust)
+      )
+
+      # zoom
+      # Niveau de zoom
+      zoomLevel<- function(){
+        if(input$zoomin != 0) {
+          return(
+            ggplot2::coord_sf(
+              expand = TRUE, label_graticule = "SW", crs = 4326,
+              # étendue des longitudes
+              xlim = zoomMap(zoomCenter, as.numeric(input$zoomin))[[1]],
+              # étendue des latitudes
+              ylim = zoomMap(zoomCenter,  as.numeric(input$zoomin))[[2]]
+            )
+          )
+        }else{
+          return(
+            ggplot2::coord_sf(
+              expand = TRUE, label_graticule = "SW", crs = 4326
+            )
+          )
+        }
+      }
+
+      ### TYPE DE POSITIONNEMENT DE LA LEGENDE
+      if(legendThemeOptions$legPosType == "Côté"){
+        leg_pos <- legendThemeOptions$legLoc
+      }else{
+        leg_pos <- c(as.numeric(legendThemeOptions$legPosXcoord), as.numeric(legendThemeOptions$legPosYcoord))
+      }
+
+      ### MAKING  PLOTING
+      palett <- gplots::rich.colors(100, palette = legendThemeOptions$legPalette, rgb = F)
+
       plotMap <- reactive({
-        datatPLT<- as.data.frame(cleanData()[[1]])
-        isohyete<- cleanData()[[2]][which(cleanData()[[2]]$level %in%  input$isolignes),]
+        datatPLT<- as.data.frame(tuiles)
+        isohyete<- isohyetes[which(isohyetes$level %in%  input$isolignes),]
         isohyete$level <- as.numeric(isohyete$level)
+
         ggplot2::ggplot(datatPLT) +
           # spatialisation des résultats de l'interpolation
           ggplot2::geom_tile(
-            data =  datatPLT, ggplot2::aes(x = longitude, y = latitude, fill = Moyenne, color = Moyenne), size = .6
+            data =  datatPLT, ggplot2::aes(x = Longitude, y = Latitude, fill = valeur, color = valeur), size = .6
           ) +
           ggplot2::geom_sf(
-            data=bv_wgs84(), color=layersOptions$bvContColor, linewidth=as.numeric(layersOptions$bvContSize), fill=NA
+            data=bv, color=layersOptions$bvContColor, linewidth=as.numeric(layersOptions$bvContSize), fill=NA
           ) +
           ggplot2::geom_sf(
             data =isohyete, size = as.numeric(layersOptions$IsolineSize), color= layersOptions$IsolineColor,
@@ -678,17 +720,20 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
             nudge_y = as.numeric(layersOptions$IsolineLabelNudgeX), nudge_x = as.numeric(layersOptions$IsolineLabelNudgeY),
             alpha = as.numeric(layersOptions$IsolineLabelAlpha), color =  layersOptions$IsolineLabelColor, fill =  layersOptions$IsolineLabelFill
           ) +
+          ## zoom map
+          zoomLevel()+
+          # colourbar
           ggplot2::scale_fill_gradientn(
             colours =  rev(palett),
-            limits = c( min(datatPLT$Moyenne), max(datatPLT$Moyenne)),
-            breaks = seq(min(datatPLT$Moyenne), max(datatPLT$Moyenne), length.out = 6),
-            labels = round(seq(min(datatPLT$Moyenne), max(datatPLT$Moyenne), length.out = 6), input$barNumberRounding)
+            limits = c( min(datatPLT$valeur), max(datatPLT$valeur)),
+            breaks = seq(min(datatPLT$valeur), max(datatPLT$valeur), length.out = 6),
+            labels = round(seq(min(datatPLT$valeur), max(datatPLT$valeur), length.out = 6), input$barNumberRounding)
           )+
           ggplot2::scale_color_gradientn(
             colours =  rev(palett),
-            limits = c( min(datatPLT$Moyenne), max(datatPLT$Moyenne)),
-            breaks = seq(min(datatPLT$Moyenne), max(datatPLT$Moyenne), length.out = 6),
-            labels = round(seq(min(datatPLT$Moyenne), max(datatPLT$Moyenne), length.out = 6), 2),
+            limits = c( min(datatPLT$valeur), max(datatPLT$valeur)),
+            breaks = seq(min(datatPLT$valeur), max(datatPLT$valeur), length.out = 6),
+            labels = round(seq(min(datatPLT$valeur), max(datatPLT$valeur), length.out = 6), 2),
             guide = "none"
           )+
           #theme homogène
@@ -696,11 +741,11 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
           ggplot2::guides(
             fill = ggplot2::guide_colorbar(
               barwidth=as.numeric(colorbarOptions$barWidth), barheight=as.numeric(colorbarOptions$barHeight),
-              title.position = colorbarOptions$barTitleLoc,
+              title.position = colorbarOptions$barTitleLoc, title = legendThemeOptions$legTitleName,
               title.hjust = as.numeric(colorbarOptions$barTitleHjust), ticks.colour =  colorbarOptions$barTicksColor,
               ticks.linewidth = as.numeric(colorbarOptions$barTicksLineWidth), frame.colour = "gray", frame.linewidth = .3,
               title.theme = ggplot2::element_text(
-                family = "Times", size = as.numeric(colorbarOptions$barTitleSize),
+                family = "Times", size = as.numeric(colorbarOptions$barTitleSize), face = "bold",
                 margin = ggplot2::margin(
                   b=as.numeric(colorbarOptions$barTitleMarginB), l=as.numeric(colorbarOptions$barTitleMarginL),
                   t=as.numeric(colorbarOptions$barTitleMarginT), r=as.numeric(colorbarOptions$barTitleMarginR), unit = "cm"
@@ -710,6 +755,10 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
             ),
             color = "none"
           ) +
+          # graduation de l'axe des longitudes
+          ggplot2::scale_x_continuous(breaks = x_ticks_fn)+
+          # graduation de l'axe des longitudes
+          ggplot2::scale_y_continuous(breaks = y_ticks_fn)+
           ggplot2::theme(
             # légende
             legend.direction =  legendThemeOptions$legDir,
@@ -720,7 +769,7 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
                 t=as.numeric(legendThemeOptions$legTextMarginT), r=as.numeric(legendThemeOptions$legTextMarginR), unit = "cm"
               )
             ),
-            legend.position =  legendThemeOptions$legLoc,
+            legend.position =  leg_pos,
             legend.margin = ggplot2::margin(
               b=as.numeric(legendThemeOptions$legMarginB), l=as.numeric(legendThemeOptions$legMarginL),
               t=as.numeric(legendThemeOptions$legMarginT), r=as.numeric(legendThemeOptions$legMarginR), unit = "cm"
@@ -737,13 +786,25 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
             axis.title = ggplot2::element_blank(),
             #axis.text = element_text (family = "Times", size=10, color = "black")
             plot.background = ggplot2::element_rect(fill="white", color = "white", size=.0001),
-            plot.margin = ggplot2::margin(rep(.5, 4) ,unit = "cm")
+            plot.margin = ggplot2::margin(rep(.5, 4) ,unit = "cm"),
+            # strips
+            strip.background = ggplot2::element_blank(),
+            strip.text = ggplot2::element_text(
+              family = "Times", size = as.numeric(facetThemeOptions$stripTextSize), face="bold",
+              margin = ggplot2::margin(
+                b =  facetThemeOptions$stripTextMarginB,  t =  facetThemeOptions$stripTextMarginT,
+                l =  facetThemeOptions$stripTextMarginL,  r =  facetThemeOptions$stripTextMarginR,
+                unit =  facetThemeOptions$stripTextMarginUnit
+              )
+            ),
+            # legend.key = element_rect(color = NA, fill = NA),
+            panel.spacing.y = grid::unit(.5, "cm"),
+            panel.spacing.x = grid::unit(as.numeric(input$facetsXspacing), "cm")
           ) +
-          #titre de la légende
           ggplot2::labs(
             fill = legendThemeOptions$legTitleName, color = legendThemeOptions$legTitleName, linetype=NULL
           ) +
-          # ajout de la flèche Nord
+          # # ajout de la flèche Nord
           northArrow(
             location = northOptions$northArrowLocation, width=as.numeric(northOptions$northArrowWidth),
             height = as.numeric(northOptions$northArrowHeight), padx=as.numeric(northOptions$northArrowPadx),
@@ -755,36 +816,37 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
             height= as.numeric(scaleOptions$scaleTickHeight), width.hint=as.numeric(scaleOptions$scaleWidthHint),
             text.cex = as.numeric(scaleOptions$scaleTextCex),  scale.style=scaleOptions$scaleStyle
             # line.width = as.numeric(input$scaleLineWidth)
-          )
-        })
+          ) +
 
-      # export
+          ggplot2::facet_wrap(ggplot2::vars(variable))
+      })
+
       plotMap()
 
     })
 
     # affichage
     output$interpolationResult<- renderPlot({
-      req(mean_period_plot_result())
-      mean_period_plot_result()
+      req(multiperiode_map_plot())
+      multiperiode_map_plot()
     }, res = 55)
 
     ###  Exportation
     output$exportPlotJPEG <-  downloadHandler(
       filename = function() {
-        paste("Interpolation_Spatiale", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+        paste("MultiPeriodeSpatialInterpolation", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
       },
       content = function(file) {
-        ggplot2::ggsave(file, mean_period_plot_result(), width = 13.3, height = 7.05)
+        ggplot2::ggsave(file, multiperiode_map_plot(), width = 13.3, height = 7.05)
       }
     )
 
     output$exportPlotSVG <-  downloadHandler(
       filename = function() {
-        paste("Interpolation_Spatiale", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+        paste("MultiPeriodeSpatialInterpolation", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
       },
       content = function(file) {
-        ggplot2::ggsave(file, mean_period_plot_result(), width = 13.3, height = 7.05)
+        ggplot2::ggsave(file, multiperiode_map_plot(), width = 13.3, height = 7.05)
       }
     )
 
@@ -792,7 +854,7 @@ mod_unique_periode_time_serie_interpolation_map_server <- function(id, bassin, s
 }
 
 ## To be copied in the UI
-# mod_unique_periode_time_serie_interpolation_map_ui("unique_periode_time_serie_interpolation_map_1")
+# mod_multiperiode_periode_time_serie_interpolation_map_ui("multiperiode_periode_time_serie_interpolation_map_1")
 
 ## To be copied in the server
-# mod_unique_periode_time_serie_interpolation_map_server("unique_periode_time_serie_interpolation_map_1")
+# mod_multiperiode_periode_time_serie_interpolation_map_server("multiperiode_periode_time_serie_interpolation_map_1")

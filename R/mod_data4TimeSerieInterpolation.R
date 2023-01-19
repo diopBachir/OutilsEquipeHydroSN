@@ -19,9 +19,7 @@ mod_data4TimeSerieInterpolation_ui <- function(id){
                       placeholder = "fichier CSV ou Excel"
                     )
              )
-    ),
-
-    verbatimTextOutput(ns("test"))
+    )
   )
 }
 

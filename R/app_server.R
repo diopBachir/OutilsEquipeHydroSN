@@ -84,4 +84,41 @@ app_server <- function(input, output, session) {
         readyData4UniquePeriodeTimeSerieInterpolationMap$data_for_time_serie_interpolation()
       )
   })
+
+  # ||||||||||||||||||||||||||||||||||||| INERPOLATION MULTIPERIODE
+  # limites bassin versant
+  limites_multiperiode_bv_time_serie_map_interpolation <- mod_loading_VectorFile_server("loading_VectorFile_3")
+  # données
+  data4MultiPeriodeTimeSerieInterpolationMap <- mod_data_4_multiperiode_interpolation_map_server("data_4_multiperiode_interpolation_map_1")
+
+  # events trigger
+  multiperiode_time_serie_interpolation_map_events_trigger <- reactive({
+    list(
+      limites_multiperiode_bv_time_serie_map_interpolation$limite_bassin_versant(),
+      data4MultiPeriodeTimeSerieInterpolationMap$data_for_time_serie_interpolation()
+    )
+  })
+
+  observeEvent(multiperiode_time_serie_interpolation_map_events_trigger(), {
+    # showing and getting data
+    readyData4MultiPeriodeTimeSerieInterpolationMap <- mod_showData4MultiperiodeTimeSerieInterpolation_server(
+      "showData4MultiperiodeTimeSerieInterpolation_1",
+      data4MultiPeriodeTimeSerieInterpolationMap$data_for_time_serie_interpolation(),
+      limites_multiperiode_bv_time_serie_map_interpolation$limite_bassin_versant()
+    )
+    # data preparation
+    cleaned_and_ready_data_4_multivariate_interpolation_map <- mod_multivariate_interpolation_data_preparation_server(
+      "multivariate_interpolation_data_preparation_1",
+      limites_multiperiode_bv_time_serie_map_interpolation$limite_bassin_versant(),
+      readyData4MultiPeriodeTimeSerieInterpolationMap$data_for_time_serie_interpolation(),
+      readyData4MultiPeriodeTimeSerieInterpolationMap$stations_for_time_serie_interpolation()
+    )
+    # cartographie
+    mod_multiperiode_periode_time_serie_interpolation_map_server(
+      "multiperiode_periode_time_serie_interpolation_map_1",
+      limites_multiperiode_bv_time_serie_map_interpolation$limite_bassin_versant(),
+      cleaned_and_ready_data_4_multivariate_interpolation_map$cleaned_data_for_map()
+    )
+  })
 }
+
