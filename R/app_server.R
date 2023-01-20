@@ -120,5 +120,25 @@ app_server <- function(input, output, session) {
       cleaned_and_ready_data_4_multivariate_interpolation_map$cleaned_data_for_map()
     )
   })
+
+  # ||||||||||||||||||||||||||||||||||||| INERPOLATION MULTIPERIODE
+  # plot options
+  univariateBoxplotOptions<- mod_UnivariateBoxplotOptions_server("UnivariateBoxplotOptions_1")
+  # données
+  univariateBoxplotData<- mod_data4UnivariateBoxplotFile_server("data4UnivariateBoxplotFile_1")
+  # observation du changement des donées
+  observeEvent(univariateBoxplotData$data_for_univariateBoxplot(), {
+    # données
+    univariateBoxplotData<- mod_data4UnivariateBoxplotFile_server("data4UnivariateBoxplotFile_1")
+    # nettoyage et recodage
+    readyDataForUnivariateBoxplotPlot<- mod_boxplotUnivariateDataPreparation_server(
+      "boxplotUnivariateDataPreparation_1", univariateBoxplotData$data_for_univariateBoxplot()
+    )
+    # making plot
+    mod_makingUnivariateBoxplot_server(
+      "makingUnivariateBoxplot_1", readyDataForUnivariateBoxplotPlot$dataUnivariateBoxplotCleaned(), univariateBoxplotOptions
+    )
+  })
+
 }
 

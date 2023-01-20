@@ -50,6 +50,48 @@ app_ui <- function(request) {
 
                br(), br(), br(), br(),
 
+               # BOXPLOTS
+               navbarMenu(div("BoxPlot", style = "color:white;font-size:115%;"),
+                          # boxplots univarié
+                          # boxplots univarié
+                          tabPanel(h4("Boxplot Univarié"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Boxplot Univarié",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_UnivariateBoxplotOptions_ui("UnivariateBoxplotOptions_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_data4UnivariateBoxplotFile_ui("data4UnivariateBoxplotFile_1")
+                                       ),#tabPanel
+                                       tabPanel(
+                                         div("Nettoyage||Recodage", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_boxplotUnivariateDataPreparation_ui("boxplotUnivariateDataPreparation_1")
+                                       ),#tabPanel
+                                       tabPanel(
+                                         div("Graphique", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # boxplots univariés
+                                         mod_makingUnivariateBoxplot_ui("makingUnivariateBoxplot_1")
+                                       )#tabPanel
+                                       )# tabsetPanel
+                                     )# mainPanel
+                          ), # tabPanel
+               ), # navbarMenu
+
                ## INTERPOLATION SPATIALE
                navbarMenu(div("Interpolation Spatiale", style = "color:white;font-size:115%;"),
 
@@ -205,7 +247,9 @@ app_ui <- function(request) {
                                      ) # tabsetPanel
                                    ) # mainPannel
                           ) #tabPanel
-               )
+               ), # navbarMenu
+
+
     )
   )
 }
