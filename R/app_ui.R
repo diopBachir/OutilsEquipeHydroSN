@@ -91,7 +91,7 @@ app_ui <- function(request) {
                                      )# mainPanel
                           ), # tabPanel
 
-                          # boxplots multivarié
+                          # Boxplots Univariés Avec Facets
                           tabPanel(h4("Boxplots Univariés Avec Facets"),
                                    sidebarPanel(
                                      style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
@@ -128,6 +128,45 @@ app_ui <- function(request) {
                                      )# tabsetPanel
                                    )# mainPanel
                           ), # tabPanel
+
+                          tabPanel(h4("Boxplot Multivarié"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Boxplot Multivarié",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_multivariateBoxplotOptions_ui("multivariateBoxplotOptions_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_data4MultivariateBoxplotFile_ui("data4MultivariateBoxplotFile_1")
+                                       ),#tabPanel
+                                       tabPanel(
+                                         div("Nettoyage||Recodage", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_MultivariateBoxplotPlotDataPreparation_ui("MultivariateBoxplotPlotDataPreparation_1")
+                                       ),#tabPanel
+                                       tabPanel(
+                                         div("Graphique", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # boxplots univariés
+                                         mod_makingMultivariateBoxplot_ui("makingMultivariateBoxplot_1")
+                                       )#tabPanel
+                                     )# tabsetPanel
+                                   )# mainPanel
+                          ), # tabPanel
+
+
                ), # navbarMenu
 
                ## INTERPOLATION SPATIALE

@@ -167,6 +167,25 @@ app_server <- function(input, output, session) {
     )
   })
 
-
+  # ||||||||||||||||||||||||||||||||||||| BOXPLOTS MULTIVARIES
+  # Data
+  multivariateBoxplotData<- mod_data4MultivariateBoxplotFile_server("data4MultivariateBoxplotFile_1")
+  # gettingData
+  data.multivariate.dataBoxplot<- multivariateBoxplotData$data_for_multivariateBoxplot
+  # observation du changement des donées
+  observeEvent(ignoreInit = FALSE, ignoreNULL = FALSE, data.multivariate.dataBoxplot(), {
+    # données
+    data.multivariate.dataBoxplot<- multivariateBoxplotData$data_for_multivariateBoxplot
+    # plot options
+    multivariateBoxplotOptions<- mod_multivariateBoxplotOptions_server("multivariateBoxplotOptions_1")
+    # data preparation
+    dataCleanedMultivariateBoxplot<- mod_MultivariateBoxplotPlotDataPreparation_server(
+      "MultivariateBoxplotPlotDataPreparation_1", data.multivariate.dataBoxplot()
+    )
+    # making plot
+    mod_makingMultivariateBoxplot_server(
+      "makingMultivariateBoxplot_1", dataCleanedMultivariateBoxplot, multivariateBoxplotOptions
+    )
+  })
 }
 

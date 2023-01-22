@@ -79,7 +79,7 @@ mod_facetsUnivariateBoxplotOptions_ui <- function(id){
      column(4, selectInput(ns("legPosType"), label = div("Type Pos. Leg.", style="family:Georgia;text-align:left;font-size:65%"),  choices = c("Côté", "Coord."), selected = "Côté")),
      column(4, selectInput(ns("legLoc"), label = div("Leg. Position", style="family:Georgia;text-align:left;font-size:65%"),  choices = c("top", "bottom", "left", "right"), selected = "bottom")),
      column(4, selectInput(ns("stripTextMarginUnit"), label = div("Strip Marg. Unit", style="family:Georgia;text-align:left;font-size:65%"), choices = c("pt", "cm"), selected = "pt")),
-     column(4, selectInput(ns("reorderGprah"), label = div("Trier les boxs", style="family:Georgia;text-align:left;font-size:65%"),  choices = c("Desc.", "Asc."), selected = "Ascendant")),
+     column(4, selectInput(ns("reorderGprah"), label = div("Trier les boxs", style="family:Georgia;text-align:left;font-size:65%"),   choices = c("Desc"="Descendant", "Asc"="Ascendant"), selected = "Ascendant")),
      column(4, selectInput(ns("flipAxis"), label = div("Fip Coords", style="family:Georgia;text-align:left;font-size:65%"),  choices = c("Oui" = TRUE, "Non" = FALSE), selected = "TRUE")),
      column(4, selectInput(ns("FacetScale"), label = div("FacetScales", style="family:Georgia;text-align:left;font-size:65%"),  choices = c("fixed", "free", "free_x", "free_y"), selected = "free")),
      column(4, selectInput(ns("reorderGprah"), label = div("Trier les boxs", style="family:Georgia;text-align:left;font-size:65%"),  choices = c("Desc.", "Asc."), selected = "Asc.")),
