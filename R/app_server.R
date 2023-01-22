@@ -121,13 +121,13 @@ app_server <- function(input, output, session) {
     )
   })
 
-  # ||||||||||||||||||||||||||||||||||||| INERPOLATION MULTIPERIODE
-  # plot options
-  univariateBoxplotOptions<- mod_UnivariateBoxplotOptions_server("UnivariateBoxplotOptions_1")
+  # ||||||||||||||||||||||||||||||||||||| BOXPLOT UNIVARIE
   # données
   univariateBoxplotData<- mod_data4UnivariateBoxplotFile_server("data4UnivariateBoxplotFile_1")
   # observation du changement des donées
   observeEvent(univariateBoxplotData$data_for_univariateBoxplot(), {
+    # plot options
+    univariateBoxplotOptions<- mod_UnivariateBoxplotOptions_server("UnivariateBoxplotOptions_1")
     # données
     univariateBoxplotData<- mod_data4UnivariateBoxplotFile_server("data4UnivariateBoxplotFile_1")
     # nettoyage et recodage
@@ -136,9 +136,37 @@ app_server <- function(input, output, session) {
     )
     # making plot
     mod_makingUnivariateBoxplot_server(
-      "makingUnivariateBoxplot_1", readyDataForUnivariateBoxplotPlot$dataUnivariateBoxplotCleaned(), univariateBoxplotOptions
+      "makingUnivariateBoxplot_1",
+      readyDataForUnivariateBoxplotPlot$dataUnivariateBoxplotCleaned(),
+      univariateBoxplotOptions
     )
   })
+
+  # ||||||||||||||||||||||||||||||||||||| BOXPLOTS UNIVARIATE-FACETS
+  # données
+  facetsUnivariateBoxplotData<- mod_data4FacetsUnivariateBoxplotFile_server("data4FacetsUnivariateBoxplotFile_1")
+  # gettingData
+  data.univariate.facets.dataBoxplot<- facetsUnivariateBoxplotData$data_for_facetsUnivariateBoxplot
+  # observation du changement des données
+  observeEvent(ignoreInit = FALSE, data.univariate.facets.dataBoxplot(), {
+    # données
+    facetsUnivariateBoxplotData<- mod_data4FacetsUnivariateBoxplotFile_server("data4FacetsUnivariateBoxplotFile_1")
+    # gettingData
+    data.univariate.facets.dataBoxplot<- facetsUnivariateBoxplotData$data_for_facetsUnivariateBoxplot
+    # plot options
+    facetsUnivariateBoxplotOptions<- mod_facetsUnivariateBoxplotOptions_server("facetsUnivariateBoxplotOptions_1")
+    # cleaning and recoding data
+    dataCleanedUnivariateFacetsBoxplot<- mod_facetsUnivariateBoxplotPlotDataPreparation_server(
+      "facetsUnivariateBoxplotPlotDataPreparation_1", data.univariate.facets.dataBoxplot()
+    )
+    # making plot
+    mod_makingUnivariateFacetsBoxplot_server(
+      "makingUnivariateFacetsBoxplot_1",
+      dataCleanedUnivariateFacetsBoxplot,
+      facetsUnivariateBoxplotOptions
+    )
+  })
+
 
 }
 

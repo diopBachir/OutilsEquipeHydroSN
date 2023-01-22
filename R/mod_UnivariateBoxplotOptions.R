@@ -13,6 +13,9 @@ mod_UnivariateBoxplotOptions_ui <- function(id){
     tags$style(type='text/css', ".selectize-input { font-size: 95%; line-height: 32px;}"),
 
     fluidRow(
+
+      column(12, h4("GGPLOT -- [Configuration||Options]", style="color:#3474A7;family:Georgia;text-align:center;")),
+
       column(4, selectInput(ns("xAxisTextSize"), label = div("X-axis text size", style="family:Georgia;text-align:left;font-size:75%"), choices = round(seq(5, 40, 1), 2), selected = 12)),
       column(4, selectInput(ns("yAxisTextSize"), label = div("Y-axis text size", style="family:Georgia;text-align:left;font-size:75%"), choices = round(seq(5, 40, 1), 2), selected = 12)),
       column(4, selectInput(ns("axisTextColor"), label = div("Axis text color", style="family:Georgia;text-align:left;font-size:75%"), choices = colors(), selected = "black")),
