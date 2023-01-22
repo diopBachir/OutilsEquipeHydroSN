@@ -454,7 +454,7 @@ mod_makingUnivariateFacetsBoxplot_server <- function(id, cleanedData, univariate
     ###  Exportation
     output$exportPlotJPEG <-  downloadHandler(
       filename = function() {
-        paste("univariateFacetsBoxplot-", Sys.Date(), ".jpeg")
+        paste("BoxplotUnivarieAvecFacets-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
       },
       content = function(file) {
         ggplot2::ggsave(file, univariateFacetsBoxplot()[[1]], width = 13.3, height = 7.05)
@@ -463,7 +463,7 @@ mod_makingUnivariateFacetsBoxplot_server <- function(id, cleanedData, univariate
 
     output$exportPlotSVG <-  downloadHandler(
       filename = function() {
-        paste("univariateFacetsBoxplot-", Sys.Date(), ".svg")
+        paste("BoxplotUnivarieAvecFacets-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
       },
       content = function(file) {
         ggplot2::ggsave(file, univariateFacetsBoxplot()[[1]], width = 13.3, height = 7.05)
