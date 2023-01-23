@@ -1,4 +1,4 @@
-#' makingUnivariateFacetsBoxplot UI Function
+#' makingMultivariateFacetsBoxplot UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,10 +7,9 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_makingUnivariateFacetsBoxplot_ui <- function(id){
+mod_makingMultivariateFacetsBoxplot_ui <- function(id){
   ns <- NS(id)
   tagList(
-
     tags$head(tags$style(type="text/css", '
 
             .shiny-input-container {
@@ -66,24 +65,25 @@ mod_makingUnivariateFacetsBoxplot_ui <- function(id){
 
     tags$hr(style="border-color:gray;"),
 
+    verbatimTextOutput(ns("test")),
+
     # plot
-    withSpinner(plotOutput(ns("univariateFacetsBoxplot")), type=5),
+    withSpinner(plotOutput(ns("multivariateFacetsBoxplot")), type=5),
     # stats
     div(dataTableOutput(ns("statsSummary")), style="font-size:85%"),
 
     br(),br(),br()
-
   )
 }
 
-#' makingUnivariateFacetsBoxplot Server Functions
+#' makingMultivariateFacetsBoxplot Server Functions
 #'
 #' @noRd
-mod_makingUnivariateFacetsBoxplot_server <- function(id, cleanedData, univariateFacetsBoxplotOptions){
+mod_makingMultivariateFacetsBoxplot_server <- function(id, cleanedData, multivariateFacetsBoxplotOptions){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-    # Interpolation data results
+    # data
     dataPlot<- reactive({
       req(cleanedData)
       cleanedData[[1]]()
@@ -103,15 +103,15 @@ mod_makingUnivariateFacetsBoxplot_server <- function(id, cleanedData, univariate
       parseResult
     }
 
-    univariateFacetsBoxplot <- eventReactive(input$boxplot, {
-      req(dataPlot(), univariateFacetsBoxplotOptions)
+    multivariateFacetsBoxplot <- eventReactive(input$boxplot, {
+      req(dataPlot(), multivariateFacetsBoxplotOptions)
 
       # Couleur des variables
       # ------------------------------------------------------------------------------------------------------#
       manualColor<-  function(){
         # Validation des entrées vecteurs
-        if(univariateFacetsBoxplotOptions$variableColors()!=""){
-          variables_colors<- extract_variables_entries(univariateFacetsBoxplotOptions$variableColors())
+        if(multivariateFacetsBoxplotOptions$variableColors()!=""){
+          variables_colors<- extract_variables_entries(multivariateFacetsBoxplotOptions$variableColors())
 
           # tester si l'utilisateur a fourni des vecteurs de longueurs identiques
           len_vect<- length(variables_colors) == length(unique(dataPlot()$Group))
@@ -128,7 +128,7 @@ mod_makingUnivariateFacetsBoxplot_server <- function(id, cleanedData, univariate
                 )
               )
 
-              return(ggplot2::scale_fill_brewer(palette = "Set3"))
+              return(ggplot2::scale_fill_brewer(palette = "Spectral"))
 
             }else{
               return(
@@ -143,17 +143,17 @@ mod_makingUnivariateFacetsBoxplot_server <- function(id, cleanedData, univariate
               paste0("OUPS !! Vous devez spécifier autant de couleurs qu'il y'a de catégories|types !")
             )
 
-            return(ggplot2::scale_fill_brewer(palette = "Set3"))
+            return(ggplot2::scale_fill_brewer(palette = "Spectral"))
           }
         }else{
-          return(ggplot2::scale_fill_brewer(palette = "Set3"))
+          return(ggplot2::scale_fill_brewer(palette = "Spectral"))
         }
       }
 
       # ------------------------------------------------------------------------------------------------------#
       # La valeur seuil
       valeurSeuil<-function(donnees, seuil){
-        thresholdValue<-  univariateFacetsBoxplotOptions$threshold()
+        thresholdValue<-  multivariateFacetsBoxplotOptions$threshold()
         if(thresholdValue == FALSE){
           showNotification("La ligne matérialisant la valeur seuil a été désactivée !")
 
@@ -164,11 +164,11 @@ mod_makingUnivariateFacetsBoxplot_server <- function(id, cleanedData, univariate
           return(
             ggplot2::geom_hline(
               data=donnees, ggplot2::aes_string(yintercept=seuil),
-              color=univariateFacetsBoxplotOptions$thresholdColor(),
-              size=as.numeric(univariateFacetsBoxplotOptions$thresholdSize()),
-              linetype = ifelse(length(univariateFacetsBoxplotOptions$thresholdLineType()),
-                                as.numeric(univariateFacetsBoxplotOptions$thresholdLineType()),
-                                univariateFacetsBoxplotOptions$thresholdLineType())
+              color=multivariateFacetsBoxplotOptions$thresholdColor(),
+              size=as.numeric(multivariateFacetsBoxplotOptions$thresholdSize()),
+              linetype = ifelse(length(multivariateFacetsBoxplotOptions$thresholdLineType()),
+                                as.numeric(multivariateFacetsBoxplotOptions$thresholdLineType()),
+                                multivariateFacetsBoxplotOptions$thresholdLineType())
             )
           )
         }
@@ -176,12 +176,12 @@ mod_makingUnivariateFacetsBoxplot_server <- function(id, cleanedData, univariate
 
       # ------------------------------------------------------------------------------------------------------#
       ### TYPE DE POSITIONNEMENT DE LA LEGENDE
-      if(univariateFacetsBoxplotOptions$legPosType() == "Côté"){
-        leg_pos <- univariateFacetsBoxplotOptions$legLoc()
+      if(multivariateFacetsBoxplotOptions$legPosType() == "Côté"){
+        leg_pos <- multivariateFacetsBoxplotOptions$legLoc()
       }else{
         leg_pos <- c(
-          as.numeric(univariateFacetsBoxplotOptions$legPosXcoord()),
-          as.numeric(univariateFacetsBoxplotOptions$legPosYcoord())
+          as.numeric(multivariateFacetsBoxplotOptions$legPosXcoord()),
+          as.numeric(multivariateFacetsBoxplotOptions$legPosYcoord())
         )
       }
 
@@ -236,7 +236,7 @@ mod_makingUnivariateFacetsBoxplot_server <- function(id, cleanedData, univariate
       ### Transposer ou non le graphique
       flipCoord <- function(){
 
-        if(univariateFacetsBoxplotOptions$flipAxis() == TRUE){
+        if(multivariateFacetsBoxplotOptions$flipAxis() == TRUE){
           return(ggplot2::coord_flip())
         }else{
           return(ggplot2::geom_blank())
@@ -247,16 +247,16 @@ mod_makingUnivariateFacetsBoxplot_server <- function(id, cleanedData, univariate
       ### Transposer ou non le graphique
       orderingPlot <- function(){
 
-        if(univariateFacetsBoxplotOptions$reorderGprah() == "Descendant"){
+        if(multivariateFacetsBoxplotOptions$reorderGprah() == "Descendant"){
           return(
             dataPlot()  %>%
-              dplyr::group_by(Group) %>%
-              dplyr::mutate(Variable = fct_reorder(Variable, desc(Valeur)))
+              dplyr::group_by(Facet) %>%
+              dplyr::mutate(Variable = forcats::fct_reorder(Variable, desc(Valeur)))
           )
         }else{
           return(
             dataPlot()  %>%
-              dplyr::group_by(Group) %>%
+              dplyr::group_by(Facet) %>%
               dplyr::mutate(Variable = forcats::fct_reorder(Variable, Valeur))
           )
         }
@@ -269,59 +269,51 @@ mod_makingUnivariateFacetsBoxplot_server <- function(id, cleanedData, univariate
       ### Liberté ou non des axes
       facetScale <- function(){
 
-        if(univariateFacetsBoxplotOptions$FacetScale() == "fixed"){
+        if(multivariateFacetsBoxplotOptions$FacetScale() == "fixed"){
           return(
             facet_wrap_custom(
-              ggplot2::vars(donnees[["Group"]]), ncol = as.numeric(univariateFacetsBoxplotOptions$facetNcol()), scales = "fixed",
+              ggplot2::vars(donnees[["Facet"]]), ncol = 2, scales = "fixed",
               scale_overrides = facetScaleOverriding()
             )
           )
-        }else if(univariateFacetsBoxplotOptions$FacetScale() == "free"){
+        }else if(multivariateFacetsBoxplotOptions$FacetScale() == "free_y"){
           return(
             facet_wrap_custom(
-              ggplot2::vars(donnees[["Group"]]), ncol = as.numeric(univariateFacetsBoxplotOptions$facetNcol()), scales = "free",
-              scale_overrides = facetScaleOverriding()
-            )
-          )
-        }else if(univariateFacetsBoxplotOptions$FacetScale() == "free_y"){
-          return(
-            facet_wrap_custom(
-              ggplot2::vars(donnees[["Group"]]), ncol = as.numeric(univariateFacetsBoxplotOptions$facetNcol()), scales = "free_y",
+              ggplot2::vars(donnees[["Facet"]]), ncol = 2, scales = "free_y",
               scale_overrides = facetScaleOverriding()
             )
           )
         }else{
           return(
             facet_wrap_custom(
-              ggplot2::vars(donnees[["Group"]]), ncol = as.numeric(univariateFacetsBoxplotOptions$facetNcol()), scales = "free_x",
+              ggplot2::vars(donnees[["Facet"]]), ncol = 2, scales = "free_x",
               scale_overrides = facetScaleOverriding()
             )
           )
         }
       }
-
       # plot
       multivariateBplt <-
         ggplot2::ggplot(
-          data = donnees, ggplot2::aes(x=Variable, y=Valeur, fill=Group)
+          data = donnees,
+          # aes(x=reorder(Variable, Valeur), y=Valeur, fill=Group)
+          ggplot2::aes(x=Variable, y=Valeur, fill=Group)
         )+
         # barres d'erreur
         ggplot2::stat_boxplot(geom = "errorbar")+
         # boites à moustaches
         ggplot2::geom_boxplot(
-          outlier.shape = as.integer(univariateFacetsBoxplotOptions$outlierShape()), outlier.alpha = 1,
-          outlier.color = univariateFacetsBoxplotOptions$outlierColor(),
-          outlier.size = as.numeric(univariateFacetsBoxplotOptions$outlierSize()),
-          color = univariateFacetsBoxplotOptions$boxplotColor(),
-          alpha =  as.numeric(univariateFacetsBoxplotOptions$boxplotAlpha()),
-          width = as.numeric(univariateFacetsBoxplotOptions$boxplotsWidth())
+          outlier.shape = as.integer(multivariateFacetsBoxplotOptions$outlierShape()), outlier.alpha = 1,
+          outlier.color = multivariateFacetsBoxplotOptions$outlierColor(), outlier.size = as.numeric(multivariateFacetsBoxplotOptions$outlierSize()),
+          color = multivariateFacetsBoxplotOptions$boxplotColor(),  alpha =  as.numeric(multivariateFacetsBoxplotOptions$boxplotAlpha()),
+          width = as.numeric(multivariateFacetsBoxplotOptions$boxplotsWidth())
         )+
 
         # Facets Scales
         facetScale()+
 
-        # couleurs des variables
-        manualColor() +
+        # légende des Catégories|Group
+        manualColor()+
 
         # valeur Seuil
         valeurSeuil(donnees, "Seuil") +
@@ -332,38 +324,34 @@ mod_makingUnivariateFacetsBoxplot_server <- function(id, cleanedData, univariate
         # personnalisation de la légende [nbre de lignes, taille des symboles, etc.]
         ggplot2::guides(
           fill = ggplot2::guide_legend(
-            nrow = as.numeric(univariateFacetsBoxplotOptions$legendNrow()),
-            byrow = univariateFacetsBoxplotOptions$legendByRow(),
-            keywidth = grid::unit(as.numeric(univariateFacetsBoxplotOptions$legendKeyWidth()), "cm"),
-            keyheight = grid::unit(as.numeric(univariateFacetsBoxplotOptions$legendKeyHeight()), "cm")
+            nrow = as.numeric(multivariateFacetsBoxplotOptions$legendNrow()),
+            byrow = multivariateFacetsBoxplotOptions$legendByRow(),
+            keywidth = grid::unit(as.numeric(multivariateFacetsBoxplotOptions$legendKeyWidth()), "cm"),
+            keyheight = grid::unit(as.numeric(multivariateFacetsBoxplotOptions$legendKeyHeight()), "cm")
           )
         )+
 
         # personnalisation des éléments du graphique
         ggplot2::theme(
-          # legend.direction =  univariateFacetsBoxplotOptions$legDir(),
-          legend.direction = "vertical",
+          legend.direction =  multivariateFacetsBoxplotOptions$legDir(),
 
           legend.text = ggplot2::element_text(
-            family = "Times", size=as.numeric(univariateFacetsBoxplotOptions$LegTextSize()),
-            color =  univariateFacetsBoxplotOptions$LegTextColor(),
+            family = "Times", size=as.numeric(multivariateFacetsBoxplotOptions$LegTextSize()), color =  multivariateFacetsBoxplotOptions$LegTextColor(),
             margin = ggplot2::margin(
-              b=as.numeric(univariateFacetsBoxplotOptions$legTextMarginB()),
-              l=as.numeric(univariateFacetsBoxplotOptions$legTextMarginL()),
-              t=as.numeric(univariateFacetsBoxplotOptions$legTextMarginT()),
-              r=as.numeric(univariateFacetsBoxplotOptions$legTextMarginR()),
+              b=as.numeric(multivariateFacetsBoxplotOptions$legTextMarginB()),
+              l=as.numeric(multivariateFacetsBoxplotOptions$legTextMarginL()),
+              t=as.numeric(multivariateFacetsBoxplotOptions$legTextMarginT()),
+              r=as.numeric(multivariateFacetsBoxplotOptions$legTextMarginR()),
               unit = "cm"
             ),
             face = "bold"
           ),
 
           legend.position =  leg_pos,
-          #
+
           legend.margin = ggplot2::margin(
-            b=as.numeric(univariateFacetsBoxplotOptions$legMarginB()),
-            l=as.numeric(univariateFacetsBoxplotOptions$legMarginL()),
-            t=as.numeric(univariateFacetsBoxplotOptions$legMarginT()),
-            r=as.numeric(univariateFacetsBoxplotOptions$legMarginR()), unit = "cm"
+            b=as.numeric(multivariateFacetsBoxplotOptions$legMarginB()), l=as.numeric(multivariateFacetsBoxplotOptions$legMarginL()),
+            t=as.numeric(multivariateFacetsBoxplotOptions$legMarginT()), r=as.numeric(multivariateFacetsBoxplotOptions$legMarginR()), unit = "cm"
           ),
 
           legend.box.background = ggplot2::element_rect(fill = "white", color = "white"),
@@ -371,62 +359,58 @@ mod_makingUnivariateFacetsBoxplot_server <- function(id, cleanedData, univariate
 
           # axes
           axis.text.x = ggplot2::element_text(
-            family = "Times", size=as.numeric(univariateFacetsBoxplotOptions$xAxisTextSize()),
-            color = univariateFacetsBoxplotOptions$axisTextColor(),
-            angle=as.numeric(univariateFacetsBoxplotOptions$xAxisTextAngle()),
-            hjust = as.numeric(univariateFacetsBoxplotOptions$xAxisTextHjust()),
-            vjust = as.numeric(univariateFacetsBoxplotOptions$xAxisTextVjust())
+            family = "Times", size=as.numeric(multivariateFacetsBoxplotOptions$xAxisTextSize()),
+            color = multivariateFacetsBoxplotOptions$axisTextColor(),
+            angle=as.numeric(multivariateFacetsBoxplotOptions$xAxisTextAngle()),
+            hjust = as.numeric(multivariateFacetsBoxplotOptions$xAxisTextHjust()),
+            vjust = as.numeric(multivariateFacetsBoxplotOptions$xAxisTextVjust())
           ),
           axis.ticks = ggplot2::element_line(
-            colour=univariateFacetsBoxplotOptions$axisTicksColor(), size=as.numeric(univariateFacetsBoxplotOptions$axisTicksSize())
+            colour=multivariateFacetsBoxplotOptions$axisTicksColor(), size=as.numeric(multivariateFacetsBoxplotOptions$axisTicksSize())
           ),
           axis.title = ggplot2::element_text(
-            family = "Times", color = "black", size=as.numeric(univariateFacetsBoxplotOptions$AxisTitleSize())
+            family = "Times", color = "black", size=as.numeric(multivariateFacetsBoxplotOptions$AxisTitleSize())
           ),
           # les grilles
           panel.grid.major = ggplot2::element_line(
-            linetype = ifelse(length(univariateFacetsBoxplotOptions$panelGridLineType()),
-                              as.numeric(univariateFacetsBoxplotOptions$panelGridLineType()),
-                              univariateFacetsBoxplotOptions$panelGridLineType()),
-            color = univariateFacetsBoxplotOptions$panelGridColor(), size=grid::unit(.23, "cm")
+            linetype = ifelse(length(multivariateFacetsBoxplotOptions$panelGridLineType()),
+                              as.numeric(multivariateFacetsBoxplotOptions$panelGridLineType()),
+                              multivariateFacetsBoxplotOptions$panelGridLineType()),
+            color = multivariateFacetsBoxplotOptions$panelGridColor(), size=grid::unit(.23, "cm")
           ),
           panel.grid.minor = ggplot2::element_blank(),
           # texte de l'axe des y
           axis.text.y= ggplot2::element_text(
-            family = "Times", size=as.numeric(univariateFacetsBoxplotOptions$yAxisTextSize()),
-            color =  univariateFacetsBoxplotOptions$axisTextColor()
+            family = "Times", size=as.numeric(multivariateFacetsBoxplotOptions$yAxisTextSize()), color =  multivariateFacetsBoxplotOptions$axisTextColor()
           ),
           # contours
           panel.background = ggplot2::element_rect(
-            color=univariateFacetsBoxplotOptions$panelBackgroundLineColor(),
-            fill="white", size=as.numeric(univariateFacetsBoxplotOptions$panelBackgroundLineSize())
+            color=multivariateFacetsBoxplotOptions$panelBackgroundLineColor(), fill="white", size=as.numeric(multivariateFacetsBoxplotOptions$panelBackgroundLineSize())
           ),
           # arrière plan du graphique
           # panel.border = element_rect(color="gray", fill=NA, size = 1.3),
-          # titre des facetsf
+          # titre des facets
           strip.background = ggplot2::element_blank(),
           strip.text = ggplot2::element_text(
-            family = "Times", size = as.numeric(univariateFacetsBoxplotOptions$stripTextSize()), face="bold",
+            family = "Times", size = as.numeric(multivariateFacetsBoxplotOptions$stripTextSize()), face="bold",
             margin = ggplot2::margin(
-              b = univariateFacetsBoxplotOptions$stripMarginB(),  t = univariateFacetsBoxplotOptions$stripMarginT(),
-              l = univariateFacetsBoxplotOptions$stripMarginL(),  r = univariateFacetsBoxplotOptions$stripMarginR(),
-              unit =  univariateFacetsBoxplotOptions$stripMarginUnit()
+              b = multivariateFacetsBoxplotOptions$stripMarginB(),  t = multivariateFacetsBoxplotOptions$stripMarginT(),
+              l = multivariateFacetsBoxplotOptions$stripMarginL(),  r = multivariateFacetsBoxplotOptions$stripMarginR(),
+              unit =  multivariateFacetsBoxplotOptions$stripMarginUnit()
             )
           ),
           # legend.key = element_rect(color = NA, fill = NA),
-          panel.spacing.y = grid::unit(as.numeric(univariateFacetsBoxplotOptions$panelYspacing()), "cm"),
-          panel.spacing.x = grid::unit(as.numeric(univariateFacetsBoxplotOptions$panelXspacing()), "cm")
+          panel.spacing.y = grid::unit(as.numeric(multivariateFacetsBoxplotOptions$panelYspacing()), "cm"),
+          panel.spacing.x = grid::unit(as.numeric(multivariateFacetsBoxplotOptions$panelXspacing()), "cm")
         )+
 
         ggplot2::labs(
-          x = univariateFacetsBoxplotOptions$xAxisTitle(),
-          y = univariateFacetsBoxplotOptions$yAxisTitle(),
-          fill = NULL, color = NULL
+          x = multivariateFacetsBoxplotOptions$xAxisTitle(), y = multivariateFacetsBoxplotOptions$yAxisTitle(), fill = NULL, color = NULL
         )
 
       # résummé statistique
       statSum <- donnees %>%
-        dplyr::group_by(Group, Variable) %>%
+        dplyr::group_by(Facet	, Group, Variable) %>%
         dplyr::summarise(
           Min. = min(Valeur, na.rm = T), Q1 = quantile(Valeur, .25),
           Médianne = median(Valeur), Q3 = quantile(Valeur, .75),
@@ -437,37 +421,35 @@ mod_makingUnivariateFacetsBoxplot_server <- function(id, cleanedData, univariate
           dplyr::across(tidyselect::where(is.numeric), ~round(., 2), .names = "{.col}")
         )
 
-
       return(list(multivariateBplt, statSum))
-
     })
 
-    output$univariateFacetsBoxplot <- renderPlot({
-      req(univariateFacetsBoxplot())
-      univariateFacetsBoxplot()[[1]]
+    output$multivariateFacetsBoxplot <- renderPlot({
+      req(multivariateFacetsBoxplot())
+      multivariateFacetsBoxplot()[[1]]
     })
 
     output$statsSummary <- renderDataTable({
-      req(univariateFacetsBoxplot())
-      univariateFacetsBoxplot()[[2]]
+      req(multivariateFacetsBoxplot())
+      multivariateFacetsBoxplot()[[2]]
     })
 
     ###  Exportation
     output$exportPlotJPEG <-  downloadHandler(
       filename = function() {
-        paste("BoxplotUnivarieAvecFacets-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+        paste("BoxplotMultivarieAvecFacets-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
       },
       content = function(file) {
-        ggplot2::ggsave(file, univariateFacetsBoxplot()[[1]], width = 13.3, height = 7.05)
+        ggplot2::ggsave(file, multivariateFacetsBoxplot()[[1]], width = 13.3, height = 7.05)
       }
     )
 
     output$exportPlotSVG <-  downloadHandler(
       filename = function() {
-        paste("BoxplotUnivarieAvecFacets-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+        paste("BoxplotMultivarieAvecFacets-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
       },
       content = function(file) {
-        ggplot2::ggsave(file, univariateFacetsBoxplot()[[1]], width = 13.3, height = 7.05)
+        ggplot2::ggsave(file, multivariateFacetsBoxplot()[[1]], width = 13.3, height = 7.05)
       }
     )
 
@@ -475,7 +457,7 @@ mod_makingUnivariateFacetsBoxplot_server <- function(id, cleanedData, univariate
 }
 
 ## To be copied in the UI
-# mod_makingUnivariateFacetsBoxplot_ui("makingUnivariateFacetsBoxplot_1")
+# mod_makingMultivariateFacetsBoxplot_ui("makingMultivariateFacetsBoxplot_1")
 
 ## To be copied in the server
-# mod_makingUnivariateFacetsBoxplot_server("makingUnivariateFacetsBoxplot_1")
+# mod_makingMultivariateFacetsBoxplot_server("makingMultivariateFacetsBoxplot_1")

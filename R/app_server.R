@@ -187,5 +187,29 @@ app_server <- function(input, output, session) {
       "makingMultivariateBoxplot_1", dataCleanedMultivariateBoxplot, multivariateBoxplotOptions
     )
   })
+
+  # ||||||||||||||||||||||||||||||||||||| BOXPLOTS MULTIVARIES
+  # données
+  facetsMultivariateBoxplotData<- mod_data4FacetsMultivariateBoxplotFile_server("data4FacetsMultivariateBoxplotFile_1")
+  # gettingData
+  data.multivariate.facets.dataBoxplot<- facetsMultivariateBoxplotData$data_for_facetsMultivariateBoxplot
+
+  ##==================================================================#
+  observeEvent(ignoreInit = FALSE, data.multivariate.facets.dataBoxplot(), {
+    # gettingData
+    data.multivariate.facets.dataBoxplot<- facetsMultivariateBoxplotData$data_for_facetsMultivariateBoxplot
+    # # OPTIONS
+    facetsMultivariateBoxplotOptions<-  mod_facetsMultivariateBoxplotOptions_server("facetsMultivariateBoxplotOptions_1")
+    # # data preparation
+    dataCleanedMultivariateFacetsBoxplot<- mod_facetsMultivariateBoxplotPlotDataPreparation_server(
+      "facetsMultivariateBoxplotPlotDataPreparation_1", data.multivariate.facets.dataBoxplot()
+    )
+    # making plot
+    mod_makingMultivariateFacetsBoxplot_server(
+      "makingMultivariateFacetsBoxplot_1",
+      dataCleanedMultivariateFacetsBoxplot,
+      facetsMultivariateBoxplotOptions
+    )
+  })
 }
 

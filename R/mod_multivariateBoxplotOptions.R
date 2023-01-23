@@ -47,7 +47,7 @@ mod_multivariateBoxplotOptions_ui <- function(id){
       column(4, selectInput(ns("thresholdLineType"), label = div("Seuil LineType", style="family:Georgia;text-align:left;font-size:75%"), choices = c(0:7, paste0(1:7, rep(1:7, each=7))), selected = 1)),
 
       column(4, selectInput(ns("legendNrow"), label = div("Legend Nrow", style="family:Georgia;text-align:left;font-size:75%"),  choices = 1:10, selected = 1)),
-      column(4, selectInput(ns("legendByRow"), label = div("Legend Fill", style="family:Georgia;text-align:left;font-size:75%"),  choices = c("By Row" = TRUE, "By Column" = FALSE), selected = TRUE)),
+      column(4, selectInput(ns("legendByRow"), label = div("Legend Fill", style="family:Georgia;text-align:left;font-size:75%"),  choices = c("Row" = TRUE, "Column" = FALSE), selected = TRUE)),
       column(4, selectInput(ns("legendKeyWidth"), label = div("Leg. KeyWidth", style="family:Georgia;text-align:left;font-size:75%"),  choices = round(seq(.2, 10, .01), 2), selected = .60)),
 
       column(4, selectInput(ns("legendKeyHeight"), label = div("Leg. KeyHeight", style="family:Georgia;text-align:left;font-size:75%"),  choices = round(seq(.2, 10, .01), 2), selected = 1.1)),
@@ -71,7 +71,7 @@ mod_multivariateBoxplotOptions_ui <- function(id){
       column(4, selectInput(ns("legMarginL"), label = div("Leg. Marg. left", style="family:Georgia;text-align:left;font-size:75%"),  choices = round(seq(-5, 5, .01), 2), selected = 0)),
 
       column(4, selectInput(ns("legMarginR"), label = div("Leg. Marg. right", style="family:Georgia;text-align:left;font-size:75%"), choices = round(seq(-5, 5, .01), 2), selected = 0)),
-      column(4, selectInput(ns("flipAxis"), label = div("Fip Coords", style="family:Georgia;text-align:left;font-size:75%"),  choices = c("Oui" = TRUE, "Non" = FALSE), selected = "TRUE")),
+      column(4, selectInput(ns("flipAxis"), label = div("Fip Coords", style="family:Georgia;text-align:left;font-size:75%"),  choices = c("Oui" = TRUE, "Non" = FALSE), selected = TRUE)),
       column(4, selectInput(ns("reorderGprah"), label = div("Trier les boxs", style="family:Georgia;text-align:left;font-size:75%"),  choices = c("Desc"="Descendant", "Asc"="Ascendant"), selected = "Ascendant")),
 
       column(12, textInput(ns("threshold"), label = div("Valeur Seuil", style="family:Georgia;text-align:left;font-size:85%"), value = "", placeholder = "0")),

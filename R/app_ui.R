@@ -121,7 +121,7 @@ app_ui <- function(request) {
                                          mod_facetsUnivariateBoxplotPlotDataPreparation_ui("facetsUnivariateBoxplotPlotDataPreparation_1")
                                        ),#tabPanel
                                        tabPanel(
-                                         div("BoxPlots", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         div("Graphique", style = "color:#3474A7;family:Georgia;font-size:130%"),
                                          # boxplots univariés
                                          mod_makingUnivariateFacetsBoxplot_ui("makingUnivariateFacetsBoxplot_1")
                                        )#tabPanel
@@ -161,6 +161,42 @@ app_ui <- function(request) {
                                          div("Graphique", style = "color:#3474A7;family:Georgia;font-size:130%"),
                                          # boxplots univariés
                                          mod_makingMultivariateBoxplot_ui("makingMultivariateBoxplot_1")
+                                       )#tabPanel
+                                     )# tabsetPanel
+                                   )# mainPanel
+                          ), # tabPanel
+
+                          tabPanel(h4("Boxplot Multivarié Avec Facets"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Boxplot Multivarié Avec Facets",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_facetsMultivariateBoxplotOptions_ui("facetsMultivariateBoxplotOptions_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_data4FacetsMultivariateBoxplotFile_ui("data4FacetsMultivariateBoxplotFile_1")
+                                       ),#tabPanel
+                                       tabPanel(
+                                         div("Nettoyage||Recodage", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_facetsMultivariateBoxplotPlotDataPreparation_ui("facetsMultivariateBoxplotPlotDataPreparation_1")
+                                       ),#tabPanel
+                                       tabPanel(
+                                         div("Graphique", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # boxplots univariés
+                                         mod_makingMultivariateFacetsBoxplot_ui("makingMultivariateFacetsBoxplot_1")
                                        )#tabPanel
                                      )# tabsetPanel
                                    )# mainPanel

@@ -96,7 +96,7 @@ mod_makingMultivariateBoxplot_server <- function(id, cleanedData, multivariateBo
           variables_colors<- extract_variables_entries(multivariateBoxplotOptions$variableColors())
 
           # tester si l'utilisateur a fourni des vecteurs de longueurs identiques
-          len_vect<- length(variables_colors) == length(unique(dataPlot()$Type))
+          len_vect<- length(variables_colors) == length(unique(dataPlot()$Group))
           if(len_vect){# si les longueurs sont identiques
 
             # tester si les noms originaux fournis sont présents dans la table es colors
@@ -122,7 +122,7 @@ mod_makingMultivariateBoxplot_server <- function(id, cleanedData, multivariateBo
 
             shinyalert::shinyalert(
               "Erreur dans le vecteur de couleurs fournis !",
-              paste0("OUPS !! Vous devez spécifier autant de couleurs qu'il y'a de catégories|types !")
+              paste0("OUPS !! Vous devez spécifier autant de couleurs qu'il y'a de catégories|types dans le champ {{Group}}!")
             )
 
             return(ggplot2::scale_fill_brewer(palette = "Spectral"))

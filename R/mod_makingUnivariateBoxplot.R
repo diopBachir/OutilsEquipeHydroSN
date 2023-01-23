@@ -87,7 +87,7 @@ mod_makingUnivariateBoxplot_server <- function(id, cleanedData, univariateBoxplo
       # pivoter le graphique
       coordFlip <- function(){
         if(univariateBoxplotOptions$coordFlip() == TRUE){
-          return(coord_flip())
+          return(ggplot2::coord_flip())
         }else{
           return(ggplot2::geom_blank())
         }
