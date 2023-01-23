@@ -121,6 +121,25 @@ app_server <- function(input, output, session) {
     )
   })
 
+  # ||||||||||||||||||||||||||||||||||||| BOXPLOTS MENSUELS
+  # plot options
+  monthlyBoxplotOptions<-  mod_monthlyBoxplotOptions_server("monthlyBoxplotOptions_1")
+  # données
+  monthlyBoxplotData<- mod_data4MonthlyBoxplot_server("data4MonthlyBoxplot_1")
+  # observation du changement des donées
+  observeEvent(monthlyBoxplotData$data_for_monthlyBoxplot(), {
+    # données
+    monthlyBoxplotData<- mod_data4MonthlyBoxplot_server("data4MonthlyBoxplot_1")
+    # # nettoyage et recodage
+    readyDataForMonthlyBoxPlot<- mod_boxplotMonthlyDataPreparation_server(
+      "boxplotMonthlyDataPreparation_1", monthlyBoxplotData$data_for_monthlyBoxplot()
+    )
+    # making plot
+    mod_makingMonthlyBoxplot_server(
+      "makingMonthlyBoxplot_1", readyDataForMonthlyBoxPlot$dataMonthlyBoxplotCleaned(), monthlyBoxplotOptions
+    )
+  })
+
   # ||||||||||||||||||||||||||||||||||||| BOXPLOT UNIVARIE
   # données
   univariateBoxplotData<- mod_data4UnivariateBoxplotFile_server("data4UnivariateBoxplotFile_1")
@@ -188,7 +207,7 @@ app_server <- function(input, output, session) {
     )
   })
 
-  # ||||||||||||||||||||||||||||||||||||| BOXPLOTS MULTIVARIES
+  # ||||||||||||||||||||||||||||||||||||| BOXPLOTS MULTIVARIES AVEC FACETS
   # données
   facetsMultivariateBoxplotData<- mod_data4FacetsMultivariateBoxplotFile_server("data4FacetsMultivariateBoxplotFile_1")
   # gettingData
@@ -209,6 +228,30 @@ app_server <- function(input, output, session) {
       "makingMultivariateFacetsBoxplot_1",
       dataCleanedMultivariateFacetsBoxplot,
       facetsMultivariateBoxplotOptions
+    )
+  })
+
+  # # ||||||||||||||||||||||||||||||||||||| BOXPLOTS MULTIVARIES AVEC FACETS [2D]
+  # # données
+  MatrixFacetsMultivariateBoxplotData<- mod_data4MatrixFacetsMultivariateBoxplot_server("data4MatrixFacetsMultivariateBoxplot_1")
+  # gettingData
+  data.multivariate.matrix.facets.dataBoxplot<- MatrixFacetsMultivariateBoxplotData$data_for_MatrixFacetsMultivariateBoxplot
+
+  ##==================================================================#
+  observeEvent(ignoreInit = FALSE, data.multivariate.matrix.facets.dataBoxplot(), {
+    # gettingData
+    data.multivariate.matrix.facets.dataBoxplot<- MatrixFacetsMultivariateBoxplotData$data_for_MatrixFacetsMultivariateBoxplot
+    # options
+    MatrixFacetsMultivariateBoxplotOptions<- mod_MatrixFacetsMultivariateBoxplotOptions_server("MatrixFacetsMultivariateBoxplotOptions_1")
+    # data preparation
+    dataCleanedMultivariateMatrixFacetsBoxplot<- mod_MatrixFacetsMultivariateBoxplotPlotDataPreparation_server(
+      "MatrixFacetsMultivariateBoxplotPlotDataPreparation_1", data.multivariate.matrix.facets.dataBoxplot()
+    )
+    # boxplot
+    mod_makingMatrixMultivariateFacetsBoxplot_server(
+      "makingMatrixMultivariateFacetsBoxplot_1",
+      dataCleanedMultivariateMatrixFacetsBoxplot,
+      MatrixFacetsMultivariateBoxplotOptions
     )
   })
 }

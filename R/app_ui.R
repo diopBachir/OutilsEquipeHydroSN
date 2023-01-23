@@ -52,9 +52,46 @@ app_ui <- function(request) {
 
                # BOXPLOTS
                navbarMenu(div("BoxPlot", style = "color:white;font-size:115%;"),
+
+                          tabPanel(h4("Boxplots Mensuels Avec Les Mois Comme Facets"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Boxplots Mensuels Avec Les Mois Comme Facets",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_monthlyBoxplotOptions_ui("monthlyBoxplotOptions_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_data4MonthlyBoxplot_ui("data4MonthlyBoxplot_1")
+                                       ),#tabPanel
+                                       tabPanel(
+                                         div("Préparer les Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # recodage
+                                         mod_boxplotMonthlyDataPreparation_ui("boxplotMonthlyDataPreparation_1")
+                                       ),#tabPanel
+                                       tabPanel(
+                                         div("Graphique", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # boxplots univariés
+                                         mod_makingMonthlyBoxplot_ui("makingMonthlyBoxplot_1")
+                                       )#tabPanel
+                                     )# tabsetPanel
+                                   )# mainPanel
+                          ), # tabPanel
+
                           # boxplots univarié
-                          # boxplots univarié
-                          tabPanel(h4("Boxplot Univarié"),
+                          tabPanel(h4("Boxplots Univariés"),
                                    sidebarPanel(
                                      style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
                                      h3(
@@ -129,7 +166,7 @@ app_ui <- function(request) {
                                    )# mainPanel
                           ), # tabPanel
 
-                          tabPanel(h4("Boxplot Multivarié"),
+                          tabPanel(h4("Boxplots Multivariés"),
                                    sidebarPanel(
                                      style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
                                      h3(
@@ -166,7 +203,7 @@ app_ui <- function(request) {
                                    )# mainPanel
                           ), # tabPanel
 
-                          tabPanel(h4("Boxplot Multivarié Avec Facets"),
+                          tabPanel(h4("Boxplots Multivariés Avec Facets"),
                                    sidebarPanel(
                                      style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
                                      h3(
@@ -202,6 +239,41 @@ app_ui <- function(request) {
                                    )# mainPanel
                           ), # tabPanel
 
+                          tabPanel(h4("Boxplots Multivariés Avec Facets [2D]"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Boxplots Multivariés Avec Facets [2D]",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_MatrixFacetsMultivariateBoxplotOptions_ui("MatrixFacetsMultivariateBoxplotOptions_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_data4MatrixFacetsMultivariateBoxplot_ui("data4MatrixFacetsMultivariateBoxplot_1")
+                                       ),#tabPanel
+                                       tabPanel(
+                                         div("Nettoyage||Recodage", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_MatrixFacetsMultivariateBoxplotPlotDataPreparation_ui("MatrixFacetsMultivariateBoxplotPlotDataPreparation_1")
+                                       ),#tabPanel
+                                       tabPanel(
+                                         div("BoxPlots", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # boxplots univariés
+                                         mod_makingMatrixMultivariateFacetsBoxplot_ui("makingMatrixMultivariateFacetsBoxplot_1")
+                                       )#tabPanel
+                                     )
+                                   )
+                          ) # tabPanel
 
                ), # navbarMenu
 
