@@ -444,7 +444,42 @@ app_ui <- function(request) {
 
                ## INVENTAIRE DE DONNEES
                navbarMenu(div("Inventaire de Données", style = "color:white;font-size:100%;font-family:georgia"),
+                          # daily inventory
+                          tabPanel(h4("Echelle Journalière"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Echelle Journalière",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
 
+                                     # options
+                                     mod_dailyInventoryHeatmapOptions_ui("dailyInventoryHeatmapOptions_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_data4DailyInventory_ui("data4DailyInventory_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Visualisation Rapide", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # résumé statistique
+                                         mod_dailyInventoryNAvalueSummary_ui("dailyInventoryNAvalueSummary_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("HeatMap||Exportations", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # boxplots univariés
+                                         mod_makingDailyInventoryHeatmap_ui("makingDailyInventoryHeatmap_1")
+                                       )#tabPanel
+                                     ) # tabsetPanel
+                                   ) # mainPanel
+                          ), # tabPanel
                )
     )
   )

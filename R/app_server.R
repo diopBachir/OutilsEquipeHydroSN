@@ -7,6 +7,13 @@
 
 app_server <- function(input, output, session) {
 
+  ####* MAXIMUM UPLOAD SIZE LIMIT
+  #* By default, Shiny limits file uploads to 5MB per file. You can modify this
+  #* limit by using the shiny.maxRequestSize option. For example, adding
+  #* options(shiny.maxRequestSize=30*1024^2) to the top of server.R would
+  #*increase the limit to 30MB.
+  options(shiny.maxRequestSize=100*1024^2)
+
   # ||||||||||||||||||||||||||||||||||||| BOXPLOTS MENSUELS
   # plot options
   monthlyBoxplotOptions<-  mod_monthlyBoxplotOptions_server("monthlyBoxplotOptions_1")
@@ -259,5 +266,27 @@ app_server <- function(input, output, session) {
     )
   })
 
+  #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+  #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+  #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+
+  # ||||||||||||||||||||||||||||||||||||| DAILY INVENTORY
+  # data
+  dailyInventoryData<-  mod_data4DailyInventory_server("data4DailyInventory_1")
+  # gettingData
+  daily.inventory.graph.data<- dailyInventoryData$data_for_dailyInventoryGraph
+  ##==================================================================#
+  observeEvent(ignoreInit = FALSE, daily.inventory.graph.data(), {
+    # gettingData
+    daily.inventory.graph.data<- dailyInventoryData$data_for_dailyInventoryGraph
+    # Résumé statistique
+    mod_dailyInventoryNAvalueSummary_server("dailyInventoryNAvalueSummary_1", daily.inventory.graph.data())
+    # options
+    dailyInventoryHeatmapOptions<- mod_dailyInventoryHeatmapOptions_server("dailyInventoryHeatmapOptions_1")
+    # heatmap
+    mod_makingDailyInventoryHeatmap_server(
+      "makingDailyInventoryHeatmap_1", daily.inventory.graph.data(), dailyInventoryHeatmapOptions
+    )
+  })
 }
 

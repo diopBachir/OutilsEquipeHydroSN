@@ -34,6 +34,7 @@ Imports:
     gstat,
     here,
     htmltools,
+    htmlwidgets,
     ipc,
     leaflet,
     lubridate,
