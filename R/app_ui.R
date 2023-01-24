@@ -51,7 +51,7 @@ app_ui <- function(request) {
                br(), br(), br(), br(),
 
                # BOXPLOTS
-               navbarMenu(div("BoxPlot", style = "color:white;font-size:115%;"),
+               navbarMenu(div("BoxPlots", style = "color:white;font-size:100%;font-family:georgia"),
 
                           tabPanel(h4("Boxplots Mensuels Avec Les Mois Comme Facets"),
                                    sidebarPanel(
@@ -277,8 +277,12 @@ app_ui <- function(request) {
 
                ), # navbarMenu
 
+               #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+               #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+               #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+
                ## INTERPOLATION SPATIALE
-               navbarMenu(div("Interpolation Spatiale", style = "color:white;font-size:115%;"),
+               navbarMenu(div("Interpolation Spatiale", style = "color:white;font-size:100%;font-family:georgia"),
 
                           tabPanel(h4("Valeur Moyenne d'un Bassin"),
 
@@ -434,7 +438,14 @@ app_ui <- function(request) {
                           ) #tabPanel
                ), # navbarMenu
 
+               #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+               #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+               #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
 
+               ## INVENTAIRE DE DONNEES
+               navbarMenu(div("Inventaire de Données", style = "color:white;font-size:100%;font-family:georgia"),
+
+               )
     )
   )
 }
