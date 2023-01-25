@@ -288,5 +288,25 @@ app_server <- function(input, output, session) {
       "makingDailyInventoryHeatmap_1", daily.inventory.graph.data(), dailyInventoryHeatmapOptions
     )
   })
+
+  # ||||||||||||||||||||||||||||||||||||| ANNUAL INVENTORY
+  ##==================================================================#
+  # données
+  annualInventoryData<-  mod_data4AnnualInventory_server("data4AnnualInventory_1")
+  # gettingData
+  annual.inventory.graph.data<- annualInventoryData$data_for_annualInventoryGraph
+  ##==================================================================#
+  observeEvent(ignoreInit = FALSE, annual.inventory.graph.data(), {
+    # gettingData
+    annual.inventory.graph.data<- annualInventoryData$data_for_annualInventoryGraph
+    # Résumé statistique
+    mod_annualInventoryNAvalueSummary_server("annualInventoryNAvalueSummary_1", annual.inventory.graph.data())
+    # options
+    annualInventoryHeatmapOptions<- mod_annualInventoryHeatmapOptions_server("annualInventoryHeatmapOptions_1")
+    # heatmap
+    mod_makingAnnualInventoryHeatmap_server(
+      "makingAnnualInventoryHeatmap_1", annual.inventory.graph.data(), annualInventoryHeatmapOptions
+    )
+  })
 }
 

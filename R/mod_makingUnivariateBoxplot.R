@@ -52,10 +52,15 @@ mod_makingUnivariateBoxplot_ui <- function(id){
     br(),
 
     fluidRow(align = "center",
-             column(2, actionButtonStyled(ns("boxplot"), span("Boxplots", id=ns("boxplotAnimate")), class= "", type="primary")),
-             column(2, downloadButton(ns("exportPlotJPEG"), label="JPEG", icon = icon("download"), class = "btn btn-info")),
-             column(2, downloadButton(ns("exportPlotSVG"), label="SVG", icon = icon("download"), class = "btn btn-info")),
-             column(6, sliderInput(ns("yAxisRounding"), label="Nbre de Décimales dans l'axe Y", min = 0, max = 6, value = 0))
+             column(4, actionButtonStyled(ns("boxplot"), span("Boxplots", id=ns("boxplotAnimate")), class= "", type="primary")),
+             column(4, downloadButton(ns("exportPlotJPEG"), label="JPEG", icon = icon("download"), class = "btn btn-info")),
+             column(4, downloadButton(ns("exportPlotSVG"), label="SVG", icon = icon("download"), class = "btn btn-info"))
+    ),
+
+    tags$hr(style="border-color:gray;"),
+
+    fluidRow(align = "center",
+             column(12, sliderInput(ns("yAxisRounding"), label="Nbre de Décimales dans l'axe Y", min = 0, max = 6, value = 0))
     ),
 
     tags$hr(style="border-color:gray;"),

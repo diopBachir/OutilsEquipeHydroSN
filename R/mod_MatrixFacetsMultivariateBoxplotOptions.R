@@ -15,82 +15,64 @@ mod_MatrixFacetsMultivariateBoxplotOptions_ui <- function(id){
     fluidRow(
       column(12, h4("GGPLOT -- [Configuration||Options]", style="color:#3474A7;family:Georgia;text-align:center;")),
 
-      column(4, selectInput(ns("xAxisTextSize"), label = div("Xaxis TextSize", style="family:Georgia;text-align:left;font-size:65%"), choices = round(seq(5, 40, 1), 2), selected = 11)),
-      column(4, selectInput(ns("yAxisTextSize"), label = div("Yaxis TextSize", style="family:Georgia;text-align:left;font-size:65%"), choices = round(seq(5, 40, 1), 2), selected = 10)),
+      column(4, numericInput(ns("xAxisTextSize"), label = div("Xaxis TextSize", style="family:Georgia;text-align:left;font-size:65%"), min=5, max=40, step=1, value = 11)),
+      column(4, numericInput(ns("yAxisTextSize"), label = div("Yaxis TextSize", style="family:Georgia;text-align:left;font-size:65%"), min=5, max=40, step=1, value = 10)),
+      column(4, numericInput(ns("xAxisTextAngle"), label = div("Xaxis Angle", style="family:Georgia;text-align:left;font-size:65%"), min=0, max=360, step=5, value = 0)),
+      column(4, numericInput(ns("xAxisTextHjust"), label = div("Xaxis Hjust", style="family:Georgia;text-align:left;font-size:65%"), min=-5, max=5, step=.01, value = 0.50)),
+      column(4, numericInput(ns("xAxisTextVjust"), label = div("Xaxis Vjust", style="family:Georgia;text-align:left;font-size:65%"), min=-5, max=5, step=.01, value = .50)),
+      column(4, numericInput(ns("AxisTitleSize"), label = div("Axis TitleSize", style="family:Georgia;text-align:left;font-size:65%"),  min=5, max=35, step=1, value = 16)),
+      column(4, numericInput(ns("axisTicksSize"), label = div("Ticks Size", style="family:Georgia;text-align:left;font-size:65%"), min=.1, max=7, step=.01, value = 1.00)),
+      column(4, numericInput(ns("panelBackgroundLineSize"), label = div("Panel Size", style="family:Georgia;text-align:left;font-size:65%"),  min=.5, max=7, step=.01, value = 1.60)),
+      column(4, numericInput(ns("outlierShape"), label = div("Outlier Shape", style="family:Georgia;text-align:left;font-size:65%"),  min=0, max=25, step=1, value = 1)),
+      column(4, numericInput(ns("outlierSize"), label = div("Outlier Size", style="family:Georgia;text-align:left;font-size:65%"), min=.2, max=10, step=.01, value = 2.00)),
+      column(4, numericInput(ns("boxplotAlpha"), label = div("Box. Alpha", style="family:Georgia;text-align:left;font-size:65%"),  min=0, max=1, step=.1, value = 1)),
+      column(4, numericInput(ns("boxplotsWidth"), label = div("Box. Width", style="family:Georgia;text-align:left;font-size:65%"),  min=.1, max=1, step=.01, value = .50)),
+      column(4, numericInput(ns("thresholdSize"), label = div("Seuil LineSize", style="family:Georgia;text-align:left;font-size:65%"), min=.2, max=10, step=.01, value = .9)),
+      column(4, numericInput(ns("legendNrow"), label = div("Leg. Nrow", style="family:Georgia;text-align:left;font-size:65%"),  min=1, max=10, step=1, value = 1)),
+      column(4, numericInput(ns("legendKeyWidth"), label = div("Leg. KeyWidth", style="family:Georgia;text-align:left;font-size:65%"),  min=.2, max=10, step=.01, value = .60)),
+      column(4, numericInput(ns("legendKeyHeight"), label = div("Leg. KeyHeight", style="family:Georgia;text-align:left;font-size:65%"),  min=.2, max=10, step=.01, value = .5)),
+      column(4, numericInput(ns("LegTextSize"), label = div("Leg. TextSize", style="family:Georgia;text-align:left;font-size:65%"),  min=5, max=35, step=1, value = 12)),
+      column(4, numericInput(ns("legTextMarginB"), label = div("Leg. TextMargB.", style="family:Georgia;text-align:left;font-size:65%"), min=-5, max=5, step=.01, value = 0)),
+      column(4, numericInput(ns("legTextMarginT"), label = div("Leg. TextMargT.", style="family:Georgia;text-align:left;font-size:65%"), min=-5, max=5, step=.01, value = 0)),
+      column(4, numericInput(ns("legTextMarginL"), label = div("Leg. TextMargL.", style="family:Georgia;text-align:left;font-size:65%"),  min=-5, max=5, step=.01, value = 0)),
+      column(4, numericInput(ns("legTextMarginR"), label = div("Leg. TextMargR.", style="family:Georgia;text-align:left;font-size:65%"), min=-5, max=5, step=.01, value = 0)),
+      column(4, numericInput(ns("legMarginB"), label = div("Legend MargB.", style="family:Georgia;text-align:left;font-size:65%"), min=-5, max=5, step=.01, value = 0)),
+      column(4, numericInput(ns("legMarginT"), label = div("Legend MargT.", style="family:Georgia;text-align:left;font-size:65%"), min=-5, max=5, step=.01, value = -.60)),
+      column(4, numericInput(ns("legMarginL"), label = div("Legend MargL.", style="family:Georgia;text-align:left;font-size:65%"),  min=-5, max=5, step=.01, value = 0)),
+      column(4, numericInput(ns("legMarginR"), label = div("Legend MargR.", style="family:Georgia;text-align:left;font-size:65%"), min=-5, max=5, step=.01, value = 0)),
+      column(4, numericInput(ns("legPosXcoord"), label = div("Leg. XaxisCoords", style="family:Georgia;text-align:left;font-size:65%"),  min=0, max=1, step=.001, value = 0.500)),
+      column(4, numericInput(ns("legPosYcoord"), label = div("Leg. YaxisCoords", style="family:Georgia;text-align:left;font-size:65%"),  min=0, max=1, step=.001, value = 0.500)),
+      column(4, numericInput(ns("stripTextSize"), label = div("Strip TextSize", style="family:Georgia;text-align:left;font-size:65%"),  min=5, max=35, step=1, value = 12)),
+      column(4, numericInput(ns("stripTextMarginB"), label = div("Strip MargB.", style="family:Georgia;text-align:left;font-size:65%"), min=-5, max=5, step=.01, value = 2)),
+      column(4, numericInput(ns("stripTextMarginT"), label = div("Strip MargT.", style="family:Georgia;text-align:left;font-size:65%"), min=-5, max=5, step=.01, value = 0)),
+      column(6, numericInput(ns("stripTextMarginL"), label = div("Strip MargL.", style="family:Georgia;text-align:left;font-size:65%"), min=-5, max=5, step=.01, value = 0)),
+      column(6, numericInput(ns("stripTextMarginR"), label = div("Strip MargR.", style="family:Georgia;text-align:left;font-size:65%"), min=-5, max=5, step=.01, value = 0)),
+      column(6, numericInput(ns("panelXspacing"), label = div("panelXspacing", style="family:Georgia;text-align:left;font-size:65%"), min=-5, max=5, step=.01, value = -0.05)),
+      column(6, numericInput(ns("panelYspacing"), label = div("panelYspacing", style="family:Georgia;text-align:left;font-size:65%"), min=-5, max=5, step=.01, value = .5)),
+      column(12, tags$hr(style="border-color:gray;")),
       column(4, selectInput(ns("axisTextColor"), label = div("Axis TextColor", style="family:Georgia;text-align:left;font-size:65%"), choices = colors(), selected = "black")),
-
-      column(4, selectInput(ns("xAxisTextAngle"), label = div("Xaxis Angle", style="family:Georgia;text-align:left;font-size:65%"), choices = seq(0, 360, 5), selected = 0)),
-      column(4, selectInput(ns("xAxisTextHjust"), label = div("Xaxis Hjust", style="family:Georgia;text-align:left;font-size:65%"), choices = round(seq(-5, 5, .01), 2), selected = 0.50)),
-      column(4, selectInput(ns("xAxisTextVjust"), label = div("Xaxis Vjust", style="family:Georgia;text-align:left;font-size:65%"), choices = round(seq(-5, 5, .01), 2), selected = .50)),
-
-      column(4, selectInput(ns("AxisTitleSize"), label = div("Axis TitleSize", style="family:Georgia;text-align:left;font-size:65%"),  choices = seq(5, 35, 1), selected = 16)),
-      column(4, selectInput(ns("axisTicksSize"), label = div("Ticks Size", style="family:Georgia;text-align:left;font-size:65%"), choices = round(seq(.1, 7, .01), 2), selected = 1.00)),
       column(4, selectInput(ns("axisTicksColor"), label = div("Ticks Color", style="family:Georgia;text-align:left;font-size:65%"), choices = colors(), selected = "black")),
-
       column(4, selectInput(ns("panelGridLineType"), label = div("Grid LineType", style="family:Georgia;text-align:left;font-size:65%"), choices = c(0:7, paste0(1:7, rep(1:7, each=7))), selected = 2)),
       column(4, selectInput(ns("panelGridColor"), label = div("Grid Color", style="family:Georgia;text-align:left;font-size:65%"),  choices = colors(), selected = "gray")),
       column(4, selectInput(ns("panelBackgroundLineColor"), label = div("Panel Color", style="family:Georgia;text-align:left;font-size:65%"),  choices = colors(), selected = "gray")),
-
-      column(4, selectInput(ns("panelBackgroundLineSize"), label = div("Panel Size", style="family:Georgia;text-align:left;font-size:65%"),  choices = round(seq(.5, 7, .01), 2), selected = 1.60)),
-      column(4, selectInput(ns("outlierShape"), label = div("Outlier Shape", style="family:Georgia;text-align:left;font-size:65%"),  choices = 0:25, selected = 1)),
-
       column(4, selectInput(ns("outlierColor"), label = div("Outlier Color", style="family:Georgia;text-align:left;font-size:65%"),  choices = colors(), selected = "black")),
-      column(4, selectInput(ns("outlierSize"), label = div("Outlier Size", style="family:Georgia;text-align:left;font-size:65%"), choices = round(seq(.2, 10, .01), 2), selected = 2.00)),
       column(4, selectInput(ns("boxplotColor"), label = div("Boxplots Color", style="family:Georgia;text-align:left;font-size:65%"),  choices = colors(), selected = "black")),
-
-      column(4, selectInput(ns("boxplotAlpha"), label = div("Box. Alpha", style="family:Georgia;text-align:left;font-size:65%"),  choices = round(seq(0, 1, .1), 1), selected = 1)),
-      column(4, selectInput(ns("boxplotsWidth"), label = div("Box. Width", style="family:Georgia;text-align:left;font-size:65%"),  choices = round(seq(.1, 1, .01), 2), selected = .50)),
-
       column(4, selectInput(ns("threshold"), label = div("Seuil", style="family:Georgia;text-align:left;font-size:65%"),  choices = c("Oui"=TRUE, "Non"=FALSE), selected = FALSE)),
       column(4, selectInput(ns("thresholdColor"), label = div("Couleur Seuil", style="family:Georgia;text-align:left;font-size:65%"),  choices = colors(), selected = "red")),
-      column(4, selectInput(ns("thresholdSize"), label = div("Seuil LineSize", style="family:Georgia;text-align:left;font-size:65%"), choices = round(seq(.2, 10, .01), 2), selected = .9)),
       column(4, selectInput(ns("thresholdLineType"), label = div("Seuil LineType", style="family:Georgia;text-align:left;font-size:65%"), choices = c(0:7, paste0(1:7, rep(1:7, each=7))), selected = 1)),
-
-      column(4, selectInput(ns("legendNrow"), label = div("Leg. Nrow", style="family:Georgia;text-align:left;font-size:65%"),  choices = 1:10, selected = 1)),
       column(4, selectInput(ns("legendByRow"), label = div("Leg. Fill", style="family:Georgia;text-align:left;font-size:65%"),  choices = c("By Row" = TRUE, "By Column" = FALSE), selected = TRUE)),
-      column(4, selectInput(ns("legendKeyWidth"), label = div("Leg. KeyWidth", style="family:Georgia;text-align:left;font-size:65%"),  choices = round(seq(.2, 10, .01), 2), selected = .60)),
-
-      column(4, selectInput(ns("legendKeyHeight"), label = div("Leg. KeyHeight", style="family:Georgia;text-align:left;font-size:65%"),  choices = round(seq(.2, 10, .01), 2), selected = .5)),
       column(4, selectInput(ns("legDir"), label = div("Leg. direction", style="family:Georgia;text-align:left;font-size:65%"),  choices = c("H"="horizontal", "V"="vertical"), selected = "horizontal")),
-      column(4, selectInput(ns("LegTextSize"), label = div("Leg. TextSize", style="family:Georgia;text-align:left;font-size:65%"),  choices = round(seq(5, 35, 1), 2), selected = 12)),
-
       column(4, selectInput(ns("LegTextColor"), label = div("Leg. TextColor", style="family:Georgia;text-align:left;font-size:65%"),  choices = colors(), selected = "black")),
-      column(4, selectInput(ns("legTextMarginB"), label = div("Leg. TextMargB.", style="family:Georgia;text-align:left;font-size:65%"), choices = round(seq(-5, 5, .01), 2), selected = 0)),
-      column(4, selectInput(ns("legTextMarginT"), label = div("Leg. TextMargT.", style="family:Georgia;text-align:left;font-size:65%"), choices = round(seq(-5, 5, .01), 2), selected = 0)),
-
-      column(4, selectInput(ns("legTextMarginL"), label = div("Leg. TextMargL.", style="family:Georgia;text-align:left;font-size:65%"),  choices = round(seq(-5, 5, .01), 2), selected = 0)),
-      column(4, selectInput(ns("legTextMarginR"), label = div("Leg. TextMargR.", style="family:Georgia;text-align:left;font-size:65%"), choices = round(seq(-5, 5, .01), 2), selected = 0)),
       column(4, selectInput(ns("legPosType"), label = div("Leg. Pos.Type", style="family:Georgia;text-align:left;font-size:65%"),  choices = c("Côté", "Coord."), selected = "Côté")),
-
-      column(4, selectInput(ns("legPosXcoord"), label = div("Leg. XaxisCoords", style="family:Georgia;text-align:left;font-size:65%"),  choices = round(seq(0, 1, .001), 3), selected = 0.500)),
-      column(4, selectInput(ns("legPosYcoord"), label = div("Leg. YaxisCoords", style="family:Georgia;text-align:left;font-size:65%"),  choices = round(seq(0, 1, .001), 3), selected = 0.500)),
       column(4, selectInput(ns("legLoc"), label = div("Leg. Position", style="family:Georgia;text-align:left;font-size:65%"),  choices = c("top", "bottom", "left", "right"), selected = "bottom")),
-
-      column(4, selectInput(ns("legMarginB"), label = div("Legend MargB.", style="family:Georgia;text-align:left;font-size:65%"), choices = round(seq(-5, 5, .01), 2), selected = 0)),
-      column(4, selectInput(ns("legMarginT"), label = div("Legend MargT.", style="family:Georgia;text-align:left;font-size:65%"), choices = round(seq(-5, 5, .01), 2), selected = -.60)),
-      column(4, selectInput(ns("legMarginL"), label = div("Legend MargL.", style="family:Georgia;text-align:left;font-size:65%"),  choices = round(seq(-5, 5, .01), 2), selected = 0)),
-      column(4, selectInput(ns("legMarginR"), label = div("Legend MargR.", style="family:Georgia;text-align:left;font-size:65%"), choices = round(seq(-5, 5, .01), 2), selected = 0)),
-
       # strips
-      column(4, selectInput(ns("stripTextSize"), label = div("Strip TextSize", style="family:Georgia;text-align:left;font-size:65%"),  choices = round(seq(5, 35, 1), 2), selected = 12)),
-      column(4, selectInput(ns("stripTextMarginB"), label = div("Strip MargB.", style="family:Georgia;text-align:left;font-size:65%"), choices = round(seq(-5, 5, .01), 2), selected = 2)),
-      column(4, selectInput(ns("stripTextMarginT"), label = div("Strip MargT.", style="family:Georgia;text-align:left;font-size:65%"), choices = round(seq(-5, 5, .01), 2), selected = 0)),
-
-      column(4, selectInput(ns("stripTextMarginL"), label = div("Strip MargL.", style="family:Georgia;text-align:left;font-size:65%"), choices = round(seq(-5, 5, .01), 2), selected = 0)),
-      column(4, selectInput(ns("stripTextMarginR"), label = div("Strip MargR.", style="family:Georgia;text-align:left;font-size:65%"), choices = round(seq(-5, 5, .01), 2), selected = 0)),
-      column(4, selectInput(ns("stripTextMarginUnit"), label = div("Strip MargUnit", style="family:Georgia;text-align:left;font-size:65%"), choices = c("pt", "cm"), selected = "pt")),
-
-      column(4, selectInput(ns("FacetScale"), label = div("FacetScales", style="family:Georgia;text-align:left;font-size:65%"),  choices = c("fixed", "free_x", "free_y"), selected = "free_x")),
-      column(4, selectInput(ns("panelXspacing"), label = div("panelXspacing", style="family:Georgia;text-align:left;font-size:65%"), choices =round(seq(-5, 5, .01), 2), selected = -0.05)),
-      column(4, selectInput(ns("panelYspacing"), label = div("panelYspacing", style="family:Georgia;text-align:left;font-size:65%"), choices =round(seq(-5, 5, .01), 2), selected = .5)),
-
-      column(4, selectInput(ns("flipAxis"), label = div("Fip Coords", style="family:Georgia;text-align:left;font-size:65%"),  choices = c("Oui" = TRUE, "Non" = FALSE), selected = "TRUE")),
-      column(4, selectInput(ns("reorderGprah"), label = div("Trier les boxs", style="family:Georgia;text-align:left;font-size:65%"),  choices = c("Desc."="Descendant", "Asc."="Ascendant"), selected = "Ascendant")),
-
+      column(6, selectInput(ns("stripTextMarginUnit"), label = div("Strip MargUnit", style="family:Georgia;text-align:left;font-size:65%"), choices = c("pt", "cm"), selected = "pt")),
+      column(6, selectInput(ns("FacetScale"), label = div("FacetScales", style="family:Georgia;text-align:left;font-size:65%"),  choices = c("fixed", "free_x", "free_y"), selected = "free_x")),
+      column(6, selectInput(ns("flipAxis"), label = div("Pivoter Le Graphique", style="family:Georgia;text-align:left;font-size:65%"),  choices = c("Oui" = TRUE, "Non" = FALSE), selected = "TRUE")),
+      column(6, selectInput(ns("reorderGprah"), label = div("Trier les Boxs", style="family:Georgia;text-align:left;font-size:65%"),  choices = c("Descendant", "Ascendant"), selected = "Ascendant")),
       column(12, textInput(ns("variableColors"), label = div("Couleur des Groupes", style="family:Georgia;text-align:left;font-size:65%"), value = "", placeholder = "red;green;blue;cyan;orange;...")),
       column(12, textInput(ns("xAxisTitle"), label = div("Xaxis Title", style="family:Georgia;text-align:left;font-size:65%"), value = "", placeholder = "Titre Axe-X")),
       column(12, textInput(ns("yAxisTitle"), label = div("Yaxis Title", style="family:Georgia;text-align:left;font-size:65%"), value = "", placeholder = "Titre Axe-Y"))
-
     )
   )
 }
