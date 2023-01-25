@@ -480,6 +480,43 @@ app_ui <- function(request) {
                                      ) # tabsetPanel
                                    ) # mainPanel
                           ), # tabPanel
+
+                          # annual inventory with
+                          tabPanel(h4("Echelle Annuelle"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Echelle Annuelle",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_annualInventoryHeatmapOptions_ui("annualInventoryHeatmapOptions_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_data4AnnualInventory_ui("data4AnnualInventory_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Visualisation Rapide", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # résumé statistique
+                                         mod_annualInventoryNAvalueSummary_ui("annualInventoryNAvalueSummary_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("HeatMap||Exportations", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # boxplots univariés
+                                         mod_makingAnnualInventoryHeatmap_ui("makingAnnualInventoryHeatmap_1")
+                                       )#tabPanel
+                                     ) # tabsetPanel
+                                   ) # mainPanel
+                          ), # tabPanel
                )
     )
   )
