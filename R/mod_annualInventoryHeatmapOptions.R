@@ -10,7 +10,7 @@
 mod_annualInventoryHeatmapOptions_ui <- function(id){
   ns <- NS(id)
   tagList(
-    tags$style(type='text/css', ".selectize-input { font-size: 95%; line-height: 32px;}"),
+    tags$style(type='text/css', ".selectize-input { font-size: 96%; line-height: 32px;}"),
 
     column(12, h4("GGPLOT [Configuration||Options]", style="color:#3474A7;family:Georgia;text-align:center;")),
 
