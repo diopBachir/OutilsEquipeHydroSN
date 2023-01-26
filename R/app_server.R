@@ -308,5 +308,45 @@ app_server <- function(input, output, session) {
       "makingAnnualInventoryHeatmap_1", annual.inventory.graph.data(), annualInventoryHeatmapOptions
     )
   })
+
+  # ||||||||||||||||||||||||||||||||||||| DAILY INVENTORY AVEC FACETS
+  # DATA
+  dailyFacetsInventoryData<- mod_data4DailyFacetInventory_server("data4DailyFacetInventory_1")
+  # gettingData
+  daily.facets.inventory.graph.data<- dailyFacetsInventoryData$data_for_dailyFacetsInventoryGraph
+  ##==================================================================#
+  observeEvent(ignoreInit = FALSE, daily.facets.inventory.graph.data(), {
+    # gettingData
+    daily.facets.inventory.graph.data<- dailyFacetsInventoryData$data_for_dailyFacetsInventoryGraph
+    # Résumé statistique mod_dailyFacetsInventoryNAvalueSummary_server("dailyFacetsInventoryNAvalueSummary_1")
+    mod_dailyFacetsInventoryNAvalueSummary_server("dailyFacetsInventoryNAvalueSummary_1", daily.facets.inventory.graph.data())
+    # options
+    dailyFacetsInventoryHeatmapOptions<- mod_dailyFacetsInventoryHeatmapOptions_server("dailyFacetsInventoryHeatmapOptions_1")
+    # heatmap
+    mod_makingDailyFacetsInventoryHeatmap_server(
+      "makingDailyFacetsInventoryHeatmap_1", daily.facets.inventory.graph.data(), dailyFacetsInventoryHeatmapOptions
+    )
+
+  })
+
+  # ||||||||||||||||||||||||||||||||||||| ANNUAL INVENTORY AVEC FACETS
+  # data
+  annualFacetsInventoryData<-  mod_data4AnnualFacetInventory_server("data4AnnualFacetInventory_1")
+  # gettingData
+  annual.facets.inventory.graph.data<- annualFacetsInventoryData$data_for_annualFacetsInventoryGraph
+  ##======================================================================#
+  observeEvent(ignoreInit = FALSE, annual.facets.inventory.graph.data(), {
+    # gettingData
+    annual.facets.inventory.graph.data<- annualFacetsInventoryData$data_for_annualFacetsInventoryGraph
+    # Résumé statistique
+    mod_annualFacetsInventoryNAvalueSummary_server("annualFacetsInventoryNAvalueSummary_1", annual.facets.inventory.graph.data())
+    # options
+    annualFacetsInventoryHeatmapOptions<- mod_annualFacetsInventoryHeatmapOptions_server("annualFacetsInventoryHeatmapOptions_1")
+    # heatmap
+    mod_makingAnnualFacetsInventoryHeatmap_server(
+      "makingAnnualFacetsInventoryHeatmap_1", annual.facets.inventory.graph.data(), annualFacetsInventoryHeatmapOptions
+    )
+  })
+
 }
 

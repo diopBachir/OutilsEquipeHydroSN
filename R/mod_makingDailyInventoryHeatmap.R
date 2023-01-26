@@ -48,8 +48,6 @@ mod_makingDailyInventoryHeatmap_ui <- function(id, label){
             @keyframes spin10 { to { transform: translateY(-15.0em); } }
             ')),
 
-    br(),
-
     fluidRow(align = "center",
              column(4, actionButtonStyled(ns("heatmap"), span("HeatMap", id=ns("boxplotAnimate")), class= "", type="primary")),
              column(4, downloadButton(ns("exportPlotJPEG"), label="JPEG", icon = icon("download"), class = "btn btn-info")),
@@ -206,7 +204,7 @@ mod_makingDailyInventoryHeatmap_server <- function(id, cleanedData, dailyInvento
     ###  Exportation
     output$exportPlotJPEG <-  downloadHandler(
       filename = function() {
-        paste("DailyInventoryHeatmap-", Sys.Date(), ".jpeg")
+        paste("DailyInventoryHeatmap-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
       },
       content = function(file) {
         ggplot2::ggsave(file, dailyInventoryHeatmapGraph()[[1]], width = 13.3, height = 7.05)
@@ -215,7 +213,7 @@ mod_makingDailyInventoryHeatmap_server <- function(id, cleanedData, dailyInvento
 
     output$exportPlotSVG <-  downloadHandler(
       filename = function() {
-        paste("DailyInventoryHeatmap-", Sys.Date(), ".svg")
+        paste("DailyInventoryHeatmap-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
       },
       content = function(file) {
         ggplot2::ggsave(file, dailyInventoryHeatmapGraph()[[1]], width = 13.3, height = 7.05)

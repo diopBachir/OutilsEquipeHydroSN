@@ -180,7 +180,7 @@ mod_makingAnnualInventoryHeatmap_server <- function(id, cleanedData, annualInven
     ###  Exportation
     output$exportPlotJPEG <-  downloadHandler(
       filename = function() {
-        paste("AnnualInventoryHeatmap-", Sys.Date(), ".jpeg")
+        paste("AnnualInventoryHeatmap-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
       },
       content = function(file) {
         ggplot2::ggsave(file, annualInventoryHeatmapGraph()[[1]], width = 13.3, height = 7.05)
@@ -189,7 +189,7 @@ mod_makingAnnualInventoryHeatmap_server <- function(id, cleanedData, annualInven
 
     output$exportPlotSVG <-  downloadHandler(
       filename = function() {
-        paste("AnnualInventoryHeatmap-", Sys.Date(), ".svg")
+        paste("AnnualInventoryHeatmap-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
       },
       content = function(file) {
         ggplot2::ggsave(file, annualInventoryHeatmapGraph()[[1]], width = 13.3, height = 7.05)

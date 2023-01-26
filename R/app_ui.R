@@ -517,6 +517,80 @@ app_ui <- function(request) {
                                      ) # tabsetPanel
                                    ) # mainPanel
                           ), # tabPanel
+
+                          # daily inventory with facets
+                          tabPanel(h4("Echelle Journalière Avec Facets"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Echelle Journalière Avec Facets",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_dailyFacetsInventoryHeatmapOptions_ui("dailyFacetsInventoryHeatmapOptions_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_data4DailyFacetInventory_ui("data4DailyFacetInventory_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Visualisation Rapide", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # résumé statistique
+                                         mod_dailyFacetsInventoryNAvalueSummary_ui("dailyFacetsInventoryNAvalueSummary_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("HeatMap||Exportations", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # boxplots univariés
+                                         mod_makingDailyFacetsInventoryHeatmap_ui("makingDailyFacetsInventoryHeatmap_1")
+                                       )#tabPanel
+                                     ) # tabsetPanel
+                                   ) # mainPanel
+                          ), # tabPanel
+
+                          # annual inventory with facets
+                          tabPanel(h4("Echelle Annuelle Avec Facets"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Echelle Annuelle Avec Facets",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_annualFacetsInventoryHeatmapOptions_ui("annualFacetsInventoryHeatmapOptions_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_data4AnnualFacetInventory_ui("data4AnnualFacetInventory_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Visualisation Rapide", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # résumé statistique
+                                         mod_annualFacetsInventoryNAvalueSummary_ui("annualFacetsInventoryNAvalueSummary_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("HeatMap||Exportations", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # boxplots univariés
+                                         mod_makingAnnualFacetsInventoryHeatmap_ui("makingAnnualFacetsInventoryHeatmap_1")
+                                       )#tabPanel
+                                     ) # tabsetPanel
+                                   ) # mainPanel
+                          ) # tabPanel
                )
     )
   )
