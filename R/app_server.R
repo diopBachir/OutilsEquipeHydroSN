@@ -326,7 +326,6 @@ app_server <- function(input, output, session) {
     mod_makingDailyFacetsInventoryHeatmap_server(
       "makingDailyFacetsInventoryHeatmap_1", daily.facets.inventory.graph.data(), dailyFacetsInventoryHeatmapOptions
     )
-
   })
 
   # ||||||||||||||||||||||||||||||||||||| ANNUAL INVENTORY AVEC FACETS
@@ -346,6 +345,44 @@ app_server <- function(input, output, session) {
     mod_makingAnnualFacetsInventoryHeatmap_server(
       "makingAnnualFacetsInventoryHeatmap_1", annual.facets.inventory.graph.data(), annualFacetsInventoryHeatmapOptions
     )
+  })
+
+  # ||||||||||||||||||||||||||||||||||||| SPI GRAPHIQUE UNI-SERIE
+  # données
+  spiUnivariateComputingData<- mod_data4univariateSPIcomputing_server("data4univariateSPIcomputing_1")
+  # gettingData
+  spi.univariate.graph.data<- spiUnivariateComputingData$data_for_SPIcomputing
+  ##==================================================================#
+  observeEvent(ignoreInit = FALSE, spi.univariate.graph.data(), {
+    # gettingData
+    spi.univariate.graph.data<- spiUnivariateComputingData$data_for_SPIcomputing
+    # computing spi
+    spi.univariate.result.df<- mod_spiUnivariateComputing_server("spiUnivariateComputing_1", spi.univariate.graph.data())
+    # getting spi formatted data for heatmap
+    spi.result.ready.for.barplot<- spi.univariate.result.df$spi_result_cleaned
+    # plot options
+    spiBarPlotGraphOptions<-  mod_spiUnivariateBarPlotOptions_server("spiUnivariateBarPlotOptions_1")
+    # spi heatmap graph
+    mod_spiBarPlotGraph_server("spiBarPlotGraph_1", spi.result.ready.for.barplot(), spiBarPlotGraphOptions)
+  })
+
+  # ||||||||||||||||||||||||||||||||||||| SPI GRAPHIQUE HEATMAP
+  # DATA
+  spiComputingData<- mod_data4SPIcomputing_server("data4SPIcomputing_1")
+  # gettingData
+  spi.graph.data<- spiComputingData$data_for_SPIcomputing
+  ##==================================================================#
+  observeEvent(ignoreInit = FALSE, spi.graph.data(), {
+    # gettingData
+    spi.graph.data<- spiComputingData$data_for_SPIcomputing
+    # computing spi
+    spi.result.df<- mod_spiComputing_server("spiComputing_1", spi.graph.data())
+    # getting spi formatted data for heatmap
+    spi.result.ready.for.heatmap<- spi.result.df$spi_result_cleaned
+    # plot options
+    spiHeatmapGraphOptions<- mod_spiHeatmapOptions_server("spiHeatmapOptions_1")
+    # spi heatmap
+    mod_spiHeatmapGraph_server("spiHeatmapGraph_1", spi.result.ready.for.heatmap(), spiHeatmapGraphOptions)
   })
 
 }

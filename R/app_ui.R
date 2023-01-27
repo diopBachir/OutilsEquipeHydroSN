@@ -37,7 +37,7 @@ app_ui <- function(request) {
                             src = "www/leidi.png", style = "width:70px;height:70px;margin-top:-14.2px;margin-left:-13.5px;"
                           ),
                           href = "https://www.ugb.sn/"
-                        )),
+                        ))
                  )
                ),
 
@@ -50,10 +50,12 @@ app_ui <- function(request) {
 
                br(), br(), br(), br(),
 
-               # BOXPLOTS
-               navbarMenu(div("BoxPlots", style = "color:white;font-size:100%;font-family:georgia"),
+               # GRAPHIQUES
+               navbarMenu(div("Graphiques", style = "color:white;font-size:100%;font-family:georgia"),
 
-                          tabPanel(h4("Boxplots Mensuels Avec Les Mois Comme Facets"),
+                          "BOXPLOTS ============================================================||",
+
+                          tabPanel(div("Boxplots Mensuels Avec Les Mois Comme Facets", style = "color:black;font-size:110%;font-family:georgia;"),
                                    sidebarPanel(
                                      style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
                                      h3(
@@ -91,7 +93,7 @@ app_ui <- function(request) {
                           ), # tabPanel
 
                           # boxplots univarié
-                          tabPanel(h4("Boxplots Univariés"),
+                          tabPanel(div("Boxplots Univariés", style = "color:black;font-size:110%;font-family:georgia;"),
                                    sidebarPanel(
                                      style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
                                      h3(
@@ -124,12 +126,12 @@ app_ui <- function(request) {
                                          # boxplots univariés
                                          mod_makingUnivariateBoxplot_ui("makingUnivariateBoxplot_1")
                                        )#tabPanel
-                                       )# tabsetPanel
-                                     )# mainPanel
+                                     )# tabsetPanel
+                                   )# mainPanel
                           ), # tabPanel
 
                           # Boxplots Univariés Avec Facets
-                          tabPanel(h4("Boxplots Univariés Avec Facets"),
+                          tabPanel(div("Boxplots Univariés Avec Facets", style = "color:black;font-size:110%;font-family:georgia;"),
                                    sidebarPanel(
                                      style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
                                      h3(
@@ -166,7 +168,7 @@ app_ui <- function(request) {
                                    )# mainPanel
                           ), # tabPanel
 
-                          tabPanel(h4("Boxplots Multivariés"),
+                          tabPanel(div("Boxplots Multivariés", style = "color:black;font-size:110%;font-family:georgia;"),
                                    sidebarPanel(
                                      style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
                                      h3(
@@ -203,7 +205,7 @@ app_ui <- function(request) {
                                    )# mainPanel
                           ), # tabPanel
 
-                          tabPanel(h4("Boxplots Multivariés Avec Facets"),
+                          tabPanel(div("Boxplots Multivariés Avec Facets", style = "color:black;font-size:110%;font-family:georgia;"),
                                    sidebarPanel(
                                      style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
                                      h3(
@@ -239,7 +241,7 @@ app_ui <- function(request) {
                                    )# mainPanel
                           ), # tabPanel
 
-                          tabPanel(h4("Boxplots Multivariés Avec Facets [2D]"),
+                          tabPanel(div("Boxplots Multivariés Avec Facets [2D]", style = "color:black;font-size:110%;font-family:georgia;"),
                                    sidebarPanel(
                                      style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
                                      h3(
@@ -273,7 +275,230 @@ app_ui <- function(request) {
                                        )#tabPanel
                                      )
                                    )
-                          ) # tabPanel
+                          ),# tabPanel
+
+                          #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+                          "INVENTAIRE DE DONNEES ===============================================||",
+
+                          # daily inventory
+                          tabPanel(div("Echelle Journalière", style = "color:black;font-size:110%;font-family:georgia;"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Echelle Journalière",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_dailyInventoryHeatmapOptions_ui("dailyInventoryHeatmapOptions_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_data4DailyInventory_ui("data4DailyInventory_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Visualisation Rapide", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # résumé statistique
+                                         mod_dailyInventoryNAvalueSummary_ui("dailyInventoryNAvalueSummary_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("HeatMap||Exportations", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # boxplots univariés
+                                         mod_makingDailyInventoryHeatmap_ui("makingDailyInventoryHeatmap_1")
+                                       )#tabPanel
+                                     ) # tabsetPanel
+                                   ) # mainPanel
+                          ), # tabPanel
+
+                          # annual inventory with
+                          tabPanel(div("Echelle Annuelle", style = "color:black;font-size:110%;font-family:georgia;"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Echelle Annuelle",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_annualInventoryHeatmapOptions_ui("annualInventoryHeatmapOptions_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_data4AnnualInventory_ui("data4AnnualInventory_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Visualisation Rapide", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # résumé statistique
+                                         mod_annualInventoryNAvalueSummary_ui("annualInventoryNAvalueSummary_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("HeatMap||Exportations", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # boxplots univariés
+                                         mod_makingAnnualInventoryHeatmap_ui("makingAnnualInventoryHeatmap_1")
+                                       )#tabPanel
+                                     ) # tabsetPanel
+                                   ) # mainPanel
+                          ), # tabPanel
+
+                          # daily inventory with facets
+                          tabPanel(div("Echelle Journalière Avec Facets", style = "color:black;font-size:110%;font-family:georgia;"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Echelle Journalière Avec Facets",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_dailyFacetsInventoryHeatmapOptions_ui("dailyFacetsInventoryHeatmapOptions_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_data4DailyFacetInventory_ui("data4DailyFacetInventory_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Visualisation Rapide", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # résumé statistique
+                                         mod_dailyFacetsInventoryNAvalueSummary_ui("dailyFacetsInventoryNAvalueSummary_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("HeatMap||Exportations", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # boxplots univariés
+                                         mod_makingDailyFacetsInventoryHeatmap_ui("makingDailyFacetsInventoryHeatmap_1")
+                                       )#tabPanel
+                                     ) # tabsetPanel
+                                   ) # mainPanel
+                          ), # tabPanel
+
+                          # annual inventory with facets
+                          tabPanel(div("Echelle Annuelle Avec Facets", style = "color:black;font-size:110%;font-family:georgia;"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Echelle Annuelle Avec Facets",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_annualFacetsInventoryHeatmapOptions_ui("annualFacetsInventoryHeatmapOptions_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_data4AnnualFacetInventory_ui("data4AnnualFacetInventory_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Visualisation Rapide", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # résumé statistique
+                                         mod_annualFacetsInventoryNAvalueSummary_ui("annualFacetsInventoryNAvalueSummary_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("HeatMap||Exportations", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # boxplots univariés
+                                         mod_makingAnnualFacetsInventoryHeatmap_ui("makingAnnualFacetsInventoryHeatmap_1")
+                                       )#tabPanel
+                                     ) # tabsetPanel
+                                   ) # mainPanel
+                          ), # tabPanel
+
+                          #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||,||||||||||||||||||||||||||||||||||||||||||#
+                          "STANDARDIZED PRECIPITATION INDEX [SPI] =================================||",
+
+                          # univar heatmap
+                          tabPanel(div("SPI UniSerie", style = "color:black;font-size:110%;font-family:georgia;"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "SPI UniSerie",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+                                     # options
+                                     mod_spiUnivariateBarPlotOptions_ui("spiUnivariateBarPlotOptions_1")
+                                   ), # sidebarPanel
+
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_data4univariateSPIcomputing_ui("data4univariateSPIcomputing_1")
+                                       ), # tabPanel
+                                       tabPanel(
+                                         div("Calcul du SPI", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # calcul du SPI
+                                         mod_spiUnivariateComputing_ui("spiUnivariateComputing_1")
+                                       ), # tabPanel
+                                       tabPanel(
+                                         div("SPI Graph-Bar", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # spi heatmap
+                                         mod_spiBarPlotGraph_ui("spiBarPlotGraph_1")
+                                       )
+                                     ) # tabsetPanel
+                                   )
+                          ), #tabPanel
+
+                          tabPanel(div("SPI HeatMap", style = "color:black;font-size:110%;font-family:georgia;"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:30%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "SPI-HeatMap",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+                                     # options
+                                     mod_spiHeatmapOptions_ui("spiHeatmapOptions_1")
+                                   ), # sidebarPanel
+
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_data4SPIcomputing_ui("data4SPIcomputing_1")
+                                       ), # tabPanel
+                                       tabPanel(
+                                         div("Calcul SPI", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # calcul du SPI
+                                         mod_spiComputing_ui("spiComputing_1")
+                                       ), # tabPanel
+                                       tabPanel(
+                                         div("SPI Graph-HeatMap", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # spi heatmap
+                                         mod_spiHeatmapGraph_ui("spiHeatmapGraph_1")
+                                       )
+                                     ) # tabsetPanel
+                                   )
+                          ), #tabPanel
 
                ), # navbarMenu
 
@@ -442,155 +667,14 @@ app_ui <- function(request) {
                #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
                #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
 
-               ## INVENTAIRE DE DONNEES
-               navbarMenu(div("Inventaire de Données", style = "color:white;font-size:100%;font-family:georgia"),
-                          # daily inventory
-                          tabPanel(h4("Echelle Journalière"),
-                                   sidebarPanel(
-                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
-                                     h3(
-                                       "Echelle Journalière",
-                                       style=paste0(
-                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
-                                       )
-                                     ),
+               navbarMenu(div("Variables Et Indices", style = "color:white;font-size:100%;font-family:georgia"),
+                          # SPI
+                          navbarMenu(div("Indices", style = "color:dodgerblue;font-size:130%;font-family:georgia;"),
+                                     tabPanel(div("SPI", style = "color:dodgerblue;font-size:115%;font-family:georgia;font-family:italic;"),
 
-                                     # options
-                                     mod_dailyInventoryHeatmapOptions_ui("dailyInventoryHeatmapOptions_1"),
+                                     )
+                          )
 
-                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
-                                   ),# sidebarPane
-                                   mainPanel(
-                                     tabsetPanel(
-                                       tabPanel(
-                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
-                                         # données
-                                         mod_data4DailyInventory_ui("data4DailyInventory_1")
-                                       ), #tabPanel
-                                       tabPanel(
-                                         div("Visualisation Rapide", style = "color:#3474A7;family:Georgia;font-size:130%"),
-                                         # résumé statistique
-                                         mod_dailyInventoryNAvalueSummary_ui("dailyInventoryNAvalueSummary_1")
-                                       ), #tabPanel
-                                       tabPanel(
-                                         div("HeatMap||Exportations", style = "color:#3474A7;family:Georgia;font-size:130%"),
-                                         # boxplots univariés
-                                         mod_makingDailyInventoryHeatmap_ui("makingDailyInventoryHeatmap_1")
-                                       )#tabPanel
-                                     ) # tabsetPanel
-                                   ) # mainPanel
-                          ), # tabPanel
-
-                          # annual inventory with
-                          tabPanel(h4("Echelle Annuelle"),
-                                   sidebarPanel(
-                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
-                                     h3(
-                                       "Echelle Annuelle",
-                                       style=paste0(
-                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
-                                       )
-                                     ),
-
-                                     # options
-                                     mod_annualInventoryHeatmapOptions_ui("annualInventoryHeatmapOptions_1"),
-
-                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
-                                   ),# sidebarPane
-                                   mainPanel(
-                                     tabsetPanel(
-                                       tabPanel(
-                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
-                                         # données
-                                         mod_data4AnnualInventory_ui("data4AnnualInventory_1")
-                                       ), #tabPanel
-                                       tabPanel(
-                                         div("Visualisation Rapide", style = "color:#3474A7;family:Georgia;font-size:130%"),
-                                         # résumé statistique
-                                         mod_annualInventoryNAvalueSummary_ui("annualInventoryNAvalueSummary_1")
-                                       ), #tabPanel
-                                       tabPanel(
-                                         div("HeatMap||Exportations", style = "color:#3474A7;family:Georgia;font-size:130%"),
-                                         # boxplots univariés
-                                         mod_makingAnnualInventoryHeatmap_ui("makingAnnualInventoryHeatmap_1")
-                                       )#tabPanel
-                                     ) # tabsetPanel
-                                   ) # mainPanel
-                          ), # tabPanel
-
-                          # daily inventory with facets
-                          tabPanel(h4("Echelle Journalière Avec Facets"),
-                                   sidebarPanel(
-                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
-                                     h3(
-                                       "Echelle Journalière Avec Facets",
-                                       style=paste0(
-                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
-                                       )
-                                     ),
-
-                                     # options
-                                     mod_dailyFacetsInventoryHeatmapOptions_ui("dailyFacetsInventoryHeatmapOptions_1"),
-
-                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
-                                   ),# sidebarPane
-                                   mainPanel(
-                                     tabsetPanel(
-                                       tabPanel(
-                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
-                                         # données
-                                         mod_data4DailyFacetInventory_ui("data4DailyFacetInventory_1")
-                                       ), #tabPanel
-                                       tabPanel(
-                                         div("Visualisation Rapide", style = "color:#3474A7;family:Georgia;font-size:130%"),
-                                         # résumé statistique
-                                         mod_dailyFacetsInventoryNAvalueSummary_ui("dailyFacetsInventoryNAvalueSummary_1")
-                                       ), #tabPanel
-                                       tabPanel(
-                                         div("HeatMap||Exportations", style = "color:#3474A7;family:Georgia;font-size:130%"),
-                                         # boxplots univariés
-                                         mod_makingDailyFacetsInventoryHeatmap_ui("makingDailyFacetsInventoryHeatmap_1")
-                                       )#tabPanel
-                                     ) # tabsetPanel
-                                   ) # mainPanel
-                          ), # tabPanel
-
-                          # annual inventory with facets
-                          tabPanel(h4("Echelle Annuelle Avec Facets"),
-                                   sidebarPanel(
-                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
-                                     h3(
-                                       "Echelle Annuelle Avec Facets",
-                                       style=paste0(
-                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
-                                       )
-                                     ),
-
-                                     # options
-                                     mod_annualFacetsInventoryHeatmapOptions_ui("annualFacetsInventoryHeatmapOptions_1"),
-
-                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
-                                   ),# sidebarPane
-                                   mainPanel(
-                                     tabsetPanel(
-                                       tabPanel(
-                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
-                                         # données
-                                         mod_data4AnnualFacetInventory_ui("data4AnnualFacetInventory_1")
-                                       ), #tabPanel
-                                       tabPanel(
-                                         div("Visualisation Rapide", style = "color:#3474A7;family:Georgia;font-size:130%"),
-                                         # résumé statistique
-                                         mod_annualFacetsInventoryNAvalueSummary_ui("annualFacetsInventoryNAvalueSummary_1")
-                                       ), #tabPanel
-                                       tabPanel(
-                                         div("HeatMap||Exportations", style = "color:#3474A7;family:Georgia;font-size:130%"),
-                                         # boxplots univariés
-                                         mod_makingAnnualFacetsInventoryHeatmap_ui("makingAnnualFacetsInventoryHeatmap_1")
-                                       )#tabPanel
-                                     ) # tabsetPanel
-                                   ) # mainPanel
-                          ) # tabPanel
                )
     )
   )
@@ -616,6 +700,7 @@ golem_add_external_resources <- function() {
       path = app_sys("app/www"),
       app_title = "OutilsEquipeHydro"
     )
+    # tags$script(src = "www/script.js"),
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()
   )
