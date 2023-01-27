@@ -667,13 +667,7 @@ app_ui <- function(request) {
                #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
                #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
 
-               navbarMenu(div("Variables Et Indices", style = "color:white;font-size:100%;font-family:georgia"),
-                          # SPI
-                          navbarMenu(div("Indices", style = "color:dodgerblue;font-size:130%;font-family:georgia;"),
-                                     tabPanel(div("SPI", style = "color:dodgerblue;font-size:115%;font-family:georgia;font-family:italic;"),
-
-                                     )
-                          )
+               navbarMenu(div("Variables Et Indices", style = "color:white;font-size:100%;font-family:georgia")
 
                )
     )
