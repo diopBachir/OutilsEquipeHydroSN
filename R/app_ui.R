@@ -509,7 +509,7 @@ app_ui <- function(request) {
                ## INTERPOLATION SPATIALE
                navbarMenu(div("Interpolation Spatiale", style = "color:white;font-size:100%;font-family:georgia"),
 
-                          tabPanel(h4("Valeur Moyenne d'un Bassin"),
+                          tabPanel(div("Valeur Moyenne d'un Bassin", style = "color:black;font-size:110%;font-family:georgia;"),
 
                                    sidebarPanel(
                                      style="position:fixed;width:25%;height:90vh;overflow-y:auto;",
@@ -560,12 +560,12 @@ app_ui <- function(request) {
                                          div("Exportation", style = "color:#3474A7;family:Georgia;font-size:130%"),
                                          # Module
                                          mod_time_serie_interpolation_result_exportation_ui("time_serie_interpolation_result_exportation_1")
-                                       )#tabPanel
+                                       ) #tabPanel
                                      ) # tabsetPanel
                                    ) # mainPannel
                           ), #tabPanel
 
-                          tabPanel(h4("Carte Interpolation Uni_Période"),
+                          tabPanel(div("Carte Interpolation Uni_Période", style = "color:black;font-size:110%;font-family:georgia;"),
 
                                    sidebarPanel(
                                      style="position:fixed;width:25%;height:90vh;overflow-y:auto;",
@@ -611,7 +611,7 @@ app_ui <- function(request) {
                                    ) # mainPannel
                           ), #tabPanel
 
-                          tabPanel(h4("Carte Interpolation MultiPériode"),
+                          tabPanel(div("Carte Interpolation MultiPériode", style = "color:black;font-size:110%;font-family:georgia;"),
 
                                    sidebarPanel(
                                      style="position:fixed;width:25%;height:90vh;overflow-y:auto;",
@@ -667,8 +667,164 @@ app_ui <- function(request) {
                #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
                #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
 
-               navbarMenu(div("Variables Et Indices", style = "color:white;font-size:100%;font-family:georgia")
+               navbarMenu(div("Variables|Indices|Statistiques", style = "color:white;font-size:100%;font-family:georgia"),
 
+                          #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||,||||||||||||||||||||||||||||||||||||||||||#
+                          "VARIABLES ==============================================================||",
+
+                          tabPanel(div("Evapotranspiration [ETP] Journalière", style = "color:black;font-size:110%;font-family:georgia;"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:30%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "ETP Journalière",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     br(),
+
+                                     # Description des paramètres requis
+                                     h4("Description des Paramètres Requis Pour le Calcul de l'ETP Journalière à l'Echelle Journalière"),
+
+                                     HTML(paste0("<b>","longitude : ","</b>", "longitude de la Station cible", "</br>")),
+                                     HTML(paste0("<b>","latitude : ","</b>", "latitude de la Station cible", "</br>")),
+                                     HTML(paste0("<b>","altitude : ","</b>", "altitude de la Station cible", "</br>")),
+                                     HTML(paste0("<b>","Rs :","</b>", "Radiation solaire atteignant la surface terrestre", "</br>")),
+                                     HTML(paste0("<b>","Ra : ","</b>", "Radiation solaire au sommet de l'atmosphère", "</br>")),
+                                     HTML(paste0("<b>","Tmin : ","</b>", "Température minimale à 2m du sol", "</br>")),
+                                     HTML(paste0("<b>","Tmean : ","</b>", "Température moyenne à 2m du sol", "</br>")),
+                                     HTML(paste0("<b>","Tmax : ","</b>", "Température maximale à 2m du sol", "</br>")),
+                                     HTML(paste0("<b>","U2 : ","</b>", "Vitesse du vent à 2m du sol", "</br>")),
+                                     HTML(paste0("<b>","HRmean : ","</b>", "Humidité relative", "</br>")),
+
+                                     # Description des paramètres Estimés
+                                     h4("Formules d'Après (Allen et al., 1998)"),
+
+                                     tags$b("Pression atmosphère moyenne :"),br(),
+                                     div(withMathJax("$$P = 101.3 \\times \\left[\\frac{293-0.0065 \\times altitude}{293}\\right]^{5.26} $$"), style="font-size:80%"),
+
+                                     tags$b("Constante psychrométrique :"),br(),
+                                     div(withMathJax("$$ \\gamma = (0.665 \\times 10^{-3}) \\times P$$"),style="font-size:80%"),
+
+                                     tags$b("Température moyenne :"), br(),
+                                     div(withMathJax("$$ T_{mean} = \\frac{Tmax+Tmin}{2} $$"), style="font-size:80%"),
+
+                                     tags$b("Pression de vapeur saturante à Tmax :"),
+                                     div(withMathJax("$$ esTmax = 0.6018 \\times \\exp\\left[\\frac{17.27*Tmax}{Tmax+237.3}\\right] $$"), style="font-size:80%"),
+
+                                     tags$b("Pression de vapeur saturante à Tmin :"),
+                                     div(withMathJax("$$ esTmin = 0.6018 \\times \\exp\\left[\\frac{17.27*Tmax}{Tmax+237.3}\\right] $$"), style="font-size:80%"),
+
+                                     tags$b("Pression de vapeur saturante :"),  br(),
+                                     div(withMathJax("$$ e_s = 0.6018 \\times \\exp\\left[\\frac{17.27*Tmean}{Tmean+237.3}\\right] $$"), style="font-size:80%"),
+
+                                     tags$b("Pente de la fonction de pression de vapeur saturante :"),
+                                     div(withMathJax("$$ \\delta =  \\frac{4098 \\times e_s}{\\left[Tmean+237.3\\right]^2} $$"), style="font-size:80%"),
+
+                                     tags$b("Pression de vapeur partielle"),
+                                     div(withMathJax("$$ e_a =  \\frac{HRmean}{100} \\left[\\frac{esTmax+esTmin}{2}\\right]$$"), style="font-size:80%"),
+
+                                     tags$b("Deficit de pression de vapeur :"),
+                                     div(withMathJax("$$ vpd = e_s - e_a $$"), style="font-size:80%"),
+
+                                     tags$b("Rayonnement solaire net (ondes courtes) :"),
+                                     div(withMathJax("$$ R_{ns} = \\left[1-\\alpha\\right]Rs $$"), style="font-size:80%"),
+
+                                     tags$b("Rayonnement solaire potentiel (en ciel dégagé)) :"),
+                                     div(withMathJax("$$ R_{so} = 0.75 + 2.10^2 \\times z $$"), style="font-size:80%"),
+
+                                     tags$b("Rayonnement net à ondes longes :"),  br(),
+                                     tags$b("_____Constante de Boltzman :"),
+                                     div(withMathJax("$$ k_B = 4.903 \\times 10^{-9} $$"), style="font-size:80%"),
+
+                                     tags$b("_____TmaxK * constante de Boltzman ^4 :"),
+                                     div(withMathJax("$$ k_B\\_TmaxK = k_B \\times (Tmax+273.16)^4 $$"), style="font-size:80%"),
+
+                                     tags$b("_____TminK * constante de Boltzman ^4 :"),
+                                     div(withMathJax("$$ k_B\\_{TminK} = k_B * (Tmin+273.16)^4 $$"), style="font-size:80%"),
+
+                                     tags$b("_____Correction de l'effet de l'humidité de l'air :"),
+                                     div(withMathJax("$$ air_{H\\_C} = 0.34-0.14 \\times \\sqrt(e_a) $$"), style="font-size:80%"),
+
+                                     tags$b("_____Correction de l'effet de la nébulosité :"),
+                                     div(withMathJax("$$ cloud_C = 1.35 \\times \\frac{Rs}{R_{so}} -0.35 $$"), style="font-size:80%"),
+
+                                     tags$b("_____Calcul final du rayonnement net à ondes longes :"),
+                                     div(withMathJax("$$ R_{nl} = \\frac{k_B\\_{TmaxK} + k_B\\_{TminK}}{2} \\times air_{H\\_C} \\times cloud_C $$"), style="font-size:80%"),
+
+                                     tags$b("Rayonnement net :"),
+                                     div(withMathJax("$$ Rn = R_{ns} - R_{nl} $$"), style="font-size:80%"),
+
+                                     br(),br(),br(),br(),br(),br()
+
+                                   ), # sidebarPanel
+
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # données
+                                         mod_data4ETOcomputing_ui("data4ETOcomputing_1")
+                                       ), # tabPanel
+                                       tabPanel(
+                                         div("Calcul ETP Journalière", style = "color:#3474A7;family:Georgia;font-size:130%"),
+                                         # calcul du SPI
+                                         mod_computingDailyET0_ui("computingDailyET0_1")
+                                       ) # tabPanel
+                                     ) # tabsetPanel
+                                   )
+                          ), #tabPanel
+
+                          #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||,||||||||||||||||||||||||||||||||||||||||||#
+                          "STATISTIQUES ===========================================================||",
+
+                          tabPanel(div("Analyse de Tendance", style = "color:black;font-size:110%;font-family:georgia;"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:30%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Analyse De Tendance",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # INPUTS
+                                     h3("Données", style = "color:#3474A7"),
+
+                                     # limtes bassin versant
+                                     mod_loading_VectorFile_ui("loading_VectorFile_4"),
+                                     # données
+                                     mod_data4TrendAnalysis_ui("data4TrendAnalysis_1"),
+                                     # options
+                                     mod_TrendAnalysisGraphsOptions_ui("TrendAnalysisGraphsOptions_1")
+                                   ), # sidebarPanel
+
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # données
+                                         mod_showData4TimeSerieTrendAnalysis_ui("showData4TimeSerieTrendAnalysis_1")
+                                       ), # tabPanel
+                                       tabPanel(
+                                         div("Test D'autocorrélation [ACF]", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # ACF function
+                                         mod_TrendAnalysisAutocorrelation_ui("TrendAnalysisAutocorrelation_1")
+                                       ), # tabPanel
+                                       tabPanel(
+                                         div("Analyse De Tendance", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # analyse de tendance
+                                         # MannKenndallTestUI("MannKenndallTest"),
+                                       ),
+                                       tabPanel(
+                                         div("Cartographie", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # cartographie
+                                         # TrendAnalysisZspatialisationUI("TrendAnalysisSpatialisationZvalues")
+                                       )
+                                     ) # tabsetPanel
+                                   )
+                          ), #tabPanel
                )
     )
   )

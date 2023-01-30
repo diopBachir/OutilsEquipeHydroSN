@@ -73,6 +73,7 @@ mod_data_4_multiperiode_interpolation_map_server <- function(id){
       })
 
       # validation du nom de la première colonne
+      req(data_loaded())
       colonne_name_test<- test_match_order(names(data_loaded())[1:3], c("Station", "Longitude", "Latitude"))
       # alert
       if(!colonne_name_test){
@@ -195,7 +196,10 @@ mod_data_4_multiperiode_interpolation_map_server <- function(id){
     #return
     return(
       list(
-        data_for_time_serie_interpolation = reactive({ data_for_interpolation() })
+        data_for_time_serie_interpolation = reactive({
+          req(data_for_interpolation())
+          data_for_interpolation()
+        })
       )
     )
 

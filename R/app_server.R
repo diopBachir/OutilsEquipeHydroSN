@@ -212,7 +212,6 @@ app_server <- function(input, output, session) {
     )
   })
 
-
   observeEvent(time_serie_interpolation_map__events_trigger(), {
     # showing and getting data
     readyData4UniquePeriodeTimeSerieInterpolationMap <- mod_showData4TimeSerieInterpolation_server(
@@ -347,6 +346,10 @@ app_server <- function(input, output, session) {
     )
   })
 
+  #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+  #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+  #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+
   # ||||||||||||||||||||||||||||||||||||| SPI GRAPHIQUE UNI-SERIE
   # données
   spiUnivariateComputingData<- mod_data4univariateSPIcomputing_server("data4univariateSPIcomputing_1")
@@ -367,7 +370,7 @@ app_server <- function(input, output, session) {
   })
 
   # ||||||||||||||||||||||||||||||||||||| SPI GRAPHIQUE HEATMAP
-  # DATA
+  # données
   spiComputingData<- mod_data4SPIcomputing_server("data4SPIcomputing_1")
   # gettingData
   spi.graph.data<- spiComputingData$data_for_SPIcomputing
@@ -383,6 +386,56 @@ app_server <- function(input, output, session) {
     spiHeatmapGraphOptions<- mod_spiHeatmapOptions_server("spiHeatmapOptions_1")
     # spi heatmap
     mod_spiHeatmapGraph_server("spiHeatmapGraph_1", spi.result.ready.for.heatmap(), spiHeatmapGraphOptions)
+  })
+
+  #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+  #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+  #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+
+  # ||||||||||||||||||||||||||||||||||||| ETP JOURNALIERE
+  # données
+  dailyETPcomputingData<-  mod_data4ETOcomputing_server("data4ETOcomputing_1")
+  # gettingData
+  daily.eto.data.path.files<- dailyETPcomputingData$data_files_path_for_dailyET0computing
+  ##==================================================================#
+  observeEvent(ignoreInit = FALSE, daily.eto.data.path.files(), {
+    # gettingData
+    daily.eto.data.path.files<- dailyETPcomputingData$data_files_path_for_dailyET0computing
+    # # computing
+    mod_computingDailyET0_server("computingDailyET0_1", daily.eto.data.path.files())
+  })
+
+  # ||||||||||||||||||||||||||||||||||||| ANALYSE DE TENDANCE
+  # limites bassin versant
+  limites_bv_time_serie_trend_analysis <-mod_loading_VectorFile_server("loading_VectorFile_4")
+  # données
+  data4TimeSerieTrendAnalysis <- mod_data4TrendAnalysis_server("data4TrendAnalysis_1")
+  # ##==================================================================#
+  # events trigger
+  time_serie_trend_analysis_events_trigger <- reactive({
+    list(
+      limites_bv_time_serie_trend_analysis$limite_bassin_versant(),
+      data4TimeSerieTrendAnalysis$data_for_time_serie_trend_analysis()
+    )
+  })
+
+  observeEvent(time_serie_trend_analysis_events_trigger(), {
+    # options
+    TrendAnalysisPlotsOptions<- mod_TrendAnalysisGraphsOptions_server("TrendAnalysisGraphsOptions_1")
+    # showing and getting data mod_showData4TimeSerieTrendAnalysis_server("showData4TimeSerieTrendAnalysis_1")
+    readyData4TimeSerieInterpolation <- mod_showData4TimeSerieTrendAnalysis_server(
+      "showData4TimeSerieTrendAnalysis_1",
+      data4TimeSerieTrendAnalysis$data_for_time_serie_trend_analysis(),
+      limites_bv_time_serie_trend_analysis$limite_bassin_versant()
+    )
+    # test d'autocorrélation
+    mod_TrendAnalysisAutocorrelation_server(
+      "TrendAnalysisAutocorrelation_1",
+      limites_bv_time_serie_trend_analysis$limite_bassin_versant(),
+      readyData4TimeSerieInterpolation$data_for_time_serie_trend_analysis(),
+      readyData4TimeSerieInterpolation$stations_for_time_serie_trend_analysis(),
+      TrendAnalysisPlotsOptions
+    )
   })
 
 }

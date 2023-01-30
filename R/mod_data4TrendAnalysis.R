@@ -1,4 +1,4 @@
-#' data4TimeSerieInterpolation UI Function
+#' data4TrendAnalysis UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -6,15 +6,14 @@
 #'
 #' @noRd
 #'
-#' @import shiny
-#'
-mod_data4TimeSerieInterpolation_ui <- function(id){
+#' @importFrom shiny NS tagList
+mod_data4TrendAnalysis_ui <- function(id){
   ns <- NS(id)
   tagList(
     fluidRow(align="left",
              column(12,
                     fileInput(
-                      ns("dataInput"), label = div("Données d'Interpolation", style="font-size:95%;"),
+                      ns("dataInput"), label = div("Données [Serie.s Temporelle.s]", style="font-size:90%;"),
                       accept = c(".csv", ".xlsx", ".xls"),  buttonLabel = "Charger",
                       placeholder = "fichier CSV ou Excel"
                     )
@@ -23,10 +22,10 @@ mod_data4TimeSerieInterpolation_ui <- function(id){
   )
 }
 
-#' data4TimeSerieInterpolation Server Functions
+#' data4TrendAnalysis Server Functions
 #'
 #' @noRd
-mod_data4TimeSerieInterpolation_server <- function(id){
+mod_data4TrendAnalysis_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
@@ -78,7 +77,6 @@ mod_data4TimeSerieInterpolation_server <- function(id){
         req(data_loaded())
         nrow(data_loaded()) != 0
       })
-
       # shinyalert
       if(!testNotEmptySheet()){
         shinyFeedback::hideFeedback("dataInput")
@@ -187,13 +185,7 @@ mod_data4TimeSerieInterpolation_server <- function(id){
       # validation du format de la colonne {Date}
       req(colonne_date)
       format_date<- reactive({
-        anyNA(as.Date(
-          as.character(
-            janitor::excel_numeric_to_date(
-              as.numeric(as.character(data_loaded()$Station_ID[-c(1:4)])), date_system = "modern"
-            )
-          )
-        ))
+        anyNA(lubridate::ymd(data_loaded()$Station_ID[-c(1:4)]))
       })
       # alert
       if(format_date()){
@@ -209,7 +201,7 @@ mod_data4TimeSerieInterpolation_server <- function(id){
           "Erreur Chargement !!",
           paste(
             "Une ou plusieurs enregistrement ont un format de date incorrect. Le format de la date ",
-            "doit être de la forme : { [DD/MM/YYYY] } !"
+            "doit être de la forme : { [YYYY/MM/DD | YYYY-MM-DD] } !"
           )
         )
       }
@@ -240,21 +232,21 @@ mod_data4TimeSerieInterpolation_server <- function(id){
 
       # tester le nombre de lignes
       req(data_type_columns)
-      test_nb_row<- nrow(data_loaded()) <= 3660
+      test_nb_row<- nrow(data_loaded()) <= 1000000
       # alert
       if(!test_nb_row){
         shinyFeedback::hideFeedback("dataInput")
         shinyFeedback::feedbackWarning(
           "dataInput", !test_nb_row,
           paste0(
-            "Limite (3660 lignes) dépassée !"
+            "Limite (1000000 lignes) dépassée !"
           )
         )
 
         shinyalert::shinyalert(
           "Erreur Chargement !!",
           paste(
-            "Par précaution, il est impossible d'utiliser cet outil avec un fichier dépassant 3660 lignes.",
+            "Par précaution, il est impossible d'utiliser cet outil avec un fichier dépassant 1000000 lignes.",
             "Ce comportement est délibéré pour ne pas bousiller le système utilisé ! Si vous avez un fichier ",
             "dépassant cette limite, veillez diviser le fichier en plusieurs parties pour les importer et les ",
             "traiter un à un !"
@@ -281,21 +273,11 @@ mod_data4TimeSerieInterpolation_server <- function(id){
     #return
     return(
       list(
-        data_for_time_serie_interpolation = reactive({
+        data_for_time_serie_trend_analysis = reactive({
           req(data_for_interpolation())
           tmp.tb <- data_for_interpolation()
           # conversion des dates
-          tmp.tb$Station_ID <- c(
-            "Longitude", "Latitude", NA, "Date",
-            ### conversion des dates
-           stringr::str_replace_all(
-             as.character(
-               janitor::excel_numeric_to_date(
-                 as.numeric(as.character(tmp.tb$Station_ID[-c(1:4)])), date_system = "modern"
-               )
-             ), "-", "/"
-           )
-          )
+          tmp.tb$Station_ID <- c("Longitude", "Latitude", NA, "Date", tmp.tb$Station_ID[-c(1:4)])
           tmp.tb
         })
       )
@@ -305,7 +287,7 @@ mod_data4TimeSerieInterpolation_server <- function(id){
 }
 
 ## To be copied in the UI
-# mod_data4TimeSerieInterpolation_ui("data4TimeSerieInterpolation_1")
+# mod_data4TrendAnalysis_ui("data4TrendAnalysis_1")
 
 ## To be copied in the server
-# mod_data4TimeSerieInterpolation_server("data4TimeSerieInterpolation_1")
+# mod_data4TrendAnalysis_server("data4TrendAnalysis_1")
