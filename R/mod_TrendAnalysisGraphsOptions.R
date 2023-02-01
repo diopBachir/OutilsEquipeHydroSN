@@ -12,7 +12,7 @@ mod_TrendAnalysisGraphsOptions_ui <- function(id){
   tagList(
     fluidRow(
       column(12, h4("GGPLOT [Configuration||Options]", style="color:#3474A7;family:Georgia;text-align:center;")),
-      column(4, numericInput(ns("bvContSize"), label = div("BV Contour Size", style="family:Georgia;text-align:left;font-size:65%"), min=0.01, max=7, step=.01, value=2.5)),
+      column(4, numericInput(ns("bvContSize"), label = div("BvContourSize", style="family:Georgia;text-align:left;font-size:65%"), min=0.01, max=7, step=.01, value=2.5)),
       column(4, numericInput(ns("northArrowWidth"), label = div("NorthArrowWidth", style="family:Georgia;text-align:left;font-size:65%"), min=-10, max=10, step=.1, value = 1.5)),
       column(4, numericInput(ns("northArrowHeight"), label = div("NorthArrowHeight", style="family:Georgia;text-align:left;font-size:65%"),min=-10, max=10, step=.1, value = 1.5)),
       column(4, numericInput(ns("northArrowPadx"), label = div("NorthArrowPadx", style="family:Georgia;text-align:left;font-size:65%"),min=-5, max=5, step=.01, value = -.47)),
@@ -21,7 +21,7 @@ mod_TrendAnalysisGraphsOptions_ui <- function(id){
       column(4, numericInput(ns("scaleTickHeight"), label = div("ScaleBarTicksHeight", style="family:Georgia;text-align:left;font-size:65%"), min=.01, max=10, step=.01, value = .30)),
       column(4, numericInput(ns("scaleTextCex"), label = div("ScaleBarTextCex", style="family:Georgia;text-align:left;font-size:65%"),min=.01, max=10, step=.01, value = 1.15)),
       column(4, numericInput(ns("xAxisTextSize"), label = div("XaxiTextSize", style="family:Georgia;text-align:left;font-size:65%"),min=5, max=40, step=1, value = 12)),
-      column(4, numericInput(ns("yAxisTextSize"), label = div("YaxisTextSize", style="family:Georgia;text-align:left;font-size:65%"),min=5, max=40, step=1, value = 12)),
+      column(4, numericInput(ns("yAxisTextSize"), label = div("YaxisTextSize", style="family:Georgia;text-align:left;font-size:65%"),min=5, max=40, step=1, value = 10)),
       column(4, numericInput(ns("xAxisTextVjust"), label = div("XaxisVjust", style="family:Georgia;text-align:left;font-size:65%"),min=-5, max=5, step=.01, value = .5)),
       column(4, numericInput(ns("xAxisTextHjust"), label = div("XaxisHjust", style="family:Georgia;text-align:left;font-size:65%"),min=-5, max=5, step=.01, value = .5)),
       column(4, numericInput(ns("xAxisTextAngle"), label = div("XaxisAngle", style="family:Georgia;text-align:left;font-size:65%"),min=0, max=360, step=5, value = 90)),
@@ -56,6 +56,13 @@ mod_TrendAnalysisGraphsOptions_ui <- function(id){
       column(4, selectInput(ns("northArrowLocation"), label = div("NorthArrowLoc.", style="family:Georgia;text-align:left;font-size:65%"), choices = c("bl", "br", "tl", "tr"), selected = "tl")),
       column(4, selectInput(ns("scaleLocation"), label = div("ScaleBarLoc.", style="family:Georgia;text-align:left;font-size:65%"), choices = c("bl", "br", "tl", "tr"), selected = "bl")),
       # column(2, selectInput(ns("scaleLineWidth"), label = div("Line width",min=.01, 10, .01), selected = .18)),
+      column(4,
+             selectInput(ns("dateNbreaks"), label = div("XaxisDateNbreaks", style="family:Georgia;text-align:left;font-size:65%"),
+                         choices = list("Jours" = paste0(1:365, " days"), "Semaines" = paste0(1:365, " weeks"),
+                                        "Mois" = paste0(1:365, " months"), "Année" = paste0(1:365, " years")
+                         ), selected = "6 years", width = "100%"
+             )
+      ),
       column(4, selectInput(ns("scaleStyle"), label = div("ScaleBarStyle", style="family:Georgia;text-align:left;font-size:65%"), choices = c("bar", "ticks"), selected = "ticks")),
       column(4, selectInput(ns("axisTicksColor"), label = div("TicksColor", style="family:Georgia;text-align:left;font-size:65%"), choices = colors(), selected = "black")),
       column(4, selectInput(ns("panelGridColor"), label = div("GridColor", style="family:Georgia;text-align:left;font-size:65%"),  choices = colors(), selected = "gray")),
@@ -63,13 +70,16 @@ mod_TrendAnalysisGraphsOptions_ui <- function(id){
       column(4, selectInput(ns("panelGridLineType"), label = div("GridLineType", style="family:Georgia;text-align:left;font-size:65%"), choices = c(0:7, paste0(1:7, rep(1:7, each=7))), selected = 2)),
       column(4, selectInput(ns("stripMarginUnit"), label = div("StripTextMargUnit", style="family:Georgia;text-align:left;font-size:65%"), choices = c("pt", "cm"), selected = "pt")),
       column(4, selectInput(ns("legDir"),  label = div("LegDirection",  style="family:Georgia;text-align:left;font-size:65%"), choices = c("H"="horizontal", "V"="vertical"), selected = "horizontal")),
-      column(4, selectInput(ns("LegTextColor"),  label = div("LegTextColor", style="family:Georgia;text-align:left;font-size:65%"), choices = colors(), selected = "black")),
-      column(4, selectInput(ns("legPalette"), label = div("ColourBarPalette", style="family:Georgia;text-align:left;font-size:65%"), choices = c("Temp"="temperature", "Blues"="blues"), selected = "temperature")),
-      column(4, selectInput(ns("legPosType"),  label = div("LegPositionType", style="family:Georgia;text-align:left;font-size:65%"), choices = c("Côté"="Côté", "Coords"="Coordonnées"), selected = "Côté")),
-      column(4, selectInput(ns("legLoc"),  label = div("LegendLocation",  style="family:Georgia;text-align:left;font-size:65%"), choices = c("top", "bottom", "left", "right"), selected = "bottom")),
+      column(6, selectInput(ns("LegTextColor"),  label = div("Legend TextColor", style="family:Georgia;text-align:left;font-size:65%"), choices = colors(), selected = "black")),
+      column(6, selectInput(ns("legPalette"), label = div("ColourBar Palette", style="family:Georgia;text-align:left;font-size:65%"), choices = c("Temp"="temperature", "Blues"="blues"), selected = "temperature")),
+      column(6, selectInput(ns("legPosType"),  label = div("Positionnement Legende", style="family:Georgia;text-align:left;font-size:65%"), choices = c("Côté"="Côté", "Coords"="Coordonnées"), selected = "Côté")),
+      column(6, selectInput(ns("legLoc"),  label = div("Location de la Légende",  style="family:Georgia;text-align:left;font-size:65%"), choices = c("top", "bottom", "left", "right"), selected = "bottom")),
 
-      column(12, textInput(ns("variableColors"), label = div("Couleur des Groupes", style="family:Georgia;text-align:left;font-size:70%"), value = "", placeholder = "red;green;blue;cyan;orange;..."))
-    )
+      column(12, textInput(ns("variableColors"), label = div("Couleur des Groupes", style="family:Georgia;text-align:left;font-size:70%"), value = "", placeholder = "red;green;blue;cyan;orange;...", width = "100%")),
+      column(12, textInput(ns("yAxisTitle"), label = div("Titre de l'Axe des Ordonnées", style="family:Georgia;text-align:left;font-size:70%"),  value = "Variable Analysé (unité)", width = "100%"))
+    ),
+
+    br(),br(),br(),br(),br(),br(),br(),br(),br()
   )
 }
 
@@ -143,6 +153,8 @@ mod_TrendAnalysisGraphsOptions_server <- function(id){
         legMarginL			= reactive({ input$legMarginL }) ,
         legMarginR			= reactive({ input$legMarginR }) ,
 
+        dateNbreaks = reactive({ input$dateNbreaks }),
+        yAxisTitle = reactive({ input$yAxisTitle }),
         variableColors      = reactive({ input$variableColors })
       )
     )

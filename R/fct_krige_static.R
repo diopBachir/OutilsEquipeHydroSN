@@ -1,13 +1,14 @@
-#' idw_static
+#' krige_static
 #'
 #' @description A fct function
 #'
 #' @return The return value, if any, from executing the function.
 #'
 #' @noRd
-#------------------------------------------------------------------------------#
-# Idw static value
-idw_static<- function(gridded.points.utm, grid.mod, bassin, utmProj){
+
+# Kriging static value
+krige_static<- function(gridded.points.utm, grid.mod, bassin, epsg){
+
   #----------------------------------------------------------------------------#
   ## Parametres:
   #  ===========#
@@ -15,45 +16,43 @@ idw_static<- function(gridded.points.utm, grid.mod, bassin, utmProj){
   # grid.mod : grille d'interpolation
   # bassin : Bassin versant
   #----------------------------------------------------------------------------#
-  # conversion en objet data.frame
-  prec.df<- gridded.points.utm@data
+
+  # df data
+  prec.df<-gridded.points.utm@data
 
   # changement de scr
-  bassin_utm<- st_transform(bassin, utmProj)
+  bassin_utm<- sf::st_transform(bassin, epsg)
 
   # interpolation sur toutes les pas de temps
-  list.idw <- colnames(prec.df)[-1] %>%
-    purr::set_names() %>%
+  list.krige <- colnames(prec.df)[-1] %>%
+    purrr::set_names() %>%
     purrr::map(
-      ., ~ gstat::idw(
-        stats::as.formula(paste(.x, "~ 1")),
-        locations = gridded.points.utm, newdata = grid.mod
+      ., ~ ordinary_krige(
+        gridded.points.utm, target_col = .x, grid_mod = grid.mod
       )
     )
-
   # transformation du résultat de la boucle en tibble
-  idw.output<-
-    as.data.frame(list.idw) %>%
+  krige.output<-
+    as.data.frame(list.krige) %>%
     tibble::as_tibble() %>%
     dplyr::select(1, 2, tidyselect::ends_with("var1.pred"))
   # renommage des colonnes
-  names(idw.output)<- c(
+  names(krige.output)<- c(
     "Longitude", "Latitude", stringr::str_replace(names(prec.df)[-1], "db_", "")
   )
 
-  idw.output.sf<- idw.output %>%
+  krige.output.sf<- krige.output %>%
     #* transformation en objet sf
-    sf::st_as_sf(coords = c("Longitude", "Latitude"), crs = utmProj) %>%
+    sf::st_as_sf(coords = c("Longitude", "Latitude"), crs = epsg) %>%
     #* selection des pixels à l'intérieur du contour du bassin
     sf::st_filter(bassin_utm)
 
-  idw.output.df<- idw.output.sf %>%
+  krige.output.df<- krige.output.sf %>%
     #* transformation en tibble
     tibble::tibble() %>%
     #* suppression de la colonne {geometry}
     dplyr::select(-geometry) %>%
-    cbind(sf::st_coordinates(idw.output.sf))
+    cbind(sf::st_coordinates(krige.output.sf))
 
-  return(idw.output.df)
-
+  return(krige.output.df)
 }

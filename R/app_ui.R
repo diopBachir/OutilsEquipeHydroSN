@@ -781,7 +781,7 @@ app_ui <- function(request) {
 
                           tabPanel(div("Analyse de Tendance", style = "color:black;font-size:110%;font-family:georgia;"),
                                    sidebarPanel(
-                                     style="position:fixed;width:30%;height:90vh;overflow-y:auto;",
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
                                      h3(
                                        "Analyse De Tendance",
                                        style=paste0(
@@ -815,12 +815,12 @@ app_ui <- function(request) {
                                        tabPanel(
                                          div("Analyse De Tendance", style = "color:#3474A7;family:Georgia;font-size:120%"),
                                          # analyse de tendance
-                                         # MannKenndallTestUI("MannKenndallTest"),
+                                         mod_performing_trend_analysis_ui("performing_trend_analysis_1")
                                        ),
                                        tabPanel(
                                          div("Cartographie", style = "color:#3474A7;family:Georgia;font-size:120%"),
                                          # cartographie
-                                         # TrendAnalysisZspatialisationUI("TrendAnalysisSpatialisationZvalues")
+                                         # mod_performing_trend_analysis_ui("performing_trend_analysis_1")
                                        )
                                      ) # tabsetPanel
                                    )

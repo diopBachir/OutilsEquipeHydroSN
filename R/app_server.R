@@ -436,6 +436,14 @@ app_server <- function(input, output, session) {
       readyData4TimeSerieInterpolation$stations_for_time_serie_trend_analysis(),
       TrendAnalysisPlotsOptions
     )
+    # analyse de tendance
+    mod_performing_trend_analysis_server(
+      "performing_trend_analysis_1",
+      readyData4TimeSerieInterpolation$data_for_time_serie_trend_analysis(),
+      readyData4TimeSerieInterpolation$stations_for_time_serie_trend_analysis(),
+      TrendAnalysisPlotsOptions, limites_bv_time_serie_trend_analysis$limite_bassin_versant()
+    )
+
   })
 
 }
