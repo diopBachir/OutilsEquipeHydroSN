@@ -816,11 +816,6 @@ app_ui <- function(request) {
                                          div("Analyse De Tendance", style = "color:#3474A7;family:Georgia;font-size:120%"),
                                          # analyse de tendance
                                          mod_performing_trend_analysis_ui("performing_trend_analysis_1")
-                                       ),
-                                       tabPanel(
-                                         div("Cartographie", style = "color:#3474A7;family:Georgia;font-size:120%"),
-                                         # cartographie
-                                         # mod_performing_trend_analysis_ui("performing_trend_analysis_1")
                                        )
                                      ) # tabsetPanel
                                    )

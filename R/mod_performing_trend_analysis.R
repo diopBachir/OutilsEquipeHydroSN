@@ -96,6 +96,7 @@ mod_performing_trend_analysis_server <- function(id, TrendAnalysisData, stations
 
     # plot result
     TrendTestGraph<- reactiveVal()
+    pettitTestResult<- reactiveVal()
     ForExcelTransfert<- reactiveVal()
 
     # linear trend plot
@@ -245,10 +246,9 @@ mod_performing_trend_analysis_server <- function(id, TrendAnalysisData, stations
         ),
         footer=tagList(
           fluidRow(align = "center",
-            column(3, dipsaus::actionButtonStyled(ns("SenSlope"), label="Pente De Sen", icon = icon("chart-line"), class= "", type = "primary")),
-            column(3, dipsaus::actionButtonStyled(ns("krigeZValue"), label=span("Krigeage Des Valeurs Z", id=ns("krigeZValueAnimate")), icon = icon("microchip"), class= "", type = "info")),
-            column(3, dipsaus::actionButtonStyled(ns("zValue"), label=span("Spatialisation Des Valeurs Z", id=ns("zValueAnimate")), icon = icon("map"), class= "", type = "info")),
-            column(3, dipsaus::actionButtonStyled(ns("pettitTest"), label="Test De Pettitt", icon = icon("bacon"), class= "", type = "success"))
+            column(4, dipsaus::actionButtonStyled(ns("SenSlope"), label="Pente De Sen", icon = icon("chart-line"), class= "", type = "primary")),
+            column(4, dipsaus::actionButtonStyled(ns("krigeZValue"), label=span("Krigeage Des Valeurs Z", id=ns("krigeZValueAnimate")), icon = icon("microchip"), class= "", type = "info")),
+            column(4, dipsaus::actionButtonStyled(ns("zValue"), label=span("Spatialisation Des Valeurs Z", id=ns("zValueAnimate")), icon = icon("map"), class= "", type = "info"))
           ),
 
           tags$hr(style="border-color:gray;"),
@@ -277,9 +277,9 @@ mod_performing_trend_analysis_server <- function(id, TrendAnalysisData, stations
           tags$hr(style="border-color:gray;"),
 
           fluidRow(align = "center",
-            column(3, downloadButton(ns("exportSenSlopePlotJPEG"), label="JPEG", icon = icon("download"), class= "butt")),
-            column(3, downloadButton(ns("exportSenSlopePlotSVG"), label="SVG", icon = icon("download"), class= "butt")),
-            column(3, actionButton(ns("mkTestToExcel"), label = "TransférerVersExcel", icon = icon("file-excel"), class= "butt")),
+            column(3, downloadButton(ns("exportJPEG"), label="JPEG", icon = icon("download"), class= "butt")),
+            column(3, downloadButton(ns("exportSVG"), label="SVG", icon = icon("download"), class= "butt")),
+            column(3, downloadButton(ns("mkTestToExcel"), label="Feuille Excel", icon = icon("file-excel"), class= "butt")),
             column(3, modalButton('Fermer', icon = icon("power-off")))
           )
         ),
@@ -325,22 +325,61 @@ mod_performing_trend_analysis_server <- function(id, TrendAnalysisData, stations
         dplyr::group_by(Station) %>%
         dplyr::slice(1)
 
+      # Application du test de pettitt
+      donnees_orig <-  dataPLT() %>%
+        mutate(Annee = lubridate::year(Date)) %>%
+        dplyr::distinct()
+
+      pettitTestResult(
+        dataPLT() %>%
+          # na.omit() %>%
+          dplyr::group_by(station) %>% # groupement des station par code ADHI
+          dplyr::summarise(list_PT = list(trend::pettitt.test(variable))) %>% # application du test
+          # convertion des valeurs retournées par le test en objet {{Double}}
+          dplyr::mutate(
+            pettitt.value = purrr::map(list_PT, ~as.numeric(.x[[3]])),
+            p.value = purrr::map(list_PT, ~as.numeric(.x[[4]]))
+          ) %>%
+          dplyr::select(-list_PT) %>% # suppression de la colonne nesté {list_MK}
+          tidyr::unnest(cols = c(pettitt.value, p.value)) %>% # désimbrication des colonnes d'intêrets
+          #jointure
+          fuzzyjoin::regex_inner_join(#jointure interne
+            dataPLT(), by = "station"
+          )%>%
+          dplyr::ungroup() %>% dplyr::rename(Station = station.x)  %>%
+          dplyr::select(Station, Longitude, Latitude,  pettitt.value, p.value) %>%
+          dplyr::group_by(Station) %>%
+          # filter(p.value <= .05) %>%
+          # extraction des années de rupture
+          dplyr::mutate(
+            an.rupture = (
+              min(donnees_orig$Annee):max(donnees_orig$Annee)
+            )[pettitt.value]
+          ) %>%
+          dplyr::group_by(Station) %>%
+          dplyr::slice(1) %>%
+          dplyr::select(Station,  Longitude, Latitude, "Annee Rupture" = an.rupture, p.value)
+      )
+
       # pour l'envoi vers excel
       ForExcelTransfert(
-        mk_test_result %>%
-          dplyr::mutate(
-            seuil.p.value = cut(
-              p.value, breaks = c(0, 0.05, 0.1, 1), labels = c("p<0.05", "0.05<p<0.10", "p>0.10")
+        list(
+          "Mann-Kendall" = mk_test_result %>%
+            dplyr::mutate(
+              seuil.p.value = cut(
+                p.value, breaks = c(0, 0.05, 0.1, 1), labels = c("p<0.05", "0.05<p<0.10", "p>0.10")
+              ),
+              direction = ordered(
+                ifelse(SenSlope > 0, "Ascendant", "Descendant"), levels = c("Ascendant", "Descendant")
+              ),
+              significativité =  case_when(
+                Z < -1.96 ~" Tendance Négative Significative",
+                Z > 1.96 ~ "Tendance Postive Significative",
+                TRUE ~ "Aucune Tendance Significative"
+              )
             ),
-            direction = ordered(
-              ifelse(SenSlope > 0, "Ascendant", "Descendant"), levels = c("Ascendant", "Descendant")
-            ),
-            significativité =  case_when(
-              Z < -1.96 ~" Tendance Négative Significative",
-              Z > 1.96 ~ "Tendance Postive Significative",
-              TRUE ~ "Aucune Tendance Significative"
-            )
-          )
+          "Pettitt" = pettitTestResult()
+        )
       )
 
       # graph sen slope
@@ -373,7 +412,7 @@ mod_performing_trend_analysis_server <- function(id, TrendAnalysisData, stations
           ) +
           ggplot2::geom_text(
             vjust = .7, nudge_x = 0, size = 3,
-            ggplot2::aes(x=ifelse(SenSlope>0, SenSlope+.28, SenSlope-.28), y=Station, label = paste0("p = ", round(p.value, 8)))
+            ggplot2::aes(x=ifelse(SenSlope>0,  SenSlope+.20, SenSlope-.20), y=Station, label = paste0("p = ", round(p.value, 8)))
           ) +
           ggplot2::scale_y_discrete(expand = c(.03, .03)) +
           ggplot2::scale_x_continuous(
@@ -459,28 +498,33 @@ mod_performing_trend_analysis_server <- function(id, TrendAnalysisData, stations
 
       ### Exporting result---------------------------------------------------------------#
       #* jpeg
-      output$exportSenSlopePlotJPEG <-  downloadHandler(
+      output$exportJPEG <-  downloadHandler(
         filename = function() {
-          paste("Graph-Résultats-AnalyseDeTendance-PenteDeSen-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+          paste("Graph-Résultats-AnalysedeTendance-PenteDeSen", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
         },
         content = function(file) {
           ggplot2::ggsave(plot = TrendTestGraph(), filename = file,width = 13.3, height = 7.05)
         }
       )
       # svg
-      output$exportSenSlopePlotSVG <-  downloadHandler(
+      output$exportSVG <-  downloadHandler(
         filename = function() {
-          paste("Graph-Résultats-AnalyseDeTendance-PenteDeSen-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+          paste("Graph-Résultats-AnalysedeTendance-PenteDeSen", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
         },
         content = function(file) {
           ggplot2::ggsave(plot = TrendTestGraph(), filename = file, width = 13.3, height = 7.05)
         }
       )
+
       # exportation des résultats vers excel
-      observeEvent(ignoreInit = T, ignoreNULL = T, input$mkTestToExcel, {
-        req(ForExcelTransfert())
-        show_in_excel(ForExcelTransfert())
-      })
+      output$mkTestToExcel <-  downloadHandler(
+        filename = function() {
+          paste("Résultats-AnalyseDeTendance-MannKendall-Pettitt", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
+        },
+        content = function(file) {
+          writexl::write_xlsx(ForExcelTransfert(), file)
+        }
+      )
 
       # |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
       # GESTION DES BOUTTONS INTERNE AU MODAL
@@ -529,24 +573,6 @@ mod_performing_trend_analysis_server <- function(id, TrendAnalysisData, stations
           dplyr::group_by(Station) %>%
           dplyr::slice(1)
 
-        # pour l'envoi vers excel
-        ForExcelTransfert(
-          mk_test_result %>%
-            dplyr::mutate(
-              seuil.p.value = cut(
-                p.value, breaks = c(0, 0.05, 0.1, 1), labels = c("p<0.05", "0.05<p<0.10", "p>0.10")
-              ),
-              direction = ordered(
-                ifelse(SenSlope > 0, "Ascendant", "Descendant"), levels = c("Ascendant", "Descendant")
-              ),
-              significativité =  case_when(
-                Z < -1.96 ~" Tendance Négative Significative",
-                Z > 1.96 ~ "Tendance Postive Significative",
-                TRUE ~ "Aucune Tendance Significative"
-              )
-            )
-        )
-
         # graph sen slope
         # custom palette
         palett <- gplots::rich.colors(100, palette = "temperature", rgb = F)
@@ -577,7 +603,7 @@ mod_performing_trend_analysis_server <- function(id, TrendAnalysisData, stations
             ) +
             ggplot2::geom_text(
               vjust = .7, nudge_x = 0, size = 3,
-              ggplot2::aes(x=ifelse(SenSlope>0, SenSlope+.28, SenSlope-.28), y=Station, label = paste0("p = ", round(p.value, 8)))
+              ggplot2::aes(x=ifelse(SenSlope>0, SenSlope+.20, SenSlope-.20), y=Station, label = paste0("p = ", round(p.value, 8)))
             ) +
             ggplot2::scale_y_discrete(expand = c(.03, .03)) +
             ggplot2::scale_x_continuous(
@@ -663,28 +689,23 @@ mod_performing_trend_analysis_server <- function(id, TrendAnalysisData, stations
 
         ### Exporting result---------------------------------------------------------------#
         #* jpeg
-        output$exportLinearTrendPlotJPEG <-  downloadHandler(
+        output$exportJPEG <-  downloadHandler(
           filename = function() {
-            paste("Graph-Résultats-AnalysedeTendance-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+            paste("Graph-Résultats-AnalysedeTendance-PenteDeSen", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
           },
           content = function(file) {
             ggplot2::ggsave(plot = TrendTestGraph(), filename = file,width = 13.3, height = 7.05)
           }
         )
         # svg
-        output$exportLinearTrendPlotSVG <-  downloadHandler(
+        output$exportSVG <-  downloadHandler(
           filename = function() {
-            paste("Graph-Résultats-AnalysedeTendance-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+            paste("Graph-Résultats-AnalysedeTendance-PenteDeSen", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
           },
           content = function(file) {
             ggplot2::ggsave(plot = TrendTestGraph(), filename = file, width = 13.3, height = 7.05)
           }
         )
-        # exportation des résultats vers excel
-        observeEvent(ignoreInit = T, ignoreNULL = T, input$mkTestToExcel, {
-          req(ForExcelTransfert())
-          show_in_excel(ForExcelTransfert())
-        })
 
       }) # PENTE DE SEN
 
@@ -751,24 +772,6 @@ mod_performing_trend_analysis_server <- function(id, TrendAnalysisData, stations
               TRUE ~ "Aucune Tendance Significative"
             )
           )
-
-        # pour l'envoi vers excel
-        ForExcelTransfert(
-          mk_test_result %>%
-            dplyr::mutate(
-              seuil.p.value = cut(
-                p.value, breaks = c(0, 0.05, 0.1, 1), labels = c("p<0.05", "0.05<p<0.10", "p>0.10")
-              ),
-              direction = ordered(
-                ifelse(SenSlope > 0, "Ascendant", "Descendant"), levels = c("Ascendant", "Descendant")
-              ),
-              significativité =  case_when(
-                Z < -1.96 ~" Tendance Négative Significative",
-                Z > 1.96 ~ "Tendance Postive Significative",
-                TRUE ~ "Aucune Tendance Significative"
-              )
-            )
-        )
 
         #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         # | INTERPOLATION PAR KRIGEAGE---------------------------------------------------------------------#
@@ -1202,11 +1205,31 @@ mod_performing_trend_analysis_server <- function(id, TrendAnalysisData, stations
         output$TrendAnalysisPlot <- renderPlot({
           req(TrendTestGraph())
           TrendTestGraph()
-        })
+        }, res = 57)
 
         # Button settings
         shinyjs::enable("zValue")
         shinyjs::removeClass(id = "zValueAnimate", class = "loading dots")
+
+        ### Exporting result---------------------------------------------------------------#
+        #* jpeg
+        output$exportJPEG <-  downloadHandler(
+          filename = function() {
+            paste("Graph-Résultats-AnalysedeTendance-CarteValeursZ", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+          },
+          content = function(file) {
+            ggplot2::ggsave(plot = TrendTestGraph(), filename = file,width = 13.3, height = 7.05)
+          }
+        )
+        # svg
+        output$exportSVG <-  downloadHandler(
+          filename = function() {
+            paste("Graph-Résultats-AnalysedeTendance-CarteValeursZ", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+          },
+          content = function(file) {
+            ggplot2::ggsave(plot = TrendTestGraph(), filename = file, width = 13.3, height = 7.05)
+          }
+        )
 
       }) # SPATIALISATION DES VALEURS Z
 

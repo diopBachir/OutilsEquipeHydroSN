@@ -37,6 +37,7 @@ Imports:
     htmltools,
     htmlwidgets,
     ipc,
+    latex2exp,
     leaflet,
     lubridate,
     magrittr,
@@ -64,6 +65,7 @@ Imports:
     terra,
     tidyquant,
     tools,
+    trend,
     vroom,
     writexl
 Suggests: 
