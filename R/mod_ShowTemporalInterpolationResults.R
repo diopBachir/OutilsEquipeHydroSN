@@ -16,19 +16,19 @@ mod_ShowTemporalInterpolationResults_ui <- function(id){
     fluidRow(align = "center",
              # krigeage
              column(
-               3, actionButton(ns("showKrigeResult"), label="Krigeage", icon = icon("chart-scatter"), class = "btn btn-success")
+               3, actionButton(ns("showKrigeResult"), label="Krigeage", icon = icon("poll"), class = "btn btn-success")
              ),
              # krigeage
              column(
-               3, actionButton(ns("showIdwResult"), label="IDW", icon = icon("chart-scatter"), class = "btn btn-success")
+               3, actionButton(ns("showIdwResult"), label="IDW", icon = icon("poll"), class = "btn btn-success")
              ),
              # krigeage
              column(
-               3, actionButton(ns("showThiessenResult"), label="Thiessen", icon = icon("chart-scatter"), class = "btn btn-success")
+               3, actionButton(ns("showThiessenResult"), label="Thiessen", icon = icon("poll"), class = "btn btn-success")
              ),
              # krigeage
              column(
-               3, actionButton(ns("showSplineResult"), label="Spline", icon = icon("chart-scatter"), class = "btn btn-success")
+               3, actionButton(ns("showSplineResult"), label="Spline", icon = icon("poll"), class = "btn btn-success")
              )
     ),
 

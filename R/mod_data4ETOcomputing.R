@@ -13,9 +13,9 @@ mod_data4ETOcomputing_ui <- function(id){
     fluidRow(align="left",
              column(12,
                     fileInput(
-                      ns("dataInput"), label = div("Importer le.s Fichier.s CSV contenant les données météorologiques",
+                      ns("dataInput"), label = div("Importer le.s Fichier.s contenant les données météorologiques",
                                                    style = "color:#gray;family:Georgia;font-size:120%"),
-                      accept = c(".csv"),  buttonLabel = "Charger...",
+                      accept = c(".csv", ".xls", ".xlsx"),  buttonLabel = "Charger...",
                       placeholder = "fichiers CSV", multiple = T, width = "100%"
                     )
              )

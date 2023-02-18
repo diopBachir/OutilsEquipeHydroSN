@@ -73,7 +73,7 @@ mod_unique_periode_time_serie_interpolation_map_ui <- function(id){
     ),
     tags$hr(style="border-color:gray;"),
     fluidRow(align = "center",
-             column(3, dipsaus::actionButtonStyled(ns("idw"), span("Interpolation", id=ns("idwAnimate")), icon = icon("itercom"), class= "", type="primary")),
+             column(3, dipsaus::actionButtonStyled(ns("idw"), span("Interpolation", id=ns("idwAnimate")), icon = icon("buromobelexperte"), class= "", type="primary")),
              column(3, dipsaus::actionButtonStyled(ns("map"), span("Cartographie", id=ns("mapAnimate")), icon = icon("map"), class= "", type="primary")),
              column(3, downloadButton(ns("exportPlotJPEG"), label="JPEG", icon = icon("download"), class = "btn btn-info")),
              column(3, downloadButton(ns("exportPlotSVG"), label="SVG", icon = icon("download"), class = "btn btn-info"))

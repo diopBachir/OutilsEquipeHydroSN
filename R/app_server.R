@@ -16,7 +16,7 @@ app_server <- function(input, output, session) {
 
   # ||||||||||||||||||||||||||||||||||||| BOXPLOTS MENSUELS
   # plot options
-  monthlyBoxplotOptions<-  mod_monthlyBoxplotOptions_server("monthlyBoxplotOptions_1")
+  monthlyBoxplotOptions<- mod_monthlyBoxplotOptions_server("monthlyBoxplotOptions_1")
   # données
   monthlyBoxplotData<- mod_data4MonthlyBoxplot_server("data4MonthlyBoxplot_1")
   # observation du changement des donées
@@ -444,6 +444,55 @@ app_server <- function(input, output, session) {
       TrendAnalysisPlotsOptions, limites_bv_time_serie_trend_analysis$limite_bassin_versant()
     )
 
+  })
+
+  #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+  #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+  #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+
+  # ||||||||||||||||||||||||||||||||||||| HYDROLOGICA MODELS
+  # data
+  daily4GR4J<-  mod_data4GR4Jmodel_server("data4GR4Jmodel_1")
+  # gettingData
+  gr4j.application.data<- daily4GR4J$data_for_GR_modelisiation
+  ##==================================================================#
+  observeEvent(ignoreInit = FALSE, gr4j.application.data(), {
+    # gettingData
+    gr4j.application.data<- daily4GR4J$data_for_GR_modelisiation
+    # options
+    gr4japplication.options<- mod_gr4j_model_options_server("gr4g_model_options_1", gr4j.application.data())
+    # calage, validation and simulation
+    calage_validation_simulation_result <-mod_calage_validation_simulation_server(
+      "calage_validation_simulation_1", gr4j.application.data(), gr4japplication.options,
+      gr4J_parameters$parametres_simulation
+    )
+    # choix des paramètres du modèles pour la simulation
+    gr4J_parameters<- mod_mod_gr4j_model_pars_choose_server(
+      "mod_gr4j_model_pars_choose_1", calage_validation_simulation_result$cross_valid_best_params
+    )
+    # visualisation et exportation des résultats
+    mod_gr4j_results_graphs_n_exportation_server(
+      "gr4j_results_graphs_n_exportation_1",
+      # période d'échauffement
+      calage_validation_simulation_result$warm_up_period(),
+      # donnees
+      calage_validation_simulation_result$cross_validation_data_first(),
+      calage_validation_simulation_result$cross_validation_data_second(),
+      calage_validation_simulation_result$overall_serie_data(),
+      # Validation Croisée 1
+      calage_validation_simulation_result$cross_validation_period_1_1(),
+      calage_validation_simulation_result$cross_validation_period_1_2(),
+      calage_validation_simulation_result$calibration_1(),
+      calage_validation_simulation_result$validation_1(),
+      # Validation Croisée 1
+      calage_validation_simulation_result$cross_validation_period_2_1(),
+      calage_validation_simulation_result$cross_validation_period_2_2(),
+      calage_validation_simulation_result$calibration_2(),
+      calage_validation_simulation_result$validation_2(),
+      # simulation
+      calage_validation_simulation_result$simulation_period(),
+      calage_validation_simulation_result$simulation_output_result()
+    )
   })
 
 }

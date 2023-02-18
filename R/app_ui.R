@@ -51,7 +51,7 @@ app_ui <- function(request) {
                br(), br(), br(), br(),
 
                # GRAPHIQUES
-               navbarMenu(div("Graphiques", style = "color:white;font-size:100%;font-family:georgia"),
+               navbarMenu(div("Graphiques", style = "color:white;font-size:90%;font-family:georgia"),
 
                           "BOXPLOTS ============================================================||",
 
@@ -507,7 +507,7 @@ app_ui <- function(request) {
                #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
 
                ## INTERPOLATION SPATIALE
-               navbarMenu(div("Interpolation Spatiale", style = "color:white;font-size:100%;font-family:georgia"),
+               navbarMenu(div("Interpolation Spatiale", style = "color:white;font-size:90%;font-family:georgia"),
 
                           tabPanel(div("Valeur Moyenne d'un Bassin", style = "color:black;font-size:110%;font-family:georgia;"),
 
@@ -667,7 +667,7 @@ app_ui <- function(request) {
                #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
                #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
 
-               navbarMenu(div("Variables|Indices|Statistiques", style = "color:white;font-size:100%;font-family:georgia"),
+               navbarMenu(div("Variables|Indices|Statistiques", style = "color:white;font-size:90%;font-family:georgia"),
 
                           #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||,||||||||||||||||||||||||||||||||||||||||||#
                           "VARIABLES ==============================================================||",
@@ -820,6 +820,56 @@ app_ui <- function(request) {
                                      ) # tabsetPanel
                                    )
                           ), #tabPanel
+               ), # Variables|Indices|Statistiques
+
+               #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+               #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+               #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+
+               navbarMenu(div("Modélisation Hydro", style = "color:white;font-size:90%;font-family:georgia"),
+
+                          #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||,||||||||||||||||||||||||||||||||||||||||||#
+                          "MODElES GR =============================================================||",
+
+                          # GR4J
+                          tabPanel(div("Modèle GR4J", style = "color:black;font-size:110%;font-family:georgia;"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_gr4j_model_options_ui("gr4g_model_options_1"),
+
+                                     # choix des paramètres du modèle
+                                     mod_mod_gr4j_model_pars_choose_ui("mod_gr4j_model_pars_choose_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # données
+                                         mod_data4GR4Jmodel_ui("data4GR4Jmodel_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Calage||Validation||Simulation", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # calage et simulation
+                                         mod_calage_validation_simulation_ui("calage_validation_simulation_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Résulats||Graphs||Exportations", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # exportations des résultats
+                                         mod_gr4j_results_graphs_n_exportation_ui("gr4j_results_graphs_n_exportation_1")
+                                       )#tabPanel
+                                     ) # tabsetPanel
+                                   ) # mainPanel
+                          ), # tabPanel
                )
     )
   )
