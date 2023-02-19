@@ -1,4 +1,4 @@
-#' data4GR4Jmodel UI Function
+#' mod_data4GR2Mmodel UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_data4GR4Jmodel_ui <- function(id){
+mod_mod_data4GR2Mmodel_ui <- function(id){
   ns <- NS(id)
   tagList(
     fluidRow(align="left",
@@ -30,10 +30,10 @@ mod_data4GR4Jmodel_ui <- function(id){
   )
 }
 
-#' data4GR4Jmodel Server Functions
+#' mod_data4GR2Mmodel Server Functions
 #'
 #' @noRd
-mod_data4GR4Jmodel_server <- function(id){
+mod_mod_data4GR2Mmodel_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
@@ -196,9 +196,9 @@ mod_data4GR4Jmodel_server <- function(id){
       if(data_type_columns){
         shinyFeedback::hideFeedback("dataInput")
         shinyFeedback::feedbackSuccess("dataInput", data_type_columns,
-          paste0(
-            "Fichier Chargé Avec Succès ", icon("check"), icon("check"), icon("check")
-          )
+                                       paste0(
+                                         "Fichier Chargé Avec Succès ", icon("check"), icon("check"), icon("check")
+                                       )
         )
         return(
           data_loaded() %>%
@@ -233,7 +233,7 @@ mod_data4GR4Jmodel_server <- function(id){
 }
 
 ## To be copied in the UI
-# mod_data4GR4Jmodel_ui("data4GR4Jmodel_1")
+# mod_mod_data4GR2Mmodel_ui("mod_data4GR2Mmodel_1")
 
 ## To be copied in the server
-# mod_data4GR4Jmodel_server("data4GR4Jmodel_1")
+# mod_mod_data4GR2Mmodel_server("mod_data4GR2Mmodel_1")

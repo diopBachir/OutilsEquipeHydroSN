@@ -1,4 +1,4 @@
-#' gr4g_model_options UI Function
+#' gr2m_model_options UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,17 +7,19 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_gr4j_model_options_ui <- function(id){
+mod_gr2m_model_options_ui <- function(id){
   ns <- NS(id)
   tagList(
-    uiOutput(ns("model_options"))
+    tagList(
+      uiOutput(ns("model_options"))
+    )
   )
 }
 
-#' gr4g_model_options Server Functions
+#' gr2m_model_options Server Functions
 #'
 #' @noRd
-mod_gr4j_model_options_server <- function(id, ready_data_4_gr4j_application){
+mod_gr2m_model_options_server <- function(id, ready_data_4_gr4j_application){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
@@ -56,8 +58,8 @@ mod_gr4j_model_options_server <- function(id, ready_data_4_gr4j_application){
 
         column(12, tags$hr(style="border-color:gray;")),
 
-        column(12, h4("Options De Mise en Route [jours]", style="font-family=georgia;color:blue;")),
-        column(12,  numericInput(ns("nbWarmUpYear"), div("Période D'échauffement", style="font-size:85%;"), value = 730, width="100%")),
+        column(12, h4("Options De Mise en Route [années]", style="font-family=georgia;color:blue;")),
+        column(12,  numericInput(ns("nbWarmUpYear"), div("Période D'échauffement", style="font-size:85%;"), value = 2, width="100%")),
         column(12,  selectInput(
           ns("calibrationType"), div("Type De Calibration", style="font-size:85%;"),
           choices = c("Fonction Objective Unique [KGE[Q]]", "Critère Composite [KGE[Q], NSE[sqrt(Q)]]"), selected = "Fonction Objective Unique [KGE[Q]]", width="100%"
@@ -79,7 +81,7 @@ mod_gr4j_model_options_server <- function(id, ready_data_4_gr4j_application){
 }
 
 ## To be copied in the UI
-# mod_gr4j_model_options_ui("gr4g_model_options_1")
+# mod_gr2m_model_options_ui("gr2m_model_options_1")
 
 ## To be copied in the server
-# mod_gr4j_model_options_server("gr4g_model_options_1")
+# mod_gr2m_model_options_server("gr2m_model_options_1")

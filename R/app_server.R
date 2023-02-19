@@ -450,7 +450,53 @@ app_server <- function(input, output, session) {
   #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
   #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
 
-  # ||||||||||||||||||||||||||||||||||||| HYDROLOGICA MODELS
+  # ||||||||||||||||||||||||||||||||||||| HYDROLOGICA MODELS : GR2M
+  # data
+  daily4GR2M<-  mod_mod_data4GR2Mmodel_server("mod_data4GR2Mmodel_1")
+  # gettingData
+  gr2m.application.data<- daily4GR2M$data_for_GR_modelisiation
+  ##==================================================================#
+  ##==================================================================#
+  observeEvent(ignoreInit = FALSE, gr2m.application.data(), {
+    # gettingData
+    gr2m.application.data<- daily4GR2M$data_for_GR_modelisiation
+    # options
+    gr2m_application.options<- mod_gr2m_model_options_server("gr2m_model_options_1", gr2m.application.data())
+    # calage, validation and simulation
+    gr2m_calage_validation_simulation_result <- mod_gr2m_calage_validation_simulation_server(
+      "gr2m_calage_validation_simulation_1", gr2m.application.data(), gr2m_application.options,
+      gr2m_parameters_choose$parametres_simulation
+    )
+    # choix des paramètres du modèles pour la simulation
+    gr2m_parameters_choose<- mod_gr2m_parameters_server(
+      "gr2m_parameters_1", gr2m_calage_validation_simulation_result$cross_valid_best_params
+    )
+    # visualisation et exportation des résultats
+    mod_gr2m_results_graphs_n_exportation_server(
+      "gr2m_results_graphs_n_exportation_1",
+      # période d'échauffement
+      gr2m_calage_validation_simulation_result$warm_up_period(),
+      # donnees
+      gr2m_calage_validation_simulation_result$cross_validation_data_first(),
+      gr2m_calage_validation_simulation_result$cross_validation_data_second(),
+      gr2m_calage_validation_simulation_result$overall_serie_data(),
+      # Validation Croisée 1
+      gr2m_calage_validation_simulation_result$cross_validation_period_1_1(),
+      gr2m_calage_validation_simulation_result$cross_validation_period_1_2(),
+      gr2m_calage_validation_simulation_result$calibration_1(),
+      gr2m_calage_validation_simulation_result$validation_1(),
+      # Validation Croisée 1
+      gr2m_calage_validation_simulation_result$cross_validation_period_2_1(),
+      gr2m_calage_validation_simulation_result$cross_validation_period_2_2(),
+      gr2m_calage_validation_simulation_result$calibration_2(),
+      gr2m_calage_validation_simulation_result$validation_2(),
+      # simulation
+      gr2m_calage_validation_simulation_result$simulation_period(),
+      gr2m_calage_validation_simulation_result$simulation_output_result()
+    )
+  })
+
+  # ||||||||||||||||||||||||||||||||||||| HYDROLOGICA MODELS : GR4J
   # data
   daily4GR4J<-  mod_data4GR4Jmodel_server("data4GR4Jmodel_1")
   # gettingData
@@ -494,6 +540,5 @@ app_server <- function(input, output, session) {
       calage_validation_simulation_result$simulation_output_result()
     )
   })
-
 }
 
