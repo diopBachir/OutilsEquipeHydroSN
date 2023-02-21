@@ -1,4 +1,4 @@
-#' gr4j_results_graphs_n_exportation UI Function
+#' gr6j_results_graphs_n_exportation UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_gr4j_results_graphs_n_exportation_ui <- function(id){
+mod_gr6j_results_graphs_n_exportation_ui <- function(id){
   ns <- NS(id)
   tagList(
     tags$head(tags$style(type="text/css", '
@@ -76,14 +76,14 @@ mod_gr4j_results_graphs_n_exportation_ui <- function(id){
              column(4,
                     actionButton(
                       ns("cross_validation_plot2"), label=span("Cross-Validation [Sampling 2]", id=ns("simulation_animate"),
-                                                   style = "font-size:105%;"),
+                                                               style = "font-size:105%;"),
                       icon = icon("poll"), class = "btn-info", width = "105%"
                     )
              ),
              column(4,
                     actionButton(
                       ns("simulation_plot"), label=span("Simulation [Sample Serie]", id=ns("simulation_animate"),
-                                                               style = "font-size:110%;"),
+                                                        style = "font-size:110%;"),
                       icon = icon("poll"), class = "btn-info", width = "100%"
                     )
              )
@@ -119,7 +119,7 @@ mod_gr4j_results_graphs_n_exportation_ui <- function(id){
              column(2,
                     actionButton(
                       ns("validation1"), label=span("Valid... 1", id=ns("validation1_animate"),
-                                                               style = "font-size:105%;"),
+                                                    style = "font-size:105%;"),
                       icon = icon("table"), class = "btn-info", width = "100%"
                     )
              ),
@@ -154,10 +154,10 @@ mod_gr4j_results_graphs_n_exportation_ui <- function(id){
   )
 }
 
-#' gr4j_results_graphs_n_exportation Server Functions
+#' gr6j_results_graphs_n_exportation Server Functions
 #'
 #' @noRd
-mod_gr4j_results_graphs_n_exportation_server <- function(
+mod_gr6j_results_graphs_n_exportation_server <- function(
     # id
     id,
     # période d'échaffement
@@ -253,7 +253,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #* jpeg
       output$toJPEG <-  downloadHandler(
         filename = function() {
-          paste("Cross-Validation1--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+          paste("Cross-Validation1--GR6J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
         },
         content = function(file) {
           # 1. Open jpeg file
@@ -270,7 +270,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #* svg
       output$toSVG <-  downloadHandler(
         filename = function() {
-          paste("Cross-Validation1--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+          paste("Cross-Validation1--GR6J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
         },
         content = function(file) {
           # 1. Open jpeg file
@@ -287,7 +287,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #*excel
       output$toExcel <-  downloadHandler(
         filename = function() {
-          paste("Cross-Validation1--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
+          paste("Cross-Validation1--GR6J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
         },
         content = function(file) {
           writexl::write_xlsx(
@@ -345,7 +345,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #* jpeg
         output$toJPEG <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation1--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+            paste("Cross-Validation1--GR6J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
           },
           content = function(file) {
             # 1. Open jpeg file
@@ -362,7 +362,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #* svg
         output$toSVG <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation1--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+            paste("Cross-Validation1--GR6J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
           },
           content = function(file) {
             # 1. Open jpeg file
@@ -379,7 +379,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #*excel
         output$toExcel <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation1--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
+            paste("Cross-Validation1--GR6J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
           },
           content = function(file) {
             writexl::write_xlsx(
@@ -436,7 +436,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #* jpeg
         output$toJPEG <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation1--GR4J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+            paste("Cross-Validation1--GR6J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
           },
           content = function(file) {
             # 1. Open jpeg file
@@ -453,7 +453,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #* svg
         output$toSVG <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation1--GR4J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+            paste("Cross-Validation1--GR6J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
           },
           content = function(file) {
             # 1. Open jpeg file
@@ -470,7 +470,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #*excel
         output$toExcel <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation1--GR4J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
+            paste("Cross-Validation1--GR6J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
           },
           content = function(file) {
             writexl::write_xlsx(
@@ -583,7 +583,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #* jpeg
       output$toJPEG2 <-  downloadHandler(
         filename = function() {
-          paste("Cross-Validation2--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+          paste("Cross-Validation2--GR6J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
         },
         content = function(file) {
           # 1. Open jpeg file
@@ -600,7 +600,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #* svg
       output$toSVG2 <-  downloadHandler(
         filename = function() {
-          paste("Cross-Validation2--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+          paste("Cross-Validation2--GR6J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
         },
         content = function(file) {
           # 1. Open jpeg file
@@ -617,7 +617,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #*excel
       output$toExcel2 <-  downloadHandler(
         filename = function() {
-          paste("Cross-Validation2--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
+          paste("Cross-Validation2--GR6J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
         },
         content = function(file) {
           writexl::write_xlsx(
@@ -666,7 +666,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         output$plot_cross_validation2<- renderPlot({
           req(calibration_2, cross__validation_data_second, ind_Run_cal_cross2)
           plot_OutputsModel_wrap(
-            calibration_2, Qobs =  cross__validation_data_second$Qobs[ind_Run_cal_cross2],
+            calibration_2, Qobs = cross__validation_data_second$Qobs[ind_Run_cal_cross2],
             cex.axis = 1.3, cex.lab = 1, cex.leg = 1.25, lwd = 1.4
           )
         })
@@ -676,7 +676,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #* jpeg
         output$toJPEG2 <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation2--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+            paste("Cross-Validation2--GR6J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
           },
           content = function(file) {
             # 1. Open jpeg file
@@ -693,7 +693,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #* svg
         output$toSVG2 <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation2--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+            paste("Cross-Validation2--GR6J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
           },
           content = function(file) {
             # 1. Open jpeg file
@@ -710,7 +710,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #*excel
         output$toExcel2 <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation2--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
+            paste("Cross-Validation2--GR6J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
           },
           content = function(file) {
             writexl::write_xlsx(
@@ -768,7 +768,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #* jpeg
         output$toJPEG2 <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation2--GR4J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+            paste("Cross-Validation2--GR6J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
           },
           content = function(file) {
             # 1. Open jpeg file
@@ -785,7 +785,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #* svg
         output$toSVG2 <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation2--GR4J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+            paste("Cross-Validation2--GR6J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
           },
           content = function(file) {
             # 1. Open jpeg file
@@ -802,7 +802,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #*excel
         output$toExcel2 <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation2--GR4J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
+            paste("Cross-Validation2--GR6J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
           },
           content = function(file) {
             writexl::write_xlsx(
@@ -837,7 +837,10 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
 
     # SIMULATION
     observeEvent(ignoreInit = TRUE, ignoreNULL = TRUE, input$simulation_plot, {
-      req(overall__serie_data, simulation__period, simulation__output_result, warm__up_period)
+      req(
+        overall__serie_data, simulation__period, simulation__output_result, warm__up_period
+        # result_calibration_tb
+      )
 
       # modal dialog
       showModal(modalDialog(
@@ -893,7 +896,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #* jpeg
       output$toJPEG3 <-  downloadHandler(
         filename = function() {
-          paste("Simulation-GR4J-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+          paste("Simulation-GR6J-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
         },
         content = function(file) {
           # 1. Open jpeg file
@@ -910,7 +913,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #* svg
       output$toSVG3 <-  downloadHandler(
         filename = function() {
-          paste("Simulation-GR4J-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+          paste("Simulation-GR6J-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
         },
         content = function(file) {
           # 1. Open jpeg file
@@ -927,7 +930,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #*excel
       output$toExcel3 <-  downloadHandler(
         filename = function() {
-          paste("Simulation-GR4J-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
+          paste("Simulation-GR6J-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
         },
         content = function(file) {
           writexl::write_xlsx(
@@ -1231,11 +1234,12 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       }, options = list(pageLength = 100))
 
     })
+
   })
 }
 
 ## To be copied in the UI
-# mod_gr4j_results_graphs_n_exportation_ui("gr4j_results_graphs_n_exportation_1")
+# mod_gr6j_results_graphs_n_exportation_ui("gr6j_results_graphs_n_exportation_1")
 
 ## To be copied in the server
-# mod_gr4j_results_graphs_n_exportation_server("gr4j_results_graphs_n_exportation_1")
+# mod_gr6j_results_graphs_n_exportation_server("gr6j_results_graphs_n_exportation_1")

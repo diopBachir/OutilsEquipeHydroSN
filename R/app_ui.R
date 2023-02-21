@@ -910,6 +910,86 @@ app_ui <- function(request) {
                                      ) # tabsetPanel
                                    ) # mainPanel
                           ), # tabPanel
+
+                          # GR5J
+                          tabPanel(div("Modèle GR5J", style = "color:black;font-size:110%;font-family:georgia;"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Modèle GR5J",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_gr5j_model_options_ui("gr5j_model_options_1"),
+
+                                     # choix des paramètres du modèle
+                                     mod_gr5J_parameters_ui("gr5J_parameters_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # données
+                                         mod_data4GR5Jmodel_ui("data4GR5Jmodel_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Calage||Validation||Simulation", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # calage et simulation
+                                         mod_gr5j_calage_validation_simulation_ui("gr5j_calage_validation_simulation_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Résulats||Graphs||Exportations", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # exportations des résultats
+                                         mod_gr5j_results_graphs_n_exportation_ui("gr5j_results_graphs_n_exportation_1")
+                                       )#tabPanel
+                                     ) # tabsetPanel
+                                   ) # mainPanel
+                          ), # tabPanel
+
+                          # GR5J
+                          tabPanel(div("Modèle GR6J", style = "color:black;font-size:110%;font-family:georgia;"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Modèle GR6J",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_gr6j_model_options_ui("gr6j_model_options_1"),
+
+                                     # choix des paramètres du modèle
+                                     mod_gr6J_parameters_ui("gr6J_parameters_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # données
+                                         mod_data4GR6Jmodel_ui("data4GR6Jmodel_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Calage||Validation||Simulation", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # calage et simulation
+                                         mod_gr6j_calage_validation_simulation_ui("gr6j_calage_validation_simulation_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Résulats||Graphs||Exportations", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # exportations des résultats
+                                         mod_gr6j_results_graphs_n_exportation_ui("gr6j_results_graphs_n_exportation_1")
+                                       )#tabPanel
+                                     ) # tabsetPanel
+                                   ) # mainPanel
+                          ), # tabPanel
                )
     )
   )

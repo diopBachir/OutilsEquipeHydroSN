@@ -60,7 +60,7 @@ mod_gr4j_model_options_server <- function(id, ready_data_4_gr4j_application){
         column(12,  numericInput(ns("nbWarmUpYear"), div("Période D'échauffement", style="font-size:85%;"), value = 730, width="100%")),
         column(12,  selectInput(
           ns("calibrationType"), div("Type De Calibration", style="font-size:85%;"),
-          choices = c("Fonction Objective Unique [KGE[Q]]", "Critère Composite [KGE[Q], NSE[sqrt(Q)]]"), selected = "Fonction Objective Unique [KGE[Q]]", width="100%"
+          choices = c("Fonction Objective Unique [KGE[Q]]", "Critère Composite [KGE[Q], NSE[sqrt(Q)]]"), selected = "Critère Composite [KGE[Q], NSE[sqrt(Q)]]", width="100%"
         )),
 
         column(12, tags$hr(style="border-color:gray;"))

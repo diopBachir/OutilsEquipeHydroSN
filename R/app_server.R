@@ -540,5 +540,96 @@ app_server <- function(input, output, session) {
       calage_validation_simulation_result$simulation_output_result()
     )
   })
+
+  # ||||||||||||||||||||||||||||||||||||| HYDROLOGICA MODELS : GR5J
+  # data
+  daily4GR5J<-  mod_data4GR5Jmodel_server("data4GR5Jmodel_1")
+  # gettingData
+  gr5j.application.data<- daily4GR5J$data_for_GR_modelisiation
+  ##==================================================================#
+  observeEvent(ignoreInit = FALSE, gr5j.application.data(), {
+    # gettingData
+    gr5j.application.data<- daily4GR5J$data_for_GR_modelisiation
+    # options
+    gr5japplication.options<- mod_gr5j_model_options_server("gr5j_model_options_1", gr5j.application.data())
+    # calage, validation and simulation
+    gr5j_calage_validation_simulation_result <-mod_gr5j_calage_validation_simulation_server(
+      "gr5j_calage_validation_simulation_1", gr5j.application.data(), gr5japplication.options,
+      gr5J_parameters$parametres_simulation
+    )
+    # choix des paramètres du modèles pour la simulation
+    gr5J_parameters<- mod_gr5J_parameters_server(
+      "gr5J_parameters_1", gr5j_calage_validation_simulation_result$cross_valid_best_params
+    )
+    # visualisation et exportation des résultats
+    mod_gr5j_results_graphs_n_exportation_server(
+      "gr5j_results_graphs_n_exportation_1",
+      # période d'échauffement
+      gr5j_calage_validation_simulation_result$warm_up_period(),
+      # donnees
+      gr5j_calage_validation_simulation_result$cross_validation_data_first(),
+      gr5j_calage_validation_simulation_result$cross_validation_data_second(),
+      gr5j_calage_validation_simulation_result$overall_serie_data(),
+      # Validation Croisée 1
+      gr5j_calage_validation_simulation_result$cross_validation_period_1_1(),
+      gr5j_calage_validation_simulation_result$cross_validation_period_1_2(),
+      gr5j_calage_validation_simulation_result$calibration_1(),
+      gr5j_calage_validation_simulation_result$validation_1(),
+      # Validation Croisée 1
+      gr5j_calage_validation_simulation_result$cross_validation_period_2_1(),
+      gr5j_calage_validation_simulation_result$cross_validation_period_2_2(),
+      gr5j_calage_validation_simulation_result$calibration_2(),
+      gr5j_calage_validation_simulation_result$validation_2(),
+      # simulation
+      gr5j_calage_validation_simulation_result$simulation_period(),
+      gr5j_calage_validation_simulation_result$simulation_output_result()
+    )
+  })
+
+  # ||||||||||||||||||||||||||||||||||||| HYDROLOGICA MODELS : GR6J
+  # data
+  daily4GR6J<-  mod_data4GR5Jmodel_server("data4GR6Jmodel_1")
+  # gettingData
+  gr6j.application.data<- daily4GR6J$data_for_GR_modelisiation
+  ##==================================================================#
+  observeEvent(ignoreInit = FALSE, gr6j.application.data(), {
+    # gettingData
+    gr6j.application.data<- daily4GR6J$data_for_GR_modelisiation
+    # options
+    gr6japplication.options<- mod_gr6j_model_options_server("gr6j_model_options_1", gr6j.application.data())
+    # calage, validation and simulation
+    gr6j_calage_validation_simulation_result <-mod_gr6j_calage_validation_simulation_server(
+      "gr6j_calage_validation_simulation_1", gr6j.application.data(), gr6japplication.options,
+      gr6J_parameters$parametres_simulation
+    )
+    # choix des paramètres du modèles pour la simulation
+    gr6J_parameters<- mod_gr6J_parameters_server(
+      "gr6J_parameters_1", gr6j_calage_validation_simulation_result$cross_valid_best_params
+    )
+    # visualisation et exportation des résultats
+    mod_gr6j_results_graphs_n_exportation_server(
+      "gr6j_results_graphs_n_exportation_1",
+      # période d'échauffement 1
+      gr6j_calage_validation_simulation_result$warm_up_period(),
+      # donnees
+      gr6j_calage_validation_simulation_result$cross_validation_data_first(),
+      gr6j_calage_validation_simulation_result$cross_validation_data_second(),
+      gr6j_calage_validation_simulation_result$overall_serie_data(),
+      # Validation Croisée 1
+      gr6j_calage_validation_simulation_result$cross_validation_period_1_1(),
+      gr6j_calage_validation_simulation_result$cross_validation_period_1_2(),
+      gr6j_calage_validation_simulation_result$calibration_1(),
+      gr6j_calage_validation_simulation_result$validation_1(),
+      # Validation Croisée 1
+      gr6j_calage_validation_simulation_result$cross_validation_period_2_1(),
+      gr6j_calage_validation_simulation_result$cross_validation_period_2_2(),
+      gr6j_calage_validation_simulation_result$calibration_2(),
+      gr6j_calage_validation_simulation_result$validation_2(),
+      # simulation
+      gr6j_calage_validation_simulation_result$simulation_period(),
+      gr6j_calage_validation_simulation_result$simulation_output_result()
+    )
+  })
+
 }
 
