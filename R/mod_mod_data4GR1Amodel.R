@@ -1,4 +1,4 @@
-#' data4GR4Jmodel UI Function
+#' mod_data4GR1Amodel UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_data4GR4Jmodel_ui <- function(id){
+mod_mod_data4GR1Amodel_ui <- function(id){
   ns <- NS(id)
   tagList(
     fluidRow(align="left",
@@ -30,10 +30,10 @@ mod_data4GR4Jmodel_ui <- function(id){
   )
 }
 
-#' data4GR4Jmodel Server Functions
+#' mod_data4GR1Amodel Server Functions
 #'
 #' @noRd
-mod_data4GR4Jmodel_server <- function(id){
+mod_mod_data4GR1Amodel_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
@@ -87,8 +87,8 @@ mod_data4GR4Jmodel_server <- function(id){
         }
       }
 
-
       req(extension_fichier())
+
       # load data
       data_loaded<-reactive({
         req(extension_fichier())
@@ -197,9 +197,9 @@ mod_data4GR4Jmodel_server <- function(id){
       if(data_type_columns){
         shinyFeedback::hideFeedback("dataInput")
         shinyFeedback::feedbackSuccess("dataInput", data_type_columns,
-          paste0(
-            "Fichier Chargé Avec Succès ", icon("check"), icon("check"), icon("check")
-          )
+                                       paste0(
+                                         "Fichier Chargé Avec Succès ", icon("check"), icon("check"), icon("check")
+                                       )
         )
         return(
           data_loaded() %>%
@@ -229,12 +229,11 @@ mod_data4GR4Jmodel_server <- function(id){
         data_for_GR_modelisiation = reactive({data_for_dailyInventoryGraph()})
       )
     )
-
   })
 }
 
 ## To be copied in the UI
-# mod_data4GR4Jmodel_ui("data4GR4Jmodel_1")
+# mod_mod_data4GR1Amodel_ui("mod_data4GR1Amodel_1")
 
 ## To be copied in the server
-# mod_data4GR4Jmodel_server("data4GR4Jmodel_1")
+# mod_mod_data4GR1Amodel_server("mod_data4GR1Amodel_1")

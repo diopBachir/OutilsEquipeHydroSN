@@ -1,4 +1,4 @@
-#' gr4j_results_graphs_n_exportation UI Function
+#' gr1a_results_graphs_n_exportation UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,11 +7,9 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_gr4j_results_graphs_n_exportation_ui <- function(id){
+mod_gr1a_results_graphs_n_exportation_ui <- function(id){
   ns <- NS(id)
   tagList(
-    shinysuspend::useShinysuspend(),
-
     tags$head(tags$style(type="text/css", '
 
             .shiny-input-container {
@@ -78,14 +76,14 @@ mod_gr4j_results_graphs_n_exportation_ui <- function(id){
              column(4,
                     actionButton(
                       ns("cross_validation_plot2"), label=span("Cross-Validation [Sampling 2]", id=ns("simulation_animate"),
-                                                   style = "font-size:105%;"),
+                                                               style = "font-size:105%;"),
                       icon = icon("poll"), class = "btn-info", width = "105%"
                     )
              ),
              column(4,
                     actionButton(
                       ns("simulation_plot"), label=span("Simulation [Overall Serie]", id=ns("simulation_animate"),
-                                                               style = "font-size:110%;"),
+                                                        style = "font-size:110%;"),
                       icon = icon("poll"), class = "btn-info", width = "100%"
                     )
              )
@@ -121,7 +119,7 @@ mod_gr4j_results_graphs_n_exportation_ui <- function(id){
              column(2,
                     actionButton(
                       ns("validation1"), label=span("Valid... 1", id=ns("validation1_animate"),
-                                                               style = "font-size:105%;"),
+                                                    style = "font-size:105%;"),
                       icon = icon("table"), class = "btn-info", width = "100%"
                     )
              ),
@@ -156,23 +154,23 @@ mod_gr4j_results_graphs_n_exportation_ui <- function(id){
   )
 }
 
-#' gr4j_results_graphs_n_exportation Server Functions
+#' gr1a_results_graphs_n_exportation Server Functions
 #'
 #' @noRd
-mod_gr4j_results_graphs_n_exportation_server <- function(
+mod_gr1a_results_graphs_n_exportation_server <- function(
     # id
-    id,
-    # période d'échaffement
-    warm__up_period,
-    # donnees utilisées
-    cross__validation_data_first, cross__validation_data_second, overall__serie_data,
-    # cross validation [1] results
-    cross__validation_period_1_1, cross__validation_period_1_2, calibration_1, validation_1,
-    # cross validation [1] results
-    cross__validation_period_2_1, cross__validation_period_2_2, calibration_2, validation_2,
-    # simulation
-    simulation__period, simulation__output_result
-  ){
+  id,
+  # période d'échaffement
+  warm__up_period,
+  # donnees utilisées
+  cross__validation_data_first, cross__validation_data_second, overall__serie_data,
+  # cross validation [1] results
+  cross__validation_period_1_1, cross__validation_period_1_2, calibration_1, validation_1,
+  # cross validation [1] results
+  cross__validation_period_2_1, cross__validation_period_2_2, calibration_2, validation_2,
+  # simulation
+  simulation__period, simulation__output_result
+){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
@@ -188,7 +186,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       # calibration 1
       ind_WarmUp_cal_cross1 <- seq(
         which(cross__validation_data_first()$date == min(cross__validation_data_first()$date, na.rm = TRUE)),
-        which(cross__validation_data_first()$date == cross__validation_data_first()$date[1]+(lubridate::days(warm__up_period())-lubridate::days(1)))
+        which(cross__validation_data_first()$date == cross__validation_data_first()$date[1]+(lubridate::years(warm__up_period())-lubridate::years(1)))
       )
       ind_Run_cal_cross1 <- seq(
         max(ind_WarmUp_cal_cross1) + 1,
@@ -197,7 +195,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #* validation 1
       ind_WarmUp_val_cross1 <- seq(
         which(cross__validation_data_second()$date == min(cross__validation_data_second()$date, na.rm = TRUE)),
-        which(cross__validation_data_second()$date == cross__validation_data_second()$date[1]+(lubridate::days(warm__up_period())-lubridate::days(1)))
+        which(cross__validation_data_second()$date == cross__validation_data_second()$date[1]+(lubridate::years(warm__up_period())-lubridate::years(1)))
       )
       ind_Run_val_cross1 <- seq(
         max(ind_WarmUp_val_cross1) + 1,
@@ -256,7 +254,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #* jpeg
       output$toJPEG <-  downloadHandler(
         filename = function() {
-          paste("Cross-Validation1--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+          paste("Cross-Validation1--GR1A--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
         },
         content = function(file) {
           # 1. Open jpeg file
@@ -273,7 +271,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #* svg
       output$toSVG <-  downloadHandler(
         filename = function() {
-          paste("Cross-Validation1--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+          paste("Cross-Validation1--GR1A--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
         },
         content = function(file) {
           # 1. Open jpeg file
@@ -290,7 +288,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #*excel
       output$toExcel <-  downloadHandler(
         filename = function() {
-          paste("Cross-Validation1--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
+          paste("Cross-Validation1--GR1A--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
         },
         content = function(file) {
           writexl::write_xlsx(
@@ -349,7 +347,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #* jpeg
         output$toJPEG <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation1--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+            paste("Cross-Validation1--GR1A--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
           },
           content = function(file) {
             # 1. Open jpeg file
@@ -366,7 +364,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #* svg
         output$toSVG <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation1--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+            paste("Cross-Validation1--GR1A--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
           },
           content = function(file) {
             # 1. Open jpeg file
@@ -383,7 +381,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #*excel
         output$toExcel <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation1--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
+            paste("Cross-Validation1--GR1A--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
           },
           content = function(file) {
             writexl::write_xlsx(
@@ -441,7 +439,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #* jpeg
         output$toJPEG <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation1--GR4J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+            paste("Cross-Validation1--GR1A--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
           },
           content = function(file) {
             # 1. Open jpeg file
@@ -458,7 +456,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #* svg
         output$toSVG <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation1--GR4J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+            paste("Cross-Validation1--GR1A--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
           },
           content = function(file) {
             # 1. Open jpeg file
@@ -475,7 +473,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #*excel
         output$toExcel <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation1--GR4J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
+            paste("Cross-Validation1--GR1A--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
           },
           content = function(file) {
             writexl::write_xlsx(
@@ -521,7 +519,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       # calibration 1
       ind_WarmUp_cal_cross2 <- seq(
         which(cross__validation_data_second()$date == min(cross__validation_data_second()$date, na.rm = TRUE)),
-        which(cross__validation_data_second()$date == cross__validation_data_second()$date[1]+(lubridate::days(warm__up_period())-lubridate::days(1)))
+        which(cross__validation_data_second()$date == cross__validation_data_second()$date[1]+(lubridate::years(warm__up_period())-lubridate::years(1)))
       )
       ind_Run_cal_cross2 <- seq(
         max(ind_WarmUp_cal_cross2) + 1,
@@ -530,7 +528,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #* validation 1
       ind_WarmUp_val_cross2 <- seq(
         which(cross__validation_data_first()$date == min(cross__validation_data_first()$date, na.rm = TRUE)),
-        which(cross__validation_data_first()$date == cross__validation_data_first()$date[1]+(lubridate::days(warm__up_period())-lubridate::days(1)))
+        which(cross__validation_data_first()$date == cross__validation_data_first()$date[1]+(lubridate::years(warm__up_period())-lubridate::years(1)))
       )
       ind_Run_val_cross2 <- seq(
         max(ind_WarmUp_val_cross2) + 1,
@@ -589,7 +587,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #* jpeg
       output$toJPEG2 <-  downloadHandler(
         filename = function() {
-          paste("Cross-Validation2--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+          paste("Cross-Validation2--GR1A--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
         },
         content = function(file) {
           # 1. Open jpeg file
@@ -606,7 +604,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #* svg
       output$toSVG2 <-  downloadHandler(
         filename = function() {
-          paste("Cross-Validation2--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+          paste("Cross-Validation2--GR1A--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
         },
         content = function(file) {
           # 1. Open jpeg file
@@ -623,7 +621,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #*excel
       output$toExcel2 <-  downloadHandler(
         filename = function() {
-          paste("Cross-Validation2--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
+          paste("Cross-Validation2--GR1A--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
         },
         content = function(file) {
           writexl::write_xlsx(
@@ -683,7 +681,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #* jpeg
         output$toJPEG2 <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation2--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+            paste("Cross-Validation2--GR1A--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
           },
           content = function(file) {
             # 1. Open jpeg file
@@ -700,7 +698,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #* svg
         output$toSVG2 <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation2--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+            paste("Cross-Validation2--GR1A--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
           },
           content = function(file) {
             # 1. Open jpeg file
@@ -717,7 +715,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #*excel
         output$toExcel2 <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation2--GR4J--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
+            paste("Cross-Validation2--GR1A--Calibration_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
           },
           content = function(file) {
             writexl::write_xlsx(
@@ -776,7 +774,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #* jpeg
         output$toJPEG2 <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation2--GR4J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+            paste("Cross-Validation2--GR1A--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
           },
           content = function(file) {
             # 1. Open jpeg file
@@ -793,7 +791,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #* svg
         output$toSVG2 <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation2--GR4J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+            paste("Cross-Validation2--GR1A--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
           },
           content = function(file) {
             # 1. Open jpeg file
@@ -810,7 +808,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         #*excel
         output$toExcel2 <-  downloadHandler(
           filename = function() {
-            paste("Cross-Validation2--GR4J--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
+            paste("Cross-Validation2--GR1A--Validation_Period-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
           },
           content = function(file) {
             writexl::write_xlsx(
@@ -869,7 +867,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       # période d'exécution et d'échauffement
       ind_WarmUp_simulation <- seq(
         which(overall__serie_data()$date == min(overall__serie_data()$date, na.rm = T)),
-        which(overall__serie_data()$date == overall__serie_data()$date[1]+(lubridate::days(warm__up_period())-lubridate::days(1)))
+        which(overall__serie_data()$date == overall__serie_data()$date[1]+(lubridate::years(warm__up_period())-lubridate::years(1)))
       )
       ind_Run_simulation <- seq(
         max(ind_WarmUp_simulation) + 1,
@@ -915,7 +913,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #* jpeg
       output$toJPEG3 <-  downloadHandler(
         filename = function() {
-          paste("Simulation-GR4J-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
+          paste("Simulation-GR1A-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".jpeg")
         },
         content = function(file) {
           # 1. Open jpeg file
@@ -932,7 +930,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #* svg
       output$toSVG3 <-  downloadHandler(
         filename = function() {
-          paste("Simulation-GR4J-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
+          paste("Simulation-GR1A-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".svg")
         },
         content = function(file) {
           # 1. Open jpeg file
@@ -949,7 +947,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       #*excel
       output$toExcel3 <-  downloadHandler(
         filename = function() {
-          paste("Simulation-GR4J-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
+          paste("Simulation-GR1A-", stringr::str_replace_all(stringr::str_sub(Sys.time(), 1, 19), ":", "-"), ".xlsx")
         },
         content = function(file) {
           writexl::write_xlsx(
@@ -1007,7 +1005,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       # période d'exécution et d'échauffement
       ind_WarmUp_cal_cross1 <- seq(
         which(cross__validation_data_first()$date == min(cross__validation_data_first()$date, na.rm = TRUE)),
-        which(cross__validation_data_first()$date == cross__validation_data_first()$date[1]+(lubridate::days(warm__up_period())-lubridate::days(1)))
+        which(cross__validation_data_first()$date == cross__validation_data_first()$date[1]+(lubridate::years(warm__up_period())-lubridate::years(1)))
       )
       ind_Run_cal_cross1 <- seq(
         max(ind_WarmUp_cal_cross1) + 1,
@@ -1028,7 +1026,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         # shinyalert("Error!", w$message, type = "error")
         return()
       }
-     )
+      )
     }, options = list(pageLength = 100), future = TRUE)
 
     # Calibration 1
@@ -1055,7 +1053,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       # période d'exécution et d'échauffement
       ind_WarmUp_cal_cross1 <- seq(
         which(cross__validation_data_first()$date == min(cross__validation_data_first()$date, na.rm = TRUE)),
-        which(cross__validation_data_first()$date == cross__validation_data_first()$date[1]+(lubridate::days(warm__up_period())-lubridate::days(1)))
+        which(cross__validation_data_first()$date == cross__validation_data_first()$date[1]+(lubridate::years(warm__up_period())-lubridate::years(1)))
       )
       ind_Run_cal_cross1 <- seq(
         max(ind_WarmUp_cal_cross1) + 1,
@@ -1079,7 +1077,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
           # shinyalert("Error!", w$message, type = "error")
           return()
         }
-       )
+        )
       }, options = list(pageLength = 100))
 
     })
@@ -1108,7 +1106,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       # période d'exécution et d'échauffement
       ind_WarmUp_val_cross1 <- seq(
         which(cross__validation_data_second()$date == min(cross__validation_data_second()$date, na.rm = TRUE)),
-        which(cross__validation_data_second()$date == cross__validation_data_second()$date[1]+(lubridate::days(warm__up_period())-lubridate::days(1)))
+        which(cross__validation_data_second()$date == cross__validation_data_second()$date[1]+(lubridate::years(warm__up_period())-lubridate::years(1)))
       )
       ind_Run_val_cross1 <- seq(
         max(ind_WarmUp_val_cross1) + 1,
@@ -1131,7 +1129,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         }, error = function(w) {
           # shinyalert("Error!", w$message, type = "error")
           return()
-         }
+        }
         )
       }, options = list(pageLength = 100))
 
@@ -1161,7 +1159,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       # période d'exécution et d'échauffement
       ind_WarmUp_cal_cross2 <- seq(
         which(cross__validation_data_second()$date == min(cross__validation_data_second()$date, na.rm = TRUE)),
-        which(cross__validation_data_second()$date == cross__validation_data_second()$date[1]+(lubridate::days(warm__up_period())-lubridate::days(1)))
+        which(cross__validation_data_second()$date == cross__validation_data_second()$date[1]+(lubridate::years(warm__up_period())-lubridate::years(1)))
       )
       ind_Run_cal_cross2 <- seq(
         max(ind_WarmUp_cal_cross2) + 1,
@@ -1184,7 +1182,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
         }, error = function(w) {
           # shinyalert("Error!", w$message, type = "error")
           return()
-         }
+        }
         )
       }, options = list(pageLength = 100))
     })
@@ -1213,7 +1211,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       # période d'exécution et d'échauffement
       ind_WarmUp_val_cross2 <- seq(
         which(cross__validation_data_first()$date == min(cross__validation_data_first()$date, na.rm = TRUE)),
-        which(cross__validation_data_first()$date == cross__validation_data_first()$date[1]+(lubridate::days(warm__up_period())-lubridate::days(1)))
+        which(cross__validation_data_first()$date == cross__validation_data_first()$date[1]+(lubridate::years(warm__up_period())-lubridate::years(1)))
       )
       ind_Run_val_cross2 <- seq(
         max(ind_WarmUp_val_cross2) + 1,
@@ -1222,22 +1220,22 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
 
       # rendering table
       output$model_out<- renderDT({
-       tryCatch({
-         tibble::tibble(
-           Date = as.character(as.Date(validation_2()$DatesR), format = "%d-%m-%Y"),
-           "PluiesObs (mm)" = validation_2()$Precip, "ETPobs (mm)" = validation_2()$PotEvap, "Pn (mm)" = validation_2()$Pn,
-           "En (mm)" = validation_2()$En, "Ps (mm)" = validation_2()$Ps, "S (mm)" = validation_2()$Prod,
-           "Perc (mm)" = validation_2()$Perc, "Pr (mm)" = validation_2()$PR, "UH1 (mm)" = validation_2()$Q9,
-           "UH2 (mm)" = validation_2()$Q1, "Qobs (mm)" = cross__validation_data_first()$Qobs[ind_Run_val_cross2],
-           "Qsim (mm)" = validation_2()$Qsim, "Qobs_cumul (mm)" = cumsum(cross__validation_data_first()$Qobs[ind_Run_val_cross2]),
-           "Qsim_cumul (mm)" = cumsum(validation_2()$Qsim)
-         ) %>%
-           dplyr::mutate(dplyr::across(tidyselect::where(is.numeric), ~round(., 4), .names = "{.col}"))
-       }, error = function(w) {
+        tryCatch({
+          tibble::tibble(
+            Date = as.character(as.Date(validation_2()$DatesR), format = "%d-%m-%Y"),
+            "PluiesObs (mm)" = validation_2()$Precip, "ETPobs (mm)" = validation_2()$PotEvap, "Pn (mm)" = validation_2()$Pn,
+            "En (mm)" = validation_2()$En, "Ps (mm)" = validation_2()$Ps, "S (mm)" = validation_2()$Prod,
+            "Perc (mm)" = validation_2()$Perc, "Pr (mm)" = validation_2()$PR, "UH1 (mm)" = validation_2()$Q9,
+            "UH2 (mm)" = validation_2()$Q1, "Qobs (mm)" = cross__validation_data_first()$Qobs[ind_Run_val_cross2],
+            "Qsim (mm)" = validation_2()$Qsim, "Qobs_cumul (mm)" = cumsum(cross__validation_data_first()$Qobs[ind_Run_val_cross2]),
+            "Qsim_cumul (mm)" = cumsum(validation_2()$Qsim)
+          ) %>%
+            dplyr::mutate(dplyr::across(tidyselect::where(is.numeric), ~round(., 4), .names = "{.col}"))
+        }, error = function(w) {
           # shinyalert("Error!", w$message, type = "error")
           return()
-         }
-       )
+        }
+        )
       }, options = list(pageLength = 100))
 
     })
@@ -1266,7 +1264,7 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
       # période d'exécution et d'échauffement
       ind_WarmUp_simulation <- seq(
         which(overall__serie_data()$date == min(overall__serie_data()$date, na.rm = TRUE)),
-        which(overall__serie_data()$date == overall__serie_data()$date[1]+(lubridate::days(warm__up_period())-lubridate::days(1)))
+        which(overall__serie_data()$date == overall__serie_data()$date[1]+(lubridate::years(warm__up_period())-lubridate::years(1)))
       )
       ind_Run_simulation <- seq(
         max(ind_WarmUp_simulation) + 1,
@@ -1287,18 +1285,19 @@ mod_gr4j_results_graphs_n_exportation_server <- function(
           ) %>%
             dplyr::mutate(dplyr::across(tidyselect::where(is.numeric), ~round(., 4), .names = "{.col}"))
         }, error = function(w) {
-           # shinyalert("Error!", w$message, type = "error")
-           return()
-         }
-       )
+          # shinyalert("Error!", w$message, type = "error")
+          return()
+        }
+        )
       }, options = list(pageLength = 100))
 
     })
+
   })
 }
 
 ## To be copied in the UI
-# mod_gr4j_results_graphs_n_exportation_ui("gr4j_results_graphs_n_exportation_1")
+# mod_gr1a_results_graphs_n_exportation_ui("gr1a_results_graphs_n_exportation_1")
 
 ## To be copied in the server
-# mod_gr4j_results_graphs_n_exportation_server("gr4j_results_graphs_n_exportation_1")
+# mod_gr1a_results_graphs_n_exportation_server("gr1a_results_graphs_n_exportation_1")

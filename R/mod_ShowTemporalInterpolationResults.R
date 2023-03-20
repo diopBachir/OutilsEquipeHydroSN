@@ -82,9 +82,9 @@ mod_ShowTemporalInterpolationResults_server <- function(
           dplyr::mutate(Date = lubridate::ymd(Date))  %>%
           ggplot2::ggplot()+
           ggplot2::geom_line(
-            ggplot2::aes(x=Date, y=KRIGEAGE, group=1), color="dodgerblue", size = .6
+            ggplot2::aes(x=Date, y=KRIGEAGE, group=1), color="dodgerblue", size = .4
           ) +
-          ggplot2::geom_point(ggplot2::aes(x=Date, y=KRIGEAGE), size=1.5, color="dodgerblue")+
+          # ggplot2::geom_point(ggplot2::aes(x=Date, y=KRIGEAGE), size=1.5, color="dodgerblue")+
           ggplot2::geom_smooth(ggplot2::aes(x=Date, y=KRIGEAGE), method = "lm", color="dodgerblue") +
           ggplot2::scale_x_date(date_breaks = paste0(input$nbStep, " ", input$frequency)) +
           ggplot2::theme_bw(base_size = 12) +
@@ -125,9 +125,9 @@ mod_ShowTemporalInterpolationResults_server <- function(
           dplyr::mutate(Date = lubridate::ymd(Date))  %>%
           ggplot2::ggplot()+
           ggplot2::geom_line(
-            ggplot2::aes(x=Date, y=IDW, group=1), color="dodgerblue", size = .6
+            ggplot2::aes(x=Date, y=IDW, group=1), color="dodgerblue", size = .4
           ) +
-          ggplot2::geom_point(ggplot2::aes(x=Date, y=IDW), size=1.5, color="dodgerblue")+
+          # ggplot2::geom_point(ggplot2::aes(x=Date, y=IDW), size=1.5, color="dodgerblue")+
           ggplot2::geom_smooth(ggplot2::aes(x=Date, y=IDW), method = "lm", color="dodgerblue") +
           ggplot2::scale_x_date(date_breaks = paste0(input$nbStep, " ", input$frequency)) +
           ggplot2::theme_bw(base_size = 12) +
@@ -169,9 +169,9 @@ mod_ShowTemporalInterpolationResults_server <- function(
           dplyr::mutate(Date = lubridate::ymd(Date))  %>%
           ggplot2::ggplot()+
           ggplot2::geom_line(
-            ggplot2::aes(x=Date, y=THIESSEN, group=1), color="dodgerblue", size = .6
+            ggplot2::aes(x=Date, y=THIESSEN, group=1), color="dodgerblue", size = .4
           ) +
-          ggplot2::geom_point(ggplot2::aes(x=Date, y=THIESSEN), size=1.5, color="dodgerblue")+
+          # ggplot2::geom_point(ggplot2::aes(x=Date, y=THIESSEN), size=1.5, color="dodgerblue")+
           ggplot2::geom_smooth(ggplot2::aes(x=Date, y=THIESSEN), method = "lm", color="dodgerblue") +
           ggplot2::scale_x_date(date_breaks = paste0(input$nbStep, " ", input$frequency)) +
           ggplot2::theme_bw(base_size = 12) +
@@ -213,9 +213,9 @@ mod_ShowTemporalInterpolationResults_server <- function(
           dplyr::mutate(Date = lubridate::ymd(Date))  %>%
           ggplot2::ggplot()+
           ggplot2::geom_line(
-            ggplot2::aes(x=Date, y=TPS, group=1), color="dodgerblue", size = .6
+            ggplot2::aes(x=Date, y=TPS, group=1), color="dodgerblue", size = .4
           ) +
-          ggplot2::geom_point(ggplot2::aes(x=Date, y=TPS), size=1.5, color="dodgerblue")+
+          # ggplot2::geom_point(ggplot2::aes(x=Date, y=TPS), size=1.5, color="dodgerblue")+
           ggplot2::geom_smooth(ggplot2::aes(x=Date, y=TPS), method = "lm", color="dodgerblue") +
           ggplot2::scale_x_date(date_breaks = paste0(input$nbStep, " ", input$frequency)) +
           ggplot2::theme_bw(base_size = 12) +

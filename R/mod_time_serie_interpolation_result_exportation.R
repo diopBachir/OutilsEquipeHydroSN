@@ -10,6 +10,8 @@
 mod_time_serie_interpolation_result_exportation_ui <- function(id){
   ns <- NS(id)
   tagList(
+    verbatimTextOutput(ns("test")),
+
     h4("Exporter Résultats KRIGEAGE", style="text-align:center"),
     fluidRow(align = "center",
              column(
@@ -89,31 +91,54 @@ mod_time_serie_interpolation_result_exportation_ui <- function(id){
 #'
 #' @noRd
 mod_time_serie_interpolation_result_exportation_server <- function(
-    id, resultKrigeage, resultIDW, resultSpline, resultThiessen
+    id, resultKrigeage, resultIDW, resultSpline, resultThiessen, interpolationData
 ){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
+    # time serie date range for joining
+    date_range<- reactive({
+      req(interpolationData)
+      interpolationData %>%
+        dplyr::select(Date) %>%
+        dplyr::mutate(Date = lubridate::ymd(Date)) %>%
+        dplyr::rename(date = Date)
+    })
+
     result_krige<- reactive({
       req(resultKrigeage)
-      future::value(resultKrigeage) %>%
+      krige_temp<- future::value(resultKrigeage) %>%
         dplyr::mutate(Date = lubridate::ymd(Date))
+      date_range()  %>%
+        dplyr::left_join(krige_temp, by = c("date" = "Date")) %>%
+        dplyr::rename(Date = date)
+    })
 
-    })
     result_idw<- reactive({
-      req(resultIDW)
-      future::value(resultIDW) %>%
+      req(resultIDW, date_range())
+      idw_tmp<- future::value(resultIDW) %>%
         dplyr::mutate(Date = lubridate::ymd(Date))
+      date_range()  %>%
+        dplyr::left_join(idw_tmp, by = c("date" = "Date")) %>%
+        dplyr::rename(Date = date)
     })
+
     result_thiessen<- reactive({
       req(resultThiessen)
-      future::value(resultThiessen) %>%
+      thiessen_tmp<- future::value(resultThiessen) %>%
         dplyr::mutate(Date = lubridate::ymd(Date))
+      date_range()  %>%
+        dplyr::left_join(thiessen_tmp, by = c("date" = "Date")) %>%
+        dplyr::rename(Date = date)
     })
+
     result_spline<- reactive({
       req(resultSpline)
-      future::value(resultSpline) %>%
+      spline_tmp<- future::value(resultSpline) %>%
         dplyr::mutate(Date = lubridate::ymd(Date))
+      date_range()  %>%
+        dplyr::left_join(spline_tmp, by = c("date" = "Date")) %>%
+        dplyr::rename(Date = date)
     })
 
     ### KRIGEAGE---------------------------------------------------------------#

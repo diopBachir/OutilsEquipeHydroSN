@@ -167,6 +167,8 @@ app_server <- function(input, output, session) {
   })
 
   observeEvent(time_serie_interpolation_events_trigger(), {
+    # interpolation options
+    options<- mod_time_serie_interpolation_options_server("time_serie_interpolation_options_1")
     # showing and getting data
     readyData4TimeSerieInterpolation <- mod_showData4TimeSerieInterpolation_server(
       "showData4TimeSerieInterpolation_1",
@@ -194,7 +196,8 @@ app_server <- function(input, output, session) {
       time_serie_interpolation_result$kriging_output_df(),
       time_serie_interpolation_result$idw_output_df(),
       time_serie_interpolation_result$spline_output_df(),
-      time_serie_interpolation_result$thiessen_output_df()
+      time_serie_interpolation_result$thiessen_output_df(),
+      readyData4TimeSerieInterpolation$data_for_time_serie_interpolation()
     )
   })
 
@@ -450,7 +453,142 @@ app_server <- function(input, output, session) {
   #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
   #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
 
-  # ||||||||||||||||||||||||||||||||||||| HYDROLOGICA MODELS : GR2M
+  # ||||||||||||||||||||||||||||||||||||| HYDROLOGICAL MODELS : GR4J
+  # data
+  daily4GR4J<-  mod_data4GR4Jmodel_server("data4GR4Jmodel_1")
+  # gettingData
+  gr4j.application.data<- daily4GR4J$data_for_GR_modelisiation
+  ##==================================================================#
+  observeEvent(ignoreInit = FALSE, gr4j.application.data(), {
+    # gettingData
+    gr4j.application.data<- daily4GR4J$data_for_GR_modelisiation
+    # options
+    gr4japplication.options<- mod_gr4j_model_options_server("gr4g_model_options_1", gr4j.application.data())
+    # calage, validation and simulation
+    calage_validation_simulation_result <-mod_calage_validation_simulation_server(
+      "calage_validation_simulation_1", gr4j.application.data(), gr4japplication.options,
+      gr4J_parameters$parametres_simulation
+    )
+    # choix des paramètres du modèles pour la simulation
+    gr4J_parameters<- mod_mod_gr4j_model_pars_choose_server(
+      "mod_gr4j_model_pars_choose_1", calage_validation_simulation_result$cross_valid_best_params
+    )
+    # visualisation et exportation des résultats
+    mod_gr4j_results_graphs_n_exportation_server(
+      "gr4j_results_graphs_n_exportation_1",
+      # période d'échauffement
+      calage_validation_simulation_result$warm_up_period,
+      # donnees
+      calage_validation_simulation_result$cross_validation_data_first,
+      calage_validation_simulation_result$cross_validation_data_second,
+      calage_validation_simulation_result$overall_serie_data,
+      # Validation Croisée 1
+      calage_validation_simulation_result$cross_validation_period_1_1,
+      calage_validation_simulation_result$cross_validation_period_1_2,
+      calage_validation_simulation_result$calibration_1,
+      calage_validation_simulation_result$validation_1,
+      # Validation Croisée 1
+      calage_validation_simulation_result$cross_validation_period_2_1,
+      calage_validation_simulation_result$cross_validation_period_2_2,
+      calage_validation_simulation_result$calibration_2,
+      calage_validation_simulation_result$validation_2,
+      # simulation
+      calage_validation_simulation_result$simulation_period,
+      calage_validation_simulation_result$simulation_output_result
+    )
+  })
+
+  # ||||||||||||||||||||||||||||||||||||| HYDROLOGICAL MODELS : GR5J
+  # data
+  daily4GR5J<-  mod_data4GR5Jmodel_server("data4GR5Jmodel_1")
+  # gettingData
+  gr5j.application.data<- daily4GR5J$data_for_GR_modelisiation
+  ##==================================================================#
+  observeEvent(ignoreInit = FALSE, gr5j.application.data(), {
+    # gettingData
+    gr5j.application.data<- daily4GR5J$data_for_GR_modelisiation
+    # options
+    gr5japplication.options<- mod_gr5j_model_options_server("gr5j_model_options_1", gr5j.application.data())
+    # calage, validation and simulation
+    gr5j_calage_validation_simulation_result <-mod_gr5j_calage_validation_simulation_server(
+      "gr5j_calage_validation_simulation_1", gr5j.application.data(), gr5japplication.options,
+      gr5J_parameters$parametres_simulation
+    )
+    # choix des paramètres du modèles pour la simulation
+    gr5J_parameters<- mod_gr5J_parameters_server(
+      "gr5J_parameters_1", gr5j_calage_validation_simulation_result$cross_valid_best_params
+    )
+    # visualisation et exportation des résultats
+    mod_gr5j_results_graphs_n_exportation_server(
+      "gr5j_results_graphs_n_exportation_1",
+      # période d'échauffement
+      gr5j_calage_validation_simulation_result$warm_up_period,
+      # donnees
+      gr5j_calage_validation_simulation_result$cross_validation_data_first,
+      gr5j_calage_validation_simulation_result$cross_validation_data_second,
+      gr5j_calage_validation_simulation_result$overall_serie_data,
+      # Validation Croisée 1
+      gr5j_calage_validation_simulation_result$cross_validation_period_1_1,
+      gr5j_calage_validation_simulation_result$cross_validation_period_1_2,
+      gr5j_calage_validation_simulation_result$calibration_1,
+      gr5j_calage_validation_simulation_result$validation_1,
+      # Validation Croisée 1
+      gr5j_calage_validation_simulation_result$cross_validation_period_2_1,
+      gr5j_calage_validation_simulation_result$cross_validation_period_2_2,
+      gr5j_calage_validation_simulation_result$calibration_2,
+      gr5j_calage_validation_simulation_result$validation_2,
+      # simulation
+      gr5j_calage_validation_simulation_result$simulation_period,
+      gr5j_calage_validation_simulation_result$simulation_output_result
+    )
+  })
+
+  # ||||||||||||||||||||||||||||||||||||| HYDROLOGICAL MODELS : GR6J
+  # data
+  daily4GR6J<-  mod_data4GR5Jmodel_server("data4GR6Jmodel_1")
+  # gettingData
+  gr6j.application.data<- daily4GR6J$data_for_GR_modelisiation
+  ##==================================================================#
+  observeEvent(ignoreInit = FALSE, gr6j.application.data(), {
+    # gettingData
+    gr6j.application.data<- daily4GR6J$data_for_GR_modelisiation
+    # options
+    gr6japplication.options<- mod_gr6j_model_options_server("gr6j_model_options_1", gr6j.application.data())
+    # calage, validation and simulation
+    gr6j_calage_validation_simulation_result <-mod_gr6j_calage_validation_simulation_server(
+      "gr6j_calage_validation_simulation_1", gr6j.application.data(), gr6japplication.options,
+      gr6J_parameters$parametres_simulation
+    )
+    # choix des paramètres du modèles pour la simulation
+    gr6J_parameters<- mod_gr6J_parameters_server(
+      "gr6J_parameters_1", gr6j_calage_validation_simulation_result$cross_valid_best_params
+    )
+    # visualisation et exportation des résultats
+    mod_gr6j_results_graphs_n_exportation_server(
+      "gr6j_results_graphs_n_exportation_1",
+      # période d'échauffement 1
+      gr6j_calage_validation_simulation_result$warm_up_period,
+      # donnees
+      gr6j_calage_validation_simulation_result$cross_validation_data_first,
+      gr6j_calage_validation_simulation_result$cross_validation_data_second,
+      gr6j_calage_validation_simulation_result$overall_serie_data,
+      # Validation Croisée 1
+      gr6j_calage_validation_simulation_result$cross_validation_period_1_1,
+      gr6j_calage_validation_simulation_result$cross_validation_period_1_2,
+      gr6j_calage_validation_simulation_result$calibration_1,
+      gr6j_calage_validation_simulation_result$validation_1,
+      # Validation Croisée 1
+      gr6j_calage_validation_simulation_result$cross_validation_period_2_1,
+      gr6j_calage_validation_simulation_result$cross_validation_period_2_2,
+      gr6j_calage_validation_simulation_result$calibration_2,
+      gr6j_calage_validation_simulation_result$validation_2,
+      # simulation
+      gr6j_calage_validation_simulation_result$simulation_period,
+      gr6j_calage_validation_simulation_result$simulation_output_result
+    )
+  })
+
+  # ||||||||||||||||||||||||||||||||||||| HYDROLOGICAL MODELS : GR2M
   # data
   daily4GR2M<-  mod_mod_data4GR2Mmodel_server("mod_data4GR2Mmodel_1")
   # gettingData
@@ -475,161 +613,233 @@ app_server <- function(input, output, session) {
     mod_gr2m_results_graphs_n_exportation_server(
       "gr2m_results_graphs_n_exportation_1",
       # période d'échauffement
-      gr2m_calage_validation_simulation_result$warm_up_period(),
+      gr2m_calage_validation_simulation_result$warm_up_period,
       # donnees
-      gr2m_calage_validation_simulation_result$cross_validation_data_first(),
-      gr2m_calage_validation_simulation_result$cross_validation_data_second(),
-      gr2m_calage_validation_simulation_result$overall_serie_data(),
+      gr2m_calage_validation_simulation_result$cross_validation_data_first,
+      gr2m_calage_validation_simulation_result$cross_validation_data_second,
+      gr2m_calage_validation_simulation_result$overall_serie_data,
       # Validation Croisée 1
-      gr2m_calage_validation_simulation_result$cross_validation_period_1_1(),
-      gr2m_calage_validation_simulation_result$cross_validation_period_1_2(),
-      gr2m_calage_validation_simulation_result$calibration_1(),
-      gr2m_calage_validation_simulation_result$validation_1(),
+      gr2m_calage_validation_simulation_result$cross_validation_period_1_1,
+      gr2m_calage_validation_simulation_result$cross_validation_period_1_2,
+      gr2m_calage_validation_simulation_result$calibration_1,
+      gr2m_calage_validation_simulation_result$validation_1,
       # Validation Croisée 1
-      gr2m_calage_validation_simulation_result$cross_validation_period_2_1(),
-      gr2m_calage_validation_simulation_result$cross_validation_period_2_2(),
-      gr2m_calage_validation_simulation_result$calibration_2(),
-      gr2m_calage_validation_simulation_result$validation_2(),
+      gr2m_calage_validation_simulation_result$cross_validation_period_2_1,
+      gr2m_calage_validation_simulation_result$cross_validation_period_2_2,
+      gr2m_calage_validation_simulation_result$calibration_2,
+      gr2m_calage_validation_simulation_result$validation_2,
       # simulation
-      gr2m_calage_validation_simulation_result$simulation_period(),
-      gr2m_calage_validation_simulation_result$simulation_output_result()
+      gr2m_calage_validation_simulation_result$simulation_period,
+      gr2m_calage_validation_simulation_result$simulation_output_result
     )
   })
 
-  # ||||||||||||||||||||||||||||||||||||| HYDROLOGICA MODELS : GR4J
+  # ||||||||||||||||||||||||||||||||||||| HYDROLOGICAL MODELS : GR1A
   # data
-  daily4GR4J<-  mod_data4GR4Jmodel_server("data4GR4Jmodel_1")
+  daily4GR1A<-  mod_mod_data4GR1Amodel_server("mod_data4GR1Amodel_1")
   # gettingData
-  gr4j.application.data<- daily4GR4J$data_for_GR_modelisiation
+  gr1a.application.data<- daily4GR1A$data_for_GR_modelisiation
   ##==================================================================#
-  observeEvent(ignoreInit = FALSE, gr4j.application.data(), {
+  ##==================================================================#
+  observeEvent(ignoreInit = FALSE, gr1a.application.data(), {
     # gettingData
-    gr4j.application.data<- daily4GR4J$data_for_GR_modelisiation
-    # options
-    gr4japplication.options<- mod_gr4j_model_options_server("gr4g_model_options_1", gr4j.application.data())
+    gr1a.application.data<- daily4GR1A$data_for_GR_modelisiation
+    # # options
+    gr1a_application.options<- mod_gr1a_model_options_server("gr1a_model_options_1", gr1a.application.data())
     # calage, validation and simulation
-    calage_validation_simulation_result <-mod_calage_validation_simulation_server(
-      "calage_validation_simulation_1", gr4j.application.data(), gr4japplication.options,
-      gr4J_parameters$parametres_simulation
+    gr1a_calage_validation_simulation_result <- mod_gr1a_calage_validation_simulation_server(
+      "gr1a_calage_validation_simulation_1", gr1a.application.data(), gr1a_application.options,
+      gr1a_parameters_choose$parametres_simulation
     )
     # choix des paramètres du modèles pour la simulation
-    gr4J_parameters<- mod_mod_gr4j_model_pars_choose_server(
-      "mod_gr4j_model_pars_choose_1", calage_validation_simulation_result$cross_valid_best_params
+    gr1a_parameters_choose<- mod_gr1a_parameters_server(
+      "gr1a_parameters_1", gr1a_calage_validation_simulation_result$cross_valid_best_params
     )
     # visualisation et exportation des résultats
-    mod_gr4j_results_graphs_n_exportation_server(
-      "gr4j_results_graphs_n_exportation_1",
+    mod_gr1a_results_graphs_n_exportation_server(
+      "gr1a_results_graphs_n_exportation_1",
       # période d'échauffement
-      calage_validation_simulation_result$warm_up_period(),
+      gr1a_calage_validation_simulation_result$warm_up_period,
       # donnees
-      calage_validation_simulation_result$cross_validation_data_first(),
-      calage_validation_simulation_result$cross_validation_data_second(),
-      calage_validation_simulation_result$overall_serie_data(),
+      gr1a_calage_validation_simulation_result$cross_validation_data_first,
+      gr1a_calage_validation_simulation_result$cross_validation_data_second,
+      gr1a_calage_validation_simulation_result$overall_serie_data,
       # Validation Croisée 1
-      calage_validation_simulation_result$cross_validation_period_1_1(),
-      calage_validation_simulation_result$cross_validation_period_1_2(),
-      calage_validation_simulation_result$calibration_1(),
-      calage_validation_simulation_result$validation_1(),
+      gr1a_calage_validation_simulation_result$cross_validation_period_1_1,
+      gr1a_calage_validation_simulation_result$cross_validation_period_1_2,
+      gr1a_calage_validation_simulation_result$calibration_1,
+      gr1a_calage_validation_simulation_result$validation_1,
       # Validation Croisée 1
-      calage_validation_simulation_result$cross_validation_period_2_1(),
-      calage_validation_simulation_result$cross_validation_period_2_2(),
-      calage_validation_simulation_result$calibration_2(),
-      calage_validation_simulation_result$validation_2(),
+      gr1a_calage_validation_simulation_result$cross_validation_period_2_1,
+      gr1a_calage_validation_simulation_result$cross_validation_period_2_2,
+      gr1a_calage_validation_simulation_result$calibration_2,
+      gr1a_calage_validation_simulation_result$validation_2,
       # simulation
-      calage_validation_simulation_result$simulation_period(),
-      calage_validation_simulation_result$simulation_output_result()
+      gr1a_calage_validation_simulation_result$simulation_period,
+      gr1a_calage_validation_simulation_result$simulation_output_result
     )
   })
 
-  # ||||||||||||||||||||||||||||||||||||| HYDROLOGICA MODELS : GR5J
+  # ||||||||||||||||||||||||||||||||||||| HYDROLOGICAL MODELS : HBV
   # data
-  daily4GR5J<-  mod_data4GR5Jmodel_server("data4GR5Jmodel_1")
+  dailydata4HBVmodel<-  mod__data4HBVmodel_server("data4HBVmodel_1")
   # gettingData
-  gr5j.application.data<- daily4GR5J$data_for_GR_modelisiation
+  hbv.application.data<- dailydata4HBVmodel$data_for_HBV_modelisiation
   ##==================================================================#
-  observeEvent(ignoreInit = FALSE, gr5j.application.data(), {
+  ##==================================================================#
+  observeEvent(ignoreInit = FALSE, hbv.application.data(), {
     # gettingData
-    gr5j.application.data<- daily4GR5J$data_for_GR_modelisiation
+    hbv.application.data<- dailydata4HBVmodel$data_for_HBV_modelisiation
     # options
-    gr5japplication.options<- mod_gr5j_model_options_server("gr5j_model_options_1", gr5j.application.data())
+    hbv_application.options<- mod_HBV_model_options_server("HBV_model_options_1", hbv.application.data())
     # calage, validation and simulation
-    gr5j_calage_validation_simulation_result <-mod_gr5j_calage_validation_simulation_server(
-      "gr5j_calage_validation_simulation_1", gr5j.application.data(), gr5japplication.options,
-      gr5J_parameters$parametres_simulation
+    hbv_calage_validation_simulation_result <- mod_calibration_HBV_server(
+      "calibration_HBV_1", hbv.application.data(), hbv_application.options,
+      hbv_parameters_choose$parametres_simulation
     )
-    # choix des paramètres du modèles pour la simulation
-    gr5J_parameters<- mod_gr5J_parameters_server(
-      "gr5J_parameters_1", gr5j_calage_validation_simulation_result$cross_valid_best_params
+    # paramètres du modèles
+    hbv_parameters_choose<- mod_hbv_parameters_server(
+      "hbv_parameters_1", hbv_calage_validation_simulation_result$cross_valid_best_params_values
     )
-    # visualisation et exportation des résultats
-    mod_gr5j_results_graphs_n_exportation_server(
-      "gr5j_results_graphs_n_exportation_1",
-      # période d'échauffement
-      gr5j_calage_validation_simulation_result$warm_up_period(),
-      # donnees
-      gr5j_calage_validation_simulation_result$cross_validation_data_first(),
-      gr5j_calage_validation_simulation_result$cross_validation_data_second(),
-      gr5j_calage_validation_simulation_result$overall_serie_data(),
+    # exportation des résultats
+    mod_hbv_results_graphs_n_exportation_server(
+      "hbv_results_graphs_n_exportation_1",
       # Validation Croisée 1
-      gr5j_calage_validation_simulation_result$cross_validation_period_1_1(),
-      gr5j_calage_validation_simulation_result$cross_validation_period_1_2(),
-      gr5j_calage_validation_simulation_result$calibration_1(),
-      gr5j_calage_validation_simulation_result$validation_1(),
+      hbv_calage_validation_simulation_result$cross_validation_period_1_1,
+      hbv_calage_validation_simulation_result$cross_validation_period_1_2,
+      hbv_calage_validation_simulation_result$calibration_1,
+      hbv_calage_validation_simulation_result$validation_1,
       # Validation Croisée 1
-      gr5j_calage_validation_simulation_result$cross_validation_period_2_1(),
-      gr5j_calage_validation_simulation_result$cross_validation_period_2_2(),
-      gr5j_calage_validation_simulation_result$calibration_2(),
-      gr5j_calage_validation_simulation_result$validation_2(),
+      hbv_calage_validation_simulation_result$cross_validation_period_2_1,
+      hbv_calage_validation_simulation_result$cross_validation_period_2_2,
+      hbv_calage_validation_simulation_result$calibration_2,
+      hbv_calage_validation_simulation_result$validation_2,
       # simulation
-      gr5j_calage_validation_simulation_result$simulation_period(),
-      gr5j_calage_validation_simulation_result$simulation_output_result()
+      hbv_calage_validation_simulation_result$simulation_period,
+      hbv_calage_validation_simulation_result$simulation_output_result
     )
   })
 
-  # ||||||||||||||||||||||||||||||||||||| HYDROLOGICA MODELS : GR6J
-  # data
-  daily4GR6J<-  mod_data4GR5Jmodel_server("data4GR6Jmodel_1")
-  # gettingData
-  gr6j.application.data<- daily4GR6J$data_for_GR_modelisiation
-  ##==================================================================#
-  observeEvent(ignoreInit = FALSE, gr6j.application.data(), {
-    # gettingData
-    gr6j.application.data<- daily4GR6J$data_for_GR_modelisiation
-    # options
-    gr6japplication.options<- mod_gr6j_model_options_server("gr6j_model_options_1", gr6j.application.data())
-    # calage, validation and simulation
-    gr6j_calage_validation_simulation_result <-mod_gr6j_calage_validation_simulation_server(
-      "gr6j_calage_validation_simulation_1", gr6j.application.data(), gr6japplication.options,
-      gr6J_parameters$parametres_simulation
-    )
-    # choix des paramètres du modèles pour la simulation
-    gr6J_parameters<- mod_gr6J_parameters_server(
-      "gr6J_parameters_1", gr6j_calage_validation_simulation_result$cross_valid_best_params
-    )
-    # visualisation et exportation des résultats
-    mod_gr6j_results_graphs_n_exportation_server(
-      "gr6j_results_graphs_n_exportation_1",
-      # période d'échauffement 1
-      gr6j_calage_validation_simulation_result$warm_up_period(),
-      # donnees
-      gr6j_calage_validation_simulation_result$cross_validation_data_first(),
-      gr6j_calage_validation_simulation_result$cross_validation_data_second(),
-      gr6j_calage_validation_simulation_result$overall_serie_data(),
-      # Validation Croisée 1
-      gr6j_calage_validation_simulation_result$cross_validation_period_1_1(),
-      gr6j_calage_validation_simulation_result$cross_validation_period_1_2(),
-      gr6j_calage_validation_simulation_result$calibration_1(),
-      gr6j_calage_validation_simulation_result$validation_1(),
-      # Validation Croisée 1
-      gr6j_calage_validation_simulation_result$cross_validation_period_2_1(),
-      gr6j_calage_validation_simulation_result$cross_validation_period_2_2(),
-      gr6j_calage_validation_simulation_result$calibration_2(),
-      gr6j_calage_validation_simulation_result$validation_2(),
-      # simulation
-      gr6j_calage_validation_simulation_result$simulation_period(),
-      gr6j_calage_validation_simulation_result$simulation_output_result()
-    )
+  #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+  #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+  #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+
+  # ||||||||||||||||||||||||||||||||||||| DELIMITATION DE BASSIN VERSANT
+  whitebox::wbt_init()
+  ## set tmap modeto interactive viewing
+  tmap::tmap_mode("plot")
+
+  # repertoire de travail
+  working_dir<- mod_set_watershed_delienation_project_folder_server("set_watershed_delienation_project_folder_1")
+  working_directory<- working_dir$wdir
+  # whitebox option
+  whitebox_options<- mod_whitebox_options_server("whitebox_options_1")
+  observeEvent(working_directory(), {
+    # repertoire de travail
+    # working_dir<- mod_set_watershed_delienation_project_folder_server("set_watershed_delienation_project_folder_1")
+    # working_directory<- working_dir$wdir
+    # whitebox option
+    whitebox_options<- mod_whitebox_options_server("whitebox_options_1")
+    # repertoire de travail
+    # working_dir<- mod_set_watershed_delienation_project_folder_server("set_watershed_delienation_project_folder_1")
+    # chargement du MNT
+    MNT<- mod_loading_RasterFile_server("loading_RasterFile_1", working_directory())
+    # getting georeferenced MNT
+    georeferenced_mnt<- MNT$mnt_georeferenced
+    # Exutoire des bassins
+    bassin_outlet<- mod_loading_bassin_outlet_server("loading_bassin_outlet_1", working_directory())
+    # getting outlet layer
+    exutoires<- bassin_outlet$exutoires_bassin_versants
+
+    ##==================================================================#
+    ##==================================================================#
+    events_trigger<- reactive({list(georeferenced_mnt(), exutoires()) })
+    observeEvent(ignoreInit = TRUE, ignoreNULL = TRUE, events_trigger(), {
+      # whitebox option
+      # whitebox_options<- mod_whitebox_options_server("whitebox_options_1")
+      # # repertoire de travail
+      # # working_dir<- mod_set_watershed_delienation_project_folder_server("set_watershed_delienation_project_folder_1")
+      # # working_directory<- working_dir$wdir
+      # # chargement du MNT
+      # MNT<- mod_loading_RasterFile_server("loading_RasterFile_1", working_directory())
+      # # getting georeferenced MNT
+      # georeferenced_mnt<- MNT$mnt_georeferenced
+      # # Exutoire des bassins
+      # bassin_outlet<- mod_loading_bassin_outlet_server("loading_bassin_outlet_1", working_directory())
+      # # getting outlet layer
+      # exutoires<- bassin_outlet$exutoires_bassin_versants
+
+      # visualisation du MNT
+      mod_MNT_VIZ_server("MNT_VIZ_1", georeferenced_mnt()[[1]], exutoires()[[1]])
+
+      # prepare DEM
+      dem_preparation<- mod_DEM_Preparation_4_Hydrology_Analyses_server(
+        "DEM_Preparation_4_Hydrology_Analyses_1", working_directory(), georeferenced_mnt()[[2]],
+        exutoires()[[1]], whitebox_options$breaching_max_dist
+      )
+
+      # flow accumulation & pointers grid
+      mod_flow_accumulation_pointer_grids_server(
+        "flow_accumulation_pointer_grids_1", working_directory(),
+        dem_preparation$path_to_filled_breached_DEM,
+        whitebox_options$bassin_thresold, exutoires()[[1]],
+        exutoires()[[2]], whitebox_options$pp_snap_dist
+      )
+    })
   })
+
+
+
+  # events_trigger<- reactive({ list(georeferenced_mnt(), exutoires()[[1]]) })
+  # observeEvent(events_trigger(), {
+  #   # actualisation des données
+  #   # chargement du MNT
+  #   MNT<- mod_loading_RasterFile_server("loading_RasterFile_1")
+  #   # getting georeferenced MNT
+  #   georeferenced_mnt<- MNT$mnt_georeferenced
+  #   # Exutoire des bassins
+  #   bassin_outlet<- mod_loading_bassin_outlet_server("loading_bassin_outlet_1")
+  #   # bassin_outlet<- mod_loading_bassin_outlet_2_server("loading_bassin_outlet_2_1")
+  #   # getting outlet layer
+  #   exutoires<- bassin_outlet$exutoires_bassin_versants
+  #
+  #   # visualisation du MNT
+  #   mod_MNT_VIZ_server("MNT_VIZ_1", georeferenced_mnt()[[1]], exutoires()[[1]])
+  #
+  #   # charment des résultats du processus de préparation du DEM
+  #   #* filled DEM
+  #   filled_dem<- mod_loading_whitebox_process_result_server("loading_whitebox_process_result_demFilled")
+  #   filled_dem_path<- filled_dem$raster_result_layer
+  #   #* breached DEM
+  #   breached_dem<- mod_loading_whitebox_process_result_server("loading_whitebox_process_result_breachedFilled")
+  #   breached_dem_path<- breached_dem$raster_result_layer
+  #   #* filled breached DEM
+  #   filled_breached_dem<- mod_loading_whitebox_process_result_server("loading_whitebox_process_result_filledBreachedFilled")
+  #   filled_breached_dem_path<- filled_breached_dem$raster_result_layer
+  #   #* flow accumulation
+  #   flow_accumulation<- mod_loading_whitebox_process_result_server("loading_whitebox_process_result_flow_accumulation")
+  #   flow_accumulation_path<- flow_accumulation$raster_result_layer
+  #   #* flow accumulation
+  #   pointer_grid<- mod_loading_whitebox_process_result_server("loading_whitebox_process_result_pointer_grid")
+  #   pointer_grid_path<- pointer_grid$raster_result_layer
+  #
+  #   # DEM preparation 4 hdrological analyses
+  #   mod_DEM_Preparation_4_Hydrology_Analyses_server(
+  #     "DEM_Preparation_4_Hydrology_Analyses_1", georeferenced_mnt()[[2]], exutoires()[[1]],
+  #     filled_dem_path()[[2]], breached_dem_path()[[2]]
+  #   )
+  #
+  #   # whitebox option
+  #   whitebox_options<- mod_whitebox_options_server("whitebox_options_1")
+  #   bassin_thresold<- whitebox_options$bassin_thresold
+
+    # flow accumulation & pointers grid
+    # mod_flow_accumulation_pointer_grids_server(
+    #   "flow_accumulation_pointer_grids_1", filled_breached_dem_path()[[2]],
+    #   flow_accumulation_path()[[2]], bassin_thresold(), exutoires()[[2]], raster_stream_path()[[2]]
+    # )
+
+  # })
 
 }
 

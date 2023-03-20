@@ -37,11 +37,12 @@ mod_loading_VectorFile_server <- function(id){
         # c('shp','dbf','sbn','sbx','shx','prj', "cpg", "xml")) == length(input$vector_file$datapath)
       })
 
-      shinyFeedback::feedbackWarning(
-        "vector_file", !extension_fichier(),
-        "[{.gpkg}] ou [{.shp}] Requis !"
-      )
       if(!extension_fichier()){
+        shinyFeedback::hideFeedback("vector_file")
+        shinyFeedback::feedbackWarning(
+          "vector_file", !extension_fichier(),
+          "[{.gpkg}] ou [{.shp}] Requis !"
+        )
         shinyalert::shinyalert(
           "Erreur Chargement !!",
           paste(
@@ -66,12 +67,13 @@ mod_loading_VectorFile_server <- function(id){
       # Vérification de la projection du shapefile
       req(bassin_contours())
       proj_file<- sf::st_crs(bassin_contours())$input == "WGS 84"
-      shinyFeedback::feedbackWarning(
-        "vector_file", !proj_file,
-        "Projection WGS84 | EPSG:4326 Requis !"
-      )
       # alert
       if(!proj_file){
+        shinyFeedback::hideFeedback("vector_file")
+        shinyFeedback::feedbackWarning(
+          "vector_file", !proj_file,
+          "Projection WGS84 | EPSG:4326 Requis !"
+        )
         shinyalert::shinyalert(
           "Erreur de chargement !",
           "Veillez reprojeter la couche vectorielle vers le EPSG 4326 (WGS84) !"
@@ -79,6 +81,7 @@ mod_loading_VectorFile_server <- function(id){
       }
 
       if(proj_file){
+        shinyFeedback::hideFeedback("vector_file")
         shinyFeedback::feedbackSuccess(
           "vector_file", proj_file,
           paste0(

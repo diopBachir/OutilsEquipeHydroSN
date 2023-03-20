@@ -1,4 +1,4 @@
-#' plot_OutputsModel_wrap
+#' plot_OutputsModel_wrap_gr1a
 #'
 #' @description A fct function
 #'
@@ -6,7 +6,7 @@
 #'
 #' @noRd
 
-plot_OutputsModel_wrap <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea = NULL, which = "synth", log_scale = FALSE,
+plot_OutputsModel_wrap_gr1a <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea = NULL, which = "synth", log_scale = FALSE,
                                    cex.axis = 1, cex.lab = 0.9, cex.leg = 0.9, lwd = 1,
                                    AxisTS = function(x) axis.POSIXct(side = 1, x = x$DatesR, ...),
                                    LayoutMat = NULL, LayoutWidths = rep.int(1, ncol(LayoutMat)), LayoutHeights = rep.int(1, nrow(LayoutMat)),
@@ -869,9 +869,9 @@ plot_OutputsModel_wrap <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinA
       ylim <- log(range(c(Qobs[SelectQobsNotZero & SelectQsimNotZero], OutputsModel$Qsim[SelectQobsNotZero & SelectQsimNotZero]), na.rm = TRUE))
       plot(log(Qobs[SelectQobsNotZero & SelectQsimNotZero]),
            log(OutputsModel$Qsim[SelectQobsNotZero & SelectQsimNotZero]),
-           type = "p", pch = 1, cex = 1.2, col = rgb(0,0,0,.5), lwd = lwd,
+           type = "p", pch = 1, cex = 1.2, col = rgb(0,0,0,1), lwd = lwd,
            xlim = ylim, ylim = ylim, xaxt = "n", yaxt = "n", xlab = "", ylab = "", ...)
-      abline(a = 0, b = 1, col = "cyan", lwd = 2)
+      abline(a = 0, b = 1, col = "red", lwd = 2)
       axis(side = 1, at = seqDATA1, labels = seqDATA2, cex = cex.leg, cex.axis = cex.axis, ...)
       axis(side = 2, at = seqDATA1, labels = seqDATA2, cex = cex.leg, cex.axis = cex.axis, ...)
       mtext(side = 1, paste("Débits observés", plotunit), line = line, cex = cex.lab)
@@ -901,4 +901,3 @@ plot_OutputsModel_wrap <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinA
   }
 
 }
-

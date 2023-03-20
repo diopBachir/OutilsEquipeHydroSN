@@ -526,13 +526,11 @@ app_ui <- function(request) {
 
                                      #==================================================================#
                                      # INPUTS
-                                     h3("Données", style = "color:#3474A7"),
+                                     h4("DONNEES", style = "color:#3474A7;background-color:lightgray;text-align:center;"),
                                      # limtes bassin versa,nt
                                      mod_loading_VectorFile_ui("loading_VectorFile_1"),
                                      # stations
                                      mod_data4TimeSerieInterpolation_ui("data4TimeSerieInterpolation_1"),
-
-                                     tags$hr(style="border-color:gray;"),
 
                                      br(),br(), br(),br()
 
@@ -826,50 +824,10 @@ app_ui <- function(request) {
                #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
                #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
 
-               navbarMenu(div("Modélisation Hydro", style = "color:white;font-size:90%;font-family:georgia"),
+               navbarMenu(div("Modéles Hydro", style = "color:white;font-size:90%;font-family:georgia"),
 
                           #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||,||||||||||||||||||||||||||||||||||||||||||#
-                          "MODElES GR =============================================================||",
-
-                          # GR2M
-                          tabPanel(div("Modèle GR2M", style = "color:black;font-size:110%;font-family:georgia;"),
-                                   sidebarPanel(
-                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
-                                     h3(
-                                       "Modèle GR2M",
-                                       style=paste0(
-                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
-                                       )
-                                     ),
-
-                                     # options
-                                     mod_gr2m_model_options_ui("gr2m_model_options_1"),
-
-                                     # choix des paramètres du modèle
-                                     mod_gr2m_parameters_ui("gr2m_parameters_1"),
-
-                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
-                                   ),# sidebarPane
-                                   mainPanel(
-                                     tabsetPanel(
-                                       tabPanel(
-                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:120%"),
-                                         # données
-                                         mod_mod_data4GR2Mmodel_ui("mod_data4GR2Mmodel_1")
-                                       ), #tabPanel
-                                       tabPanel(
-                                         div("Calage||Validation||Simulation", style = "color:#3474A7;family:Georgia;font-size:120%"),
-                                         # calage et simulation
-                                         mod_gr2m_calage_validation_simulation_ui("gr2m_calage_validation_simulation_1")
-                                       ), #tabPanel
-                                       tabPanel(
-                                         div("Résulats||Graphs||Exportations", style = "color:#3474A7;family:Georgia;font-size:120%"),
-                                         # exportations des résultats
-                                         mod_gr2m_results_graphs_n_exportation_ui("gr2m_results_graphs_n_exportation_1")
-                                       )#tabPanel
-                                     ) # tabsetPanel
-                                   ) # mainPanel
-                          ), # tabPanel
+                          "MODELES GR =============================================================||",
 
                           # GR4J
                           tabPanel(div("Modèle GR4J", style = "color:black;font-size:110%;font-family:georgia;"),
@@ -990,9 +948,206 @@ app_ui <- function(request) {
                                      ) # tabsetPanel
                                    ) # mainPanel
                           ), # tabPanel
-               )
+
+                          # GR2M
+                          tabPanel(div("Modèle GR2M", style = "color:black;font-size:110%;font-family:georgia;"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Modèle GR2M",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_gr2m_model_options_ui("gr2m_model_options_1"),
+
+                                     # choix des paramètres du modèle
+                                     mod_gr2m_parameters_ui("gr2m_parameters_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # données
+                                         mod_mod_data4GR2Mmodel_ui("mod_data4GR2Mmodel_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Calage||Validation||Simulation", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # calage et simulation
+                                         mod_gr2m_calage_validation_simulation_ui("gr2m_calage_validation_simulation_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Résulats||Graphs||Exportations", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # exportations des résultats
+                                         mod_gr2m_results_graphs_n_exportation_ui("gr2m_results_graphs_n_exportation_1")
+                                       )#tabPanel
+                                     ) # tabsetPanel
+                                   ) # mainPanel
+                          ), # tabPanel
+
+                          # GR1A
+                          tabPanel(div("Modèle GR1A", style = "color:black;font-size:110%;font-family:georgia;"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Modèle GR1A",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_gr1a_model_options_ui("gr1a_model_options_1"),
+
+                                     # choix des paramètres du modèle
+                                     mod_gr1a_parameters_ui("gr1a_parameters_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # données
+                                         mod_mod_data4GR1Amodel_ui("mod_data4GR1Amodel_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Calage||Validation||Simulation", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # calage et simulation
+                                         mod_gr1a_calage_validation_simulation_ui("gr1a_calage_validation_simulation_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Résulats||Graphs||Exportations", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # exportations des résultats
+                                         mod_gr1a_results_graphs_n_exportation_ui("gr1a_results_graphs_n_exportation_1")
+                                       )#tabPanel
+                                     ) # tabsetPanel
+                                   ) # mainPanel
+                          ), # tabPanel
+
+                          #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||,||||||||||||||||||||||||||||||||||||||||||#
+                          "AUTRES MODELES =============================================================||",
+                          # GR1A
+                          tabPanel(div("Modèle HBV", style = "color:black;font-size:110%;font-family:georgia;"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Modèle HBV",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     # options
+                                     mod_HBV_model_options_ui("HBV_model_options_1"),
+
+                                     # choix des paramètres du modèle
+                                     mod_hbv_parameters_ui("hbv_parameters_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ),# sidebarPane
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # données
+                                         mod__data4HBVmodel_ui("data4HBVmodel_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Calibration", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # calage et simulation
+                                         mod_calibration_HBV_ui("calibration_HBV_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Résulats||Graphs||Exportations", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # exportations des résultats
+                                         mod_hbv_results_graphs_n_exportation_ui("hbv_results_graphs_n_exportation_1")
+                                       )#tabPanel
+                                     ) # tabsetPanel
+                                   ) # mainPanel
+                          ), # tabPanel
+               ), # navbarMenu
+
+               #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+               #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+               #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
+
+               navbarMenu(div("Extraction", style = "color:white;font-size:90%;font-family:georgia"),
+
+                          #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||,||||||||||||||||||||||||||||||||||||||||||#
+                          # Bassin Versant
+                          tabPanel(div("Extraction de Bassin(s) Versants(s)", style = "color:black;font-size:110%;font-family:georgia;"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "Extraction de BVs",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+
+                                     h4(
+                                       "IMPORTATION DES DONNEES",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+                                     # repertoire de travail
+                                     mod_set_watershed_delienation_project_folder_ui("set_watershed_delienation_project_folder_1"),
+                                     span("_____________________________________________________________", style="color:lightgray"),
+                                     # chargement du MNT
+                                     mod_loading_RasterFile_ui("loading_RasterFile_1"),
+                                     span("_____________________________________________________________", style="color:lightgray"),
+                                     # # Exutoires
+                                     mod_loading_bassin_outlet_ui("loading_bassin_outlet_1"),
+
+                                     tags$hr(style="border-color:gray;"),
+
+                                    #---------------------------------------------------------------
+                                     h4(
+                                       "OPTIONS  | CONFIGURATION",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+                                     # module
+                                     mod_whitebox_options_ui("whitebox_options_1"),
+
+                                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                                   ), # sidebarPanel
+                                   mainPanel(
+                                     tabsetPanel(
+                                       tabPanel(
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:100%"),
+                                         # données
+                                         mod_MNT_VIZ_ui("MNT_VIZ_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("Préparation du DEM", style = "color:#3474A7;family:Georgia;font-size:100%"),
+                                         # préparation du MNT pour les analyses hydrologiques
+                                         mod_DEM_Preparation_4_Hydrology_Analyses_ui("DEM_Preparation_4_Hydrology_Analyses_1")
+                                       ), #tabPanel
+                                       tabPanel(
+                                         div("FlowAccumulation & PourPoints", style = "color:#3474A7;family:Georgia;font-size:100%"),
+                                         # flow accumulation and pointer grids
+                                         mod_flow_accumulation_pointer_grids_ui("flow_accumulation_pointer_grids_1")
+                                       ), #tabPanel
+                                       # tabPanel(
+                                       #   div("Points D'écoulement", style = "color:#3474A7;family:Georgia;font-size:100%"),
+                                       #   # génération des points d'écoulements
+                                       #   # mod_flow_accumulation_pointer_grids_ui("flow_accumulation_pointer_grids_1")
+                                       # )#tabPanel
+                                       )# tabsetPanel
+                                   ) # mainPanel
+                          ) # tabPanel
+               ) # navbarMenu
     )
   )
+
 }
 
 #' Add external Resources to the Application

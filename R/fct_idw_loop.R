@@ -57,7 +57,7 @@ idw_loop<- function(gridded.points.utm, grid.mod, bassin, utmProj){
     ) %>%
     dplyr::group_by(Date) %>%
     dplyr::summarise(
-      IDW = round(mean(IDW_Valeurs), 2)
+      IDW = round(mean(IDW_Valeurs, na.rm=TRUE), 2)
     )
 
   return(

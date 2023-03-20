@@ -102,7 +102,44 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
 
     # première période
     dataObsFirst<- reactive({
-      req(donnees)
+      req(donnees, options_de_mise_en_route)
+      # controler le choix des début et fin de période
+      if(options_de_mise_en_route$startValidationDate1() >= options_de_mise_en_route$endValidationDate1()){
+        shinyalert::shinyalert(
+          "OUPS !",
+          paste0(
+            "Intervalle de Date Incorrecte. Assurez-vous que la date de début [", options_de_mise_en_route$startValidationDate1(), "]",
+            " soit strictement inférieure à la date de fin de période [", options_de_mise_en_route$endValidationDate1(), "] !"
+          ),
+          type = "", imageUrl = "www/calendar_13_512.webp"
+        )
+      }
+
+      # controler si les dates entrées sont valides
+      if(
+        options_de_mise_en_route$startValidationDate1() < min(donnees$date, na.rm=TRUE) |  options_de_mise_en_route$startValidationDate1() > max(donnees$date, na.rm=TRUE) |
+        options_de_mise_en_route$endValidationDate1() < min(donnees$date, na.rm=TRUE) |  options_de_mise_en_route$endValidationDate1() > max(donnees$date, na.rm=TRUE)
+      ){
+        shinyalert::shinyalert(
+          "OUPS !",
+          paste0(
+            "Les plages de dates autorisées se trouvent entre la date [", min(donnees$date, na.rm=TRUE), "]",
+            " et la date [", max(donnees$date, na.rm=TRUE), "] ! NB : Cette restriction est déduite de l'analyse de la ",
+            "série chronologique chargée."
+          ),
+          type = "", imageUrl = "www/calendar_13_512.webp"
+        )
+      }
+
+      req(options_de_mise_en_route$startValidationDate1() < options_de_mise_en_route$endValidationDate1() &
+            options_de_mise_en_route$startValidationDate1() < options_de_mise_en_route$startValidationDate2() &
+            options_de_mise_en_route$endValidationDate1() < options_de_mise_en_route$endValidationDate2() &
+            options_de_mise_en_route$startValidationDate1() >= min(donnees$date, na.rm=TRUE) &
+            options_de_mise_en_route$startValidationDate1() <= max(donnees$date, na.rm=TRUE) &
+            options_de_mise_en_route$endValidationDate1() >= min(donnees$date, na.rm=TRUE) &
+            options_de_mise_en_route$endValidationDate1() <= max(donnees$date, na.rm=TRUE)
+      )
+
       donnees %>%
         dplyr::filter(
           (date >= options_de_mise_en_route$startValidationDate1()) & (date <= options_de_mise_en_route$endValidationDate1())
@@ -111,10 +148,78 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
 
     # seconde periode
     dataObsSecond<-  reactive({
-      req(donnees)
+      req(donnees, options_de_mise_en_route)
+      # contrôle des périodes
+      if(options_de_mise_en_route$startValidationDate2() >= options_de_mise_en_route$endValidationDate2()){
+        shinyalert::shinyalert(
+          "OUPS !",
+          paste0(
+            "Intervalle de Date Incorrecte. Assurez-vous que la date de début [", options_de_mise_en_route$startValidationDate2(), "]",
+            " soit strictement inférieure à la date de fin de période [", options_de_mise_en_route$endValidationDate2(), "] !"
+          ),
+          type = "", imageUrl = "www/calendar_13_512.webp"
+        )
+      }
+      if(options_de_mise_en_route$startValidationDate1() >= options_de_mise_en_route$startValidationDate2()){
+        shinyalert::shinyalert(
+          "OUPS !",
+          paste0(
+            "Intervalle de Date Incorrecte. Assurez-vous que la date de début de la première période [", options_de_mise_en_route$startValidationDate1(), "]",
+            " soit strictement inférieure à la date de début de la seconde période [", options_de_mise_en_route$startValidationDate2(), "] !"
+          ),
+          type = "", imageUrl = "www/calendar_13_512.webp"
+        )
+      }
+
+      # controler si les dates entrées sont valides
+      if(
+        options_de_mise_en_route$startValidationDate2() < min(donnees$date, na.rm=TRUE) | options_de_mise_en_route$startValidationDate2() > max(donnees$date, na.rm=TRUE) |
+        options_de_mise_en_route$endValidationDate2() < min(donnees$date, na.rm=TRUE) | options_de_mise_en_route$endValidationDate2() > max(donnees$date, na.rm=TRUE)
+      ){
+        shinyalert::shinyalert(
+          "OUPS !",
+          paste0(
+            "Les plages de dates autorisées se trouvent entre la date [", min(donnees$date, na.rm=TRUE), "]",
+            " et la date [", max(donnees$date, na.rm=TRUE), "] ! NB : Cette restriction est déduite de l'analyse de la ",
+            "série chronologique chargée."
+          ),
+          type = "", imageUrl = "www/calendar_13_512.webp"
+        )
+      }
+
+      req(
+        options_de_mise_en_route$startValidationDate2() < options_de_mise_en_route$endValidationDate2() &
+          options_de_mise_en_route$startValidationDate1() < options_de_mise_en_route$startValidationDate2() &
+          options_de_mise_en_route$endValidationDate1() < options_de_mise_en_route$endValidationDate2() &
+          options_de_mise_en_route$startValidationDate2() >= min(donnees$date, na.rm=TRUE) &
+          options_de_mise_en_route$startValidationDate2() <= max(donnees$date, na.rm=TRUE) &
+          options_de_mise_en_route$endValidationDate2() >= min(donnees$date, na.rm=TRUE) &
+          options_de_mise_en_route$endValidationDate2() <= max(donnees$date, na.rm=TRUE)
+      )
       donnees %>%
         dplyr::filter(
           (date >= options_de_mise_en_route$startValidationDate2()) & (date <= options_de_mise_en_route$endValidationDate2())
+        )
+    })
+
+    # global serie
+    dataOverAll<-  reactive({
+      req(donnees, options_de_mise_en_route, dataObsFirst(), dataObsSecond())
+      # controle des périodes
+      if(options_de_mise_en_route$startValidationDate1() >= options_de_mise_en_route$endValidationDate2()){
+        shinyalert::shinyalert(
+          "OUPS !",
+          paste0(
+            "Intervalle de Date Incorrecte. Assurez-vous que la date de début de la première période [", options_de_mise_en_route$startValidationDate1(), "]",
+            " soit strictement inférieure à la date de fin de la seconde période [", options_de_mise_en_route$startValidationDate2(), "] !",
+            " NB : La période de simulation est déduite par défaut à partir des bornes de périodes définies dans la validation croisée"
+          ),
+          type = "", imageUrl = "www/calendar_13_512.webp"
+        )
+      }
+      donnees %>%
+        dplyr::filter(
+          (date >= options_de_mise_en_route$startValidationDate1()) & (date <= options_de_mise_en_route$endValidationDate2())
         )
     })
 
@@ -157,7 +262,20 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
     periode_simulation<- reactiveVal()
 
     observeEvent(ignoreInit = TRUE, ignoreNULL = TRUE, input$calage_validation, {
+
       shiny::req(dataObsFirst(), dataObsSecond())
+
+      testWarmup<- reactiveVal(TRUE)
+      if(options_de_mise_en_route$nbWarmUpYear() >= nrow(dataObsFirst())){
+        shinyalert::shinyalert(
+          "Erreur !",
+          "La période d'apprentissage du modèle ne peut pas être supérieur ou égal à la période de Calibration.",
+          type = "error"
+        )
+        testWarmup(FALSE)
+      }
+
+      req(testWarmup())
 
       # setting buttons with shinyjs
       shinyjs::addClass(id = "calage_validation_animate1", class = "loading dots")
@@ -260,7 +378,7 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
       }else{
         ## Definir un critere composite
         InputsCrit_cal_cross1<- airGR::CreateInputsCrit(
-          FUN_CRIT = list(airGR::ErrorCrit_KGE, airGR::ErrorCrit_NSE),
+          FUN_CRIT = list(airGR::ErrorCrit_KGE, airGR::ErrorCrit_KGE),
           InputsModel = InputsModel_cal_cross1,
           RunOptions = RunOptions_cal_cross1,
           Obs = list(dataObsFirst()$Qobs[ind_Run_cal_cross1], dataObsFirst()$Qobs[ind_Run_cal_cross1]),
@@ -324,7 +442,7 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
         Obs = list(dataObsFirst()$Qobs[ind_Run_cal_cross1],
                    dataObsFirst()$Qobs[ind_Run_cal_cross1],
                    dataObsFirst()$Qobs[ind_Run_cal_cross1]),
-        VarObs = list("Q", "Q","Q"), transfo = list("", "sqrt","sqrt"),
+        VarObs = list("Q", "Q","Q"), transfo = list("", "", ""),
         Weights = NULL
       )
 
@@ -371,7 +489,7 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
         Obs = list(dataObsSecond()$Qobs[ind_Run_val_cross1],
                    dataObsSecond()$Qobs[ind_Run_val_cross1],
                    dataObsSecond()$Qobs[ind_Run_val_cross1]),
-        VarObs = list("Q", "Q","Q"), transfo = list("", "sqrt","sqrt"),
+        VarObs = list("Q", "Q","Q"), transfo = list("", "", ""),
         Weights = NULL
       )
 
@@ -392,17 +510,17 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
       # Critères d'evaluation sur la periode de calage : RMSE, NSE, KGE
       cross_validation_cal_result1(
         c(
-          "RMSE [Q]" = ErrorCritMulti_cal_cross1[[1]][[1]],
-          "NSE[sqrt(Q)]" = ErrorCritMulti_cal_cross1[[2]][[1]],
-          "KGE[sqrt(Q)]" = ErrorCritMulti_cal_cross1[[3]][[1]]
+          "RMSE[Q]" = ErrorCritMulti_cal_cross1[[1]][[1]],
+          "NSE[Q]" = ErrorCritMulti_cal_cross1[[2]][[1]],
+          "KGE[Q]" = ErrorCritMulti_cal_cross1[[3]][[1]]
         )
       )
       # Critères d'evaluation sur la periode de validation : RMSE, NSE, KGE
       cross_validation_val_result1(
         c(
-          "RMSE [Q]" = ErrorCritMulti_val_cross1[[1]][[1]],
-          "NSE[sqrt(Q)]" = ErrorCritMulti_val_cross1[[2]][[1]],
-          "KGE[sqrt(Q)]" = ErrorCritMulti_val_cross1[[3]][[1]]
+          "RMSE[Q]" = ErrorCritMulti_val_cross1[[1]][[1]],
+          "NSE[Q]" = ErrorCritMulti_val_cross1[[2]][[1]],
+          "KGE[Q]" = ErrorCritMulti_val_cross1[[3]][[1]]
         )
       )
       # début et fin période 1
@@ -457,9 +575,9 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
           "\tX5::", cross_validation_param_result1()[5], "\n",
           "..........................................\n",
           "CRITERES D'EVALUATION : \n",
-          "\tRMSE[Q]-------: ", cross_validation_cal_result1()[1], "\n",
-          "\tNSE[sqrt(Q)]--: ", cross_validation_cal_result1()[2], "\n",
-          "\tKGE[sqrt(Q)]--: ", cross_validation_cal_result1()[3], "\n",
+          "\tRMSE[Q]----: ", cross_validation_cal_result1()[1], "\n",
+          "\tNSE[Q]-----: ", cross_validation_cal_result1()[2], "\n",
+          "\tKGE[Q]-----: ", cross_validation_cal_result1()[3], "\n",
           "..........................................",
           sep = ""
         )
@@ -485,9 +603,9 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
           "\tX5::", cross_validation_param_result1()[5], "\n",
           "..........................................\n",
           "CRITERES D'EVALUATION : \n",
-          "\tRMSE[Q]-------: ", cross_validation_val_result1()[1], "\n",
-          "\tNSE[sqrt(Q)]--: ", cross_validation_val_result1()[2], "\n",
-          "\tKGE[sqrt(Q)]--: ", cross_validation_val_result1()[3], "\n",
+          "\tRMSE[Q]----: ", cross_validation_val_result1()[1], "\n",
+          "\tNSE[Q]-----: ", cross_validation_val_result1()[2], "\n",
+          "\tKGE[Q]-----: ", cross_validation_val_result1()[3], "\n",
           "..........................................",
           sep = ""
         )
@@ -655,7 +773,7 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
         Obs = list(dataObsSecond()$Qobs[ind_Run_cal_cross2],
                    dataObsSecond()$Qobs[ind_Run_cal_cross2],
                    dataObsSecond()$Qobs[ind_Run_cal_cross2]),
-        VarObs = list("Q", "Q","Q"), transfo = list("", "sqrt","sqrt"),
+        VarObs = list("Q", "Q","Q"), transfo = list("", "", ""),
         Weights = NULL
       )
 
@@ -702,7 +820,7 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
         Obs = list(dataObsFirst()$Qobs[ind_Run_val_cross2],
                    dataObsFirst()$Qobs[ind_Run_val_cross2],
                    dataObsFirst()$Qobs[ind_Run_val_cross2]),
-        VarObs = list("Q", "Q","Q"), transfo = list("", "sqrt","sqrt"),
+        VarObs = list("Q", "Q","Q"), transfo = list("", "", ""),
         Weights = NULL
       )
 
@@ -723,17 +841,17 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
       # Critères d'evaluation sur la periode de calage : RMSE, NSE, KGE
       cross_validation_cal_result2(
         c(
-          "RMSE [Q]" = ErrorCritMulti_cal_cross2[[1]][[1]],
-          "NSE[sqrt(Q)]" = ErrorCritMulti_cal_cross2[[2]][[1]],
-          "KGE[sqrt(Q)]" = ErrorCritMulti_cal_cross2[[3]][[1]]
+          "RMSE[Q]" = ErrorCritMulti_cal_cross2[[1]][[1]],
+          "NSE[Q]" = ErrorCritMulti_cal_cross2[[2]][[1]],
+          "KGE[Q]" = ErrorCritMulti_cal_cross2[[3]][[1]]
         )
       )
       # Critères d'evaluation sur la periode de validation : RMSE, NSE, KGE
       cross_validation_val_result2(
         c(
-          "RMSE [Q]" = ErrorCritMulti_val_cross2[[1]][[1]],
-          "NSE[sqrt(Q)]" = ErrorCritMulti_val_cross2[[2]][[1]],
-          "KGE[sqrt(Q)]" = ErrorCritMulti_val_cross2[[3]][[1]]
+          "RMSE[Q]" = ErrorCritMulti_val_cross2[[1]][[1]],
+          "NSE[Q]" = ErrorCritMulti_val_cross2[[2]][[1]],
+          "KGE[Q]" = ErrorCritMulti_val_cross2[[3]][[1]]
         )
       )
       # début et fin période 2
@@ -788,9 +906,9 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
           "\tX5::", cross_validation_param_result2()[5], "\n",
           "..........................................\n",
           "CRITERES D'EVALUATION : \n",
-          "\tRMSE[Q]-------: ", cross_validation_cal_result2()[1], "\n",
-          "\tNSE[sqrt(Q)]--: ", cross_validation_cal_result2()[2], "\n",
-          "\tKGE[sqrt(Q)]--: ", cross_validation_cal_result2()[3], "\n",
+          "\tRMSE[Q]----: ", cross_validation_cal_result2()[1], "\n",
+          "\tNSE[Q]-----: ", cross_validation_cal_result2()[2], "\n",
+          "\tKGE[Q]-----: ", cross_validation_cal_result2()[3], "\n",
           "..........................................",
           sep = ""
         )
@@ -816,9 +934,9 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
           "\tX5::", cross_validation_param_result2()[5], "\n",
           "..........................................\n",
           "CRITERES D'EVALUATION : \n",
-          "\tRMSE[Q]-------: ", cross_validation_val_result2()[1], "\n",
-          "\tNSE[sqrt(Q)]--: ", cross_validation_val_result2()[2], "\n",
-          "\tKGE[sqrt(Q)]--: ", cross_validation_val_result2()[3], "\n",
+          "\tRMSE[Q]----: ", cross_validation_val_result2()[1], "\n",
+          "\tNSE[Q]-----: ", cross_validation_val_result2()[2], "\n",
+          "\tKGE[Q]-----: ", cross_validation_val_result2()[3], "\n",
           "..........................................",
           sep = ""
         )
@@ -847,7 +965,20 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
     #||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
     ### SIMULATION SUR TOUTE LA PERIODE
     observeEvent(ignoreInit = TRUE, ignoreNULL = TRUE, input$simulation, {
-      shiny::req(donnees, parametres_du_modele())
+
+      req(dataOverAll(), options_de_mise_en_route)
+
+      testWarmup<- reactiveVal(TRUE)
+      if(options_de_mise_en_route$nbWarmUpYear() >= nrow(dataOverAll())){
+        shinyalert::shinyalert(
+          "Erreur !",
+          "La période d'échauffement du modèle ne peut pas être supérieur ou égal à la période de Simulation",
+          type = "error"
+        )
+        testWarmup(FALSE)
+      }
+
+      shiny::req(dataOverAll(), parametres_du_modele(), testWarmup())
 
       # setting buttons with shinyjs
       shinyjs::addClass(id = "simulation", class = "loading dots")
@@ -856,21 +987,21 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
       #------------------------------------------------------------------------------#
       ###* InputsModel object
       InputsModel_simulation <-  CreateInputsModel(
-        FUN_MOD = airGR::RunModel_GR5J, DatesR = donnees$date,
-        Precip = donnees$PmmObs, PotEvap = donnees$ETP
+        FUN_MOD = airGR::RunModel_GR5J, DatesR = dataOverAll()$date,
+        Precip = dataOverAll()$PmmObs, PotEvap = dataOverAll()$ETP
       )
 
       #------------------------------------------------------------------------------#
       ###* RUnOptions Object
       #* mise en route
       ind_WarmUp_simulation <-  seq(
-        which(donnees$date == min(donnees$date, na.rm = TRUE)),
-        which(donnees$date == donnees$date[1]+(lubridate::days(options_de_mise_en_route$nbWarmUpYear())-lubridate::days(1)))
+        which(dataOverAll()$date == options_de_mise_en_route$startValidationDate1()),
+        which(dataOverAll()$date == dataOverAll()$date[1]+(lubridate::days(options_de_mise_en_route$nbWarmUpYear())-lubridate::days(1)))
       )
       #* période d'exécution
       ind_Run_simulation <- seq(
         max(ind_WarmUp_simulation) + 1,
-        which(donnees$date == max(donnees$date, na.rm = TRUE))
+        which(dataOverAll()$date == options_de_mise_en_route$endValidationDate2())
       )
 
       #* création des options d'éxécution
@@ -890,10 +1021,10 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
       InputsCritMulti_simulation <- airGR::CreateInputsCrit(
         FUN_CRIT = list(airGR::ErrorCrit_RMSE, airGR::ErrorCrit_NSE, airGR::ErrorCrit_KGE),
         InputsModel = InputsModel_simulation, RunOptions = RunOptions_simulation,
-        Obs = list(donnees$Qobs[ind_Run_simulation],
-                   donnees$Qobs[ind_Run_simulation],
-                   donnees$Qobs[ind_Run_simulation]),
-        VarObs = list("Q", "Q","Q"), transfo = list("", "sqrt","sqrt"),
+        Obs = list(dataOverAll()$Qobs[ind_Run_simulation],
+                   dataOverAll()$Qobs[ind_Run_simulation],
+                   dataOverAll()$Qobs[ind_Run_simulation]),
+        VarObs = list("Q", "Q","Q"), transfo = list("", "",""),
         Weights = NULL
       )
 
@@ -907,9 +1038,9 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
       # Critères d'evaluation sur la periode de simulation : RMSE, NSE, KGE
       simulation_evaluation_result(
         c(
-          "RMSE [Q]" = ErrorCritMulti_simulation[[1]][[1]],
-          "NSE[sqrt(Q)]" = ErrorCritMulti_simulation[[2]][[1]],
-          "KGE[sqrt(Q)]" = ErrorCritMulti_simulation[[3]][[1]]
+          "RMSE[Q]" = ErrorCritMulti_simulation[[1]][[1]],
+          "NSE[Q]" = ErrorCritMulti_simulation[[2]][[1]],
+          "KGE[Q]" = ErrorCritMulti_simulation[[3]][[1]]
         )
       )
 
@@ -919,8 +1050,8 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
       # début et fin période 1
       periode_simulation(
         c(
-          "debut" = min(donnees$date, na.rm = T),
-          "fin" = max(donnees$date, na.rm = T)
+          "debut" = options_de_mise_en_route$startValidationDate1(),
+          "fin" = options_de_mise_en_route$endValidationDate2()
         )
       )
 
@@ -953,12 +1084,12 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
           "\tX2::", simulation_param()[2], "\n",
           "\tX3::", simulation_param()[3], "\n",
           "\tX4::", simulation_param()[4], "\n",
-          "\tX5::", simulation_param()[5], "\n",
+          "\tX4::", simulation_param()[5], "\n",
           "..........................................\n",
           "CRITERES D'EVALUATION : \n",
-          "\tRMSE[Q]-------: ", simulation_evaluation_result()[1], "\n",
-          "\tNSE[sqrt(Q)]--: ", simulation_evaluation_result()[2], "\n",
-          "\tKGE[sqrt(Q)]--: ", simulation_evaluation_result()[3], "\n",
+          "\tRMSE[Q]----: ", simulation_evaluation_result()[1], "\n",
+          "\tNSE[Q]-----: ", simulation_evaluation_result()[2], "\n",
+          "\tKGE[Q]-----: ", simulation_evaluation_result()[3], "\n",
           "..........................................",
           sep = ""
         )
@@ -973,27 +1104,34 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
 
     })
 
+    #########"" Return
     return(
       list(
         cross_valid_best_params = reactive({ cross_validation_best_values() }),
         warm_up_period = reactive({ options_de_mise_en_route$nbWarmUpYear() }),
         #----------------------------------------------------------------------|
-        # donnees
+        # dataOverAll()
         cross_validation_data_first = reactive({
-          req(donnees)
-          donnees %>%
+          req(dataOverAll())
+          dataOverAll() %>%
             dplyr::filter(
               (date >= options_de_mise_en_route$startValidationDate1()) & (date <= options_de_mise_en_route$endValidationDate1())
             )
         }),
         cross_validation_data_second = reactive({
-          req(donnees)
-          donnees %>%
+          req(dataOverAll())
+          dataOverAll() %>%
             dplyr::filter(
               (date >= options_de_mise_en_route$startValidationDate2()) & (date <= options_de_mise_en_route$endValidationDate2())
             )
         }),
-        overall_serie_data = reactive({ donnees }),
+        overall_serie_data = reactive({
+          req(donnees)
+          donnees %>%
+            dplyr::filter(
+              (date >= options_de_mise_en_route$startValidationDate1()) & (date <= options_de_mise_en_route$endValidationDate2())
+            )
+        }),
         # cross_validation 1
         cross_validation_period_1_1 = reactive({ periode_cross1_1() }),
         cross_validation_period_1_2 = reactive({ periode_cross1_2() }),
@@ -1008,9 +1146,11 @@ mod_gr5j_calage_validation_simulation_server <- function(id, donnees, options_de
         #----------------------------------------------------------------------|
         # simulation
         simulation_period = reactive({ periode_simulation() }),
-        simulation_output_result = reactive({ simulation_output() })
+        simulation_output_result = reactive({ simulation_output() }),
+        gr5j_simulation_parameters = reactive({ periode_simulation() })
       )
     )
+
   })
 }
 

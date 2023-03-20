@@ -87,6 +87,7 @@ mod_data4GR5Jmodel_server <- function(id){
         }
       }
 
+      req(extension_fichier())
 
       # load data
       data_loaded<-reactive({

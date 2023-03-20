@@ -1,4 +1,4 @@
-#' gr2m_calage_validation_simulation UI Function
+#' gr1a_calage_validation_simulation UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_gr2m_calage_validation_simulation_ui <- function(id){
+mod_gr1a_calage_validation_simulation_ui <- function(id){
   ns <- NS(id)
   tagList(
     tags$head(tags$style(type="text/css", '
@@ -91,10 +91,10 @@ mod_gr2m_calage_validation_simulation_ui <- function(id){
   )
 }
 
-#' gr2m_calage_validation_simulation Server Functions
+#' gr1a_calage_validation_simulation Server Functions
 #'
 #' @noRd
-mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de_mise_en_route, parametres_du_modele){
+mod_gr1a_calage_validation_simulation_server <- function(id, donnees, options_de_mise_en_route, parametres_du_modele){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
@@ -294,7 +294,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
       #* modèle que l'utilisateur souhaite exécuter, d'un vecteur de dates, d'un
       #* vecteur de précipitations et d'un vecteur d'évapotranspiration potentielle.
       InputsModel_cal_cross1 <- airGR::CreateInputsModel(
-        FUN_MOD = airGR::RunModel_GR2M,        # modèle GR
+        FUN_MOD = airGR::RunModel_GR1A,        # modèle GR
         DatesR = dataObsFirst()$date,         # vecteur Date
         Precip = dataObsFirst()$PmmObs,          # vecteur Précipitations
         PotEvap = dataObsFirst()$ETP          # vecteur évapotranspiration potentielle
@@ -324,7 +324,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
       #* conseillé de paramétrer cette période de préchauffage = ou > 1 an.
       ind_WarmUp_cal_cross1 <- seq(
         which(dataObsFirst()$date == min(dataObsFirst()$date, na.rm = TRUE)),
-        which(dataObsFirst()$date == dataObsFirst()$date[1]+(base::months(options_de_mise_en_route$nbWarmUpYear())-base::months(1)))
+        which(dataObsFirst()$date == dataObsFirst()$date[1]+(lubridate::years(options_de_mise_en_route$nbWarmUpYear())-lubridate::years(1)))
       )
 
       #* Pour sélectionner une période pour laquelle l'utilisateur souhaite exécuter
@@ -339,7 +339,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
       #* following arguments:
       RunOptions_cal_cross1 <- airGR::CreateRunOptions(
         #* Le modèle à utiliser
-        FUN_MOD = airGR::RunModel_GR2M,
+        FUN_MOD = airGR::RunModel_GR1A,
         #* Les entrées à considérées (d'ores et déjà définies avec la fonction
         #* CreateInputsModel() et stockées dans l'objet InputsModel ;
         InputsModel = InputsModel_cal_cross1,
@@ -393,7 +393,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
       #* Avant d'utiliser l'outil de calibration automatique, l'utilisateur doit
       #* préparer les options de calibrage avec la fonction CreateCalibOptions().
       CalibOptions_cal_cross1 <- airGR::CreateCalibOptions(
-        FUN_MOD = airGR::RunModel_GR2M,        # the name of the model function
+        FUN_MOD = airGR::RunModel_GR1A,        # the name of the model function
         FUN_CALIB = airGR::Calibration_Michel  # the name of the calibration algorithm
       )
 
@@ -414,7 +414,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
         #* the CreateCalibOptions() function
         CalibOptions = CalibOptions_cal_cross1,
         #* Le modèle à utiliser
-        FUN_MOD = airGR::RunModel_GR2M
+        FUN_MOD = airGR::RunModel_GR1A
       )
 
       #* The Calibration_Michel() function returns a vector with the parameters of
@@ -430,7 +430,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
 
       #------------------------------------------------------------------------------#
       ###* Run du modèle sur la période de calibration
-      OutputsModel_cal_cross1 <- airGR::RunModel_GR2M(
+      OutputsModel_cal_cross1 <- airGR::RunModel_GR1A(
         InputsModel = InputsModel_cal_cross1, RunOptions = RunOptions_cal_cross1, Param = param_cal_cross1
       )
 
@@ -452,7 +452,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
       #------------------------------------------------------------------------------#
       ###* InputsModel object
       InputsModel_val_cross1 <-  CreateInputsModel(
-        FUN_MOD = airGR::RunModel_GR2M, DatesR = dataObsSecond()$date,
+        FUN_MOD = airGR::RunModel_GR1A, DatesR = dataObsSecond()$date,
         Precip = dataObsSecond()$PmmObs, PotEvap = dataObsSecond()$ETP
       )
 
@@ -461,7 +461,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
       #* mise en route
       ind_WarmUp_val_cross1 <- seq(
         which(dataObsSecond()$date == min(dataObsSecond()$date, na.rm = TRUE)),
-        which(dataObsSecond()$date == dataObsSecond()$date[1]+(base::months(options_de_mise_en_route$nbWarmUpYear())-base::months(1)))
+        which(dataObsSecond()$date == dataObsSecond()$date[1]+(lubridate::years(options_de_mise_en_route$nbWarmUpYear())-lubridate::years(1)))
       )
       #* période d'exécution
       ind_Run_val_cross1 <- seq(
@@ -471,13 +471,13 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
 
       #* création des options d'éxécution
       RunOptions_val_cross1 <- airGR::CreateRunOptions(
-        FUN_MOD = airGR::RunModel_GR2M, InputsModel = InputsModel_val_cross1,
+        FUN_MOD = airGR::RunModel_GR1A, InputsModel = InputsModel_val_cross1,
         IndPeriod_WarmUp = ind_WarmUp_val_cross1, IndPeriod_Run = ind_Run_val_cross1
       )
 
       #------------------------------------------------------------------------------#
       ###* Run du modèle sur la période de validation
-      OutputsModel_val_cross1 <-  airGR::RunModel_GR2M(
+      OutputsModel_val_cross1 <-  airGR::RunModel_GR1A(
         InputsModel = InputsModel_val_cross1, RunOptions = RunOptions_val_cross1, Param = param_cal_cross1
       )
 
@@ -569,7 +569,6 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
           "..........................................\n",
           "PARAMETRES::\n",
           "\tX1::", cross_validation_param_result1()[1], "\n",
-          "\tX2::", cross_validation_param_result1()[2], "\n",
           "..........................................\n",
           "CRITERES D'EVALUATION : \n",
           "\tRMSE[Q]----: ", cross_validation_cal_result1()[1], "\n",
@@ -594,7 +593,6 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
           "..........................................\n",
           "PARAMETRES::\n",
           "\tX1::", cross_validation_param_result1()[1], "\n",
-          "\tX2::", cross_validation_param_result1()[2], "\n",
           "..........................................\n",
           "CRITERES D'EVALUATION : \n",
           "\tRMSE[Q]----: ", cross_validation_val_result1()[1], "\n",
@@ -618,7 +616,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
       #* modèle que l'utilisateur souhaite exécuter, d'un vecteur de dates, d'un
       #* vecteur de précipitations et d'un vecteur d'évapotranspiration potentielle.
       InputsModel_cal_cross2 <- airGR::CreateInputsModel(
-        FUN_MOD = airGR::RunModel_GR2M,        # modèle GR
+        FUN_MOD = airGR::RunModel_GR1A,        # modèle GR
         DatesR = dataObsSecond()$date,         # vecteur Date
         Precip = dataObsSecond()$PmmObs,       # vecteur Précipitations
         PotEvap = dataObsSecond()$ETP          # vecteur évapotranspiration potentielle
@@ -648,7 +646,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
       #* conseillé de paramétrer cette période de préchauffage = ou > 1 an.
       ind_WarmUp_cal_cross2 <- seq(
         which(dataObsSecond()$date == min(dataObsSecond()$date, na.rm = TRUE)),
-        which(dataObsSecond()$date == dataObsSecond()$date[1]+(base::months(options_de_mise_en_route$nbWarmUpYear())-base::months(1)))
+        which(dataObsSecond()$date == dataObsSecond()$date[1]+(lubridate::years(options_de_mise_en_route$nbWarmUpYear())-lubridate::years(1)))
       )
 
       #* Pour sélectionner une période pour laquelle l'utilisateur souhaite exécuter
@@ -663,7 +661,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
       #* following arguments:
       RunOptions_cal_cross2 <- airGR::CreateRunOptions(
         #* Le modèle à utiliser
-        FUN_MOD = airGR::RunModel_GR2M,
+        FUN_MOD = airGR::RunModel_GR1A,
         #* Les entrées à considérées (d'ores et déjà définies avec la fonction
         #* CreateInputsModel() et stockées dans l'objet InputsModel ;
         InputsModel = InputsModel_cal_cross2,
@@ -717,7 +715,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
       #* Avant d'utiliser l'outil de calibration automatique, l'utilisateur doit
       #* préparer les options de calibrage avec la fonction CreateCalibOptions().
       CalibOptions_cal_cross2 <- airGR::CreateCalibOptions(
-        FUN_MOD = airGR::RunModel_GR2M,        # the name of the model function
+        FUN_MOD = airGR::RunModel_GR1A,        # the name of the model function
         FUN_CALIB = airGR::Calibration_Michel  # the name of the calibration algorithm
       )
 
@@ -738,7 +736,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
         #* the CreateCalibOptions() function
         CalibOptions = CalibOptions_cal_cross2,
         #* Le modèle à utiliser
-        FUN_MOD = airGR::RunModel_GR2M
+        FUN_MOD = airGR::RunModel_GR1A
       )
 
       #* The Calibration_Michel() function returns a vector with the parameters of
@@ -755,7 +753,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
 
       #------------------------------------------------------------------------------#
       ###* Run du modèle sur la période de calibration
-      OutputsModel_cal_cross2 <- airGR::RunModel_GR2M(
+      OutputsModel_cal_cross2 <- airGR::RunModel_GR1A(
         InputsModel = InputsModel_cal_cross2, RunOptions = RunOptions_cal_cross2, Param = param_cal_cross2
       )
 
@@ -777,7 +775,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
       #------------------------------------------------------------------------------#
       ###* InputsModel object
       InputsModel_val_cross2 <-  CreateInputsModel(
-        FUN_MOD = airGR::RunModel_GR2M, DatesR = dataObsFirst()$date,
+        FUN_MOD = airGR::RunModel_GR1A, DatesR = dataObsFirst()$date,
         Precip = dataObsFirst()$PmmObs, PotEvap = dataObsFirst()$ETP
       )
 
@@ -786,7 +784,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
       #* mise en route
       ind_WarmUp_val_cross2 <-  seq(
         which(dataObsFirst()$date == min(dataObsFirst()$date, na.rm = TRUE)),
-        which(dataObsFirst()$date == dataObsFirst()$date[1]+(base::months(options_de_mise_en_route$nbWarmUpYear())-base::months(1)))
+        which(dataObsFirst()$date == dataObsFirst()$date[1]+(lubridate::years(options_de_mise_en_route$nbWarmUpYear())-lubridate::years(1)))
       )
       #* période d'exécution
       ind_Run_val_cross2 <- seq(
@@ -796,13 +794,13 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
 
       #* création des options d'éxécution
       RunOptions_val_cross2 <- airGR::CreateRunOptions(
-        FUN_MOD = airGR::RunModel_GR2M, InputsModel = InputsModel_val_cross2,
+        FUN_MOD = airGR::RunModel_GR1A, InputsModel = InputsModel_val_cross2,
         IndPeriod_WarmUp = ind_WarmUp_val_cross2, IndPeriod_Run = ind_Run_val_cross2
       )
 
       #------------------------------------------------------------------------------#
       ###* Run du modèle sur la période de validation
-      OutputsModel_val_cross2 <-  airGR::RunModel_GR2M(
+      OutputsModel_val_cross2 <-  airGR::RunModel_GR1A(
         InputsModel = InputsModel_val_cross2, RunOptions = RunOptions_val_cross2, Param = param_cal_cross2
       )
 
@@ -894,7 +892,6 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
           "..........................................\n",
           "PARAMETRES::\n",
           "\tX1::", cross_validation_param_result2()[1], "\n",
-          "\tX2::", cross_validation_param_result2()[2], "\n",
           "..........................................\n",
           "CRITERES D'EVALUATION : \n",
           "\tRMSE[Q]----: ", cross_validation_cal_result2()[1], "\n",
@@ -919,7 +916,6 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
           "..........................................\n",
           "PARAMETRES::\n",
           "\tX1::", cross_validation_param_result2()[1], "\n",
-          "\tX2::", cross_validation_param_result2()[2], "\n",
           "..........................................\n",
           "CRITERES D'EVALUATION : \n",
           "\tRMSE[Q]----: ", cross_validation_val_result2()[1], "\n",
@@ -975,7 +971,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
       #------------------------------------------------------------------------------#
       ###* InputsModel object
       InputsModel_simulation <-  CreateInputsModel(
-        FUN_MOD = airGR::RunModel_GR2M, DatesR = dataOverAll()$date,
+        FUN_MOD = airGR::RunModel_GR1A, DatesR = dataOverAll()$date,
         Precip = dataOverAll()$PmmObs, PotEvap = dataOverAll()$ETP
       )
 
@@ -984,7 +980,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
       #* mise en route
       ind_WarmUp_simulation <-  seq(
         which(dataOverAll()$date == options_de_mise_en_route$startValidationDate1()),
-        which(dataOverAll()$date == dataOverAll()$date[1]+(base::months(options_de_mise_en_route$nbWarmUpYear())-base::months(1)))
+        which(dataOverAll()$date == dataOverAll()$date[1]+(lubridate::years(options_de_mise_en_route$nbWarmUpYear())-lubridate::years(1)))
       )
       #* période d'exécution
       ind_Run_simulation <- seq(
@@ -994,13 +990,13 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
 
       #* création des options d'éxécution
       RunOptions_simulation <- airGR::CreateRunOptions(
-        FUN_MOD = airGR::RunModel_GR2M, InputsModel = InputsModel_simulation,
+        FUN_MOD = airGR::RunModel_GR1A, InputsModel = InputsModel_simulation,
         IndPeriod_WarmUp = ind_WarmUp_simulation, IndPeriod_Run = ind_Run_simulation
       )
 
       #------------------------------------------------------------------------------#
       ###* Run du modèle sur la période de validation
-      OutputsModel_simulation <-  airGR::RunModel_GR2M(
+      OutputsModel_simulation <-  airGR::RunModel_GR1A(
         InputsModel = InputsModel_simulation, RunOptions = RunOptions_simulation, Param = parametres_du_modele()
       )
 
@@ -1069,7 +1065,6 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
           "..........................................\n",
           "PARAMETRES::\n",
           "\tX1::", simulation_param()[1], "\n",
-          "\tX2::", simulation_param()[2], "\n",
           "..........................................\n",
           "CRITERES D'EVALUATION : \n",
           "\tRMSE[Q]----: ", simulation_evaluation_result()[1], "\n",
@@ -1132,7 +1127,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
         # simulation
         simulation_period = reactive({ periode_simulation() }),
         simulation_output_result = reactive({ simulation_output() }),
-        gr2m_simulation_parameters = reactive({ periode_simulation() })
+        gr1a_simulation_parameters = reactive({ periode_simulation() })
       )
     )
 
@@ -1140,7 +1135,7 @@ mod_gr2m_calage_validation_simulation_server <- function(id, donnees, options_de
 }
 
 ## To be copied in the UI
-# mod_gr2m_calage_validation_simulation_ui("gr2m_calage_validation_simulation_1")
+# mod_gr1a_calage_validation_simulation_ui("gr1a_calage_validation_simulation_1")
 
 ## To be copied in the server
-# mod_gr2m_calage_validation_simulation_server("gr2m_calage_validation_simulation_1")
+# mod_gr1a_calage_validation_simulation_server("gr1a_calage_validation_simulation_1")

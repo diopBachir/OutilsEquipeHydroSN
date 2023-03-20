@@ -34,17 +34,6 @@ mod_gr6j_model_options_server <- function(id, ready_data_4_gr6j_application){
         slice(round(nrow(ready_data_4_gr6j_application)/2+.5):nrow(ready_data_4_gr6j_application))
     })
 
-    # période de chauffage
-    # warmingUpPeriode<- reactive({
-    #   seq(which(date == min(date)), which(date == date[2]+years(2)))
-    # })
-    #
-    # # periode d'exécution du modèle
-    # executionPeriode<- reactive({
-    #   seq(max(ind_WarmUp_cal) + 1, which(date == date[round(length(date)*2/3)])
-    #   )
-    # })
-
     output$model_options<- renderUI({
       req(ready_data_4_gr6j_application)
       fluidRow(
@@ -56,22 +45,26 @@ mod_gr6j_model_options_server <- function(id, ready_data_4_gr6j_application){
 
         column(12, tags$hr(style="border-color:gray;")),
 
-        column(12, h4("Options De Mise en Route [jours]", style="font-family=georgia;color:blue;")),
-        column(12,  numericInput(ns("nbWarmUpYear"), div("Période D'échauffement", style="font-size:85%;"), value = 730, width="100%")),
+        column(12, h4("Options || Configuration", style="font-family=georgia;color:blue;")),
+        column(12,  numericInput(ns("nbWarmUpYear"), div("Période D'échauffement [Nombre de jours]", style="font-size:85%;"),
+                                 min=10, max = round(nrow(ready_data_4_gr4j_application)*50/100), value = 730,
+                                step = 1, width="100%")),
         column(12,  selectInput(
           ns("calibrationType"), div("Type De Calibration", style="font-size:85%;"),
-          choices = c("Fonction Objective Unique [KGE[Q]]", "Critère Composite [KGE[Q], NSE[sqrt(Q)]]"), selected = "Critère Composite [KGE[Q], NSE[sqrt(Q)]]", width="100%"
+          choices = c("Fonction Objective Unique [KGE[Q]]", "Critère Composite [KGE[Q], KGE[sqrt(Q)]]"), selected = "Fonction Objective Unique [KGE[Q]]", width="100%"
         )),
-
         column(12, tags$hr(style="border-color:gray;"))
       )
     })
 
     return(
       list(
-        startValidationDate1 = reactive({ input$startValidationDate1 }), endValidationDate1 = reactive({ input$endValidationDate1 }),
-        startValidationDate2 = reactive({ input$startValidationDate2 }), endValidationDate2 = reactive({ input$endValidationDate2 }),
-        nbWarmUpYear = reactive({ input$nbWarmUpYear }), calibrationType = reactive({ input$calibrationType })
+        startValidationDate1 = reactive({ input$startValidationDate1 }),
+        endValidationDate1 = reactive({ input$endValidationDate1 }),
+        startValidationDate2 = reactive({ input$startValidationDate2 }),
+        endValidationDate2 = reactive({ input$endValidationDate2 }),
+        nbWarmUpYear = reactive({ input$nbWarmUpYear }),
+        calibrationType = reactive({ input$calibrationType })
       )
     )
 

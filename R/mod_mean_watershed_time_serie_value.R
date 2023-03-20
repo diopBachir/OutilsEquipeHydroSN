@@ -52,49 +52,49 @@ mod_mean_watershed_time_serie_value_ui <- function(id){
              column(3, dipsaus::actionButtonStyled(ns("thiessen"), span("Thiessen", id=ns("ThiessenAnimate")), class= "", type="primary", icon = icon("stream"))),
              # "Thin-Plate Spline"
              column(3, dipsaus::actionButtonStyled(ns("spline"), span("Spline", id=ns("SplineAnimate")), class= "", type="primary", icon = icon("stream"))),
-             # br(),
              # Grille d'interpolation
-             # column(12,  selectInput(
-             # résolution de la grille d'interpolation
+             column(12, tags$hr(style="border-color:gray;")),
              column(12,
-                    numericInput(
-                      ns("gridRes"), label="Résolution Grille [mètres]", value = 7000, min = 500, max=100000, step = 500
+                    sliderInput(
+                      ns("gridRes"), label="Résolution de la Grille d'Interpolation [mètres]",
+                      value=10000, min=500, max=500000, step=100, width = "100%"
                     )
              ),
-             column(12, tags$hr(style="border-color:black;"))
-
+             column(12, tags$hr(style="border-color:gray;")),
     ),
 
-    tags$u(h4("Résultats de l'interpolation", style = "color:#3474A7;text-align:center")),
-
-    # verbatimTextOutput(ns("test")),
+    h4("RÉSULTATS DE L'INTERPOLATION", style = "color:#3474A7;text-align:center;background-color:lightgray"),
 
     # résumé statistique
     fluidRow(align = "center",
              # krigeage
              column(3,
-                    tags$u(h4("Krigeage")),
-                    div(dataTableOutput(ns("krigingResult")), style="font-size:80%")
+                    h4("KRIGEAGE", style = "color:#3474A7;text-align:center;background-color:lightgray"),
+                    div(dataTableOutput(ns("krigingResult")), style="font-size:75%")
              ),
 
              # IDW
              column(3,
-                    tags$u(h4("IDW")),
-                    div(dataTableOutput(ns("idwResult")), style="font-size:80%")
+                    h4("IDW", style = "color:#3474A7;text-align:center;background-color:lightgray"),
+                    div(dataTableOutput(ns("idwResult")), style="font-size:75%")
              ),
 
              # Thiessen
              column(3,
-                    tags$u(h4("Thiessen")),
-                    div(dataTableOutput(ns("thiessenResult")), style="font-size:80%")
+                    h4("THIESSEN", style = "color:#3474A7;text-align:center;background-color:lightgray"),
+                    div(dataTableOutput(ns("thiessenResult")), style="font-size:75%")
              ),
 
              # Thin-Plate Spline
              column(3,
-                    tags$u(h4("Thin-Plate Spline")),
-                    div(dataTableOutput(ns("splineResult")), style="font-size:80%")
+                    h4("SPLINE", style = "color:#3474A7;text-align:center;background-color:lightgray"),
+                    div(dataTableOutput(ns("splineResult")), style="font-size:75%")
              )
-    )
+    ),
+
+    # valeurs NA infos
+    uiOutput(ns("removed_NA_info"))
+
   )
 }
 
@@ -133,13 +133,45 @@ mod_mean_watershed_time_serie_value_server <- function(id, bassin, interpolation
       prec_grid_georef(stations, "+init=epsg:3857")[[2]]
     })
     # Interpolation data georeferenced in UTM
+    # return
+    filtered_data<- reactive({
+      req(interpolationData)
+      interpolationData[which(rowMeans(!is.na(interpolationData)) > .01), ]
+    })
+
+    # removed NA info
+    output$removed_NA_info<- renderUI({
+      req(filtered_data())
+      # modal dialog
+      showModal(modalDialog(
+        tags$h4("INFORMATION SUR LES VALEURS MANQUANTES [NA/NaN]", style="color:#3474A7;family:Georgia;text-align:left;"),
+        # affichage des résultats
+        fluidRow(
+          column(12,
+                 tags$h5(
+                   paste0(
+                     "Les enregistrements ne contenant aucune donnée dans toutes les stations sont ignorées dans l'interpolation. ",
+                     "Même si les dates de ces enregistrements apparaissent dans les résultats, elles contiendront des données manquantes !"
+                   ),
+                   style="color:#3474A7;family:Georgia;text-align:left;"
+                 )
+          ),
+        ),
+        footer=tagList(
+          modalButton('Fermer', icon = icon("power-off"))
+        ),
+
+        size = "m"
+      ))
+    })
+
     interpolationData.UTM<- reactive({
-      req(interpolationData, station.in.utm())
+      req(filtered_data(), station.in.utm())
       data_cleaning(interpolationData, station.in.utm())
     })
     interpolationData.UTM.wrap<- reactive({
-      req(interpolationData, station.in.utm())
-      data_cleaning_wrap(interpolationData, station.in.utm())
+      req(filtered_data(), station.in.utm())
+      data_cleaning_wrap(filtered_data(), station.in.utm())
     })
     # Définition du modèle de la grille d'interpolation spatiale
     grid.model<- reactive({
@@ -179,7 +211,7 @@ mod_mean_watershed_time_serie_value_server <- function(id, bassin, interpolation
 
       }
 
-      req(bassin.utm(), interpolationData.UTM(), grid.model())
+      req(bassin.utm(), interpolationData.UTM(), grid.model(), test_nrow())
 
       # setting buttons with shinyjs
       shinyjs::addClass(id = "KrigeageAnimate", class = "loading dots")
@@ -192,7 +224,7 @@ mod_mean_watershed_time_serie_value_server <- function(id, bassin, interpolation
 
       # Notification
       id <- showNotification(
-        "Interpolation par Krigeage... Peut prendre un certain temps en fonction de la longueur de la serie...",
+        "Interpolation par Krigeage... Peut prendre un certain temps en fonction de la longueur de la serie et de la résolution de la grille...",
         duration = NULL, closeButton = FALSE
       )
       # remove notification
@@ -246,7 +278,7 @@ mod_mean_watershed_time_serie_value_server <- function(id, bassin, interpolation
 
       # Notification
       id <- showNotification(
-        "Interpolation par IDW ... Peut prendre un certain temps en fonction de la longueur de la serie...",
+        "Interpolation par IDW ... Peut prendre un certain temps en fonction de la longueur de la serie et de la résolution de la grille...",
         duration = NULL, closeButton = FALSE
       )
       on.exit(removeNotification(id), add = TRUE)
@@ -302,7 +334,7 @@ mod_mean_watershed_time_serie_value_server <- function(id, bassin, interpolation
 
       }
 
-      req(bassin, stations, interpolationData)
+      req(bassin, stations, filtered_data(), test_nrow())
 
       # setting buttons with shinyjs
       shinyjs::addClass(id = "ThiessenAnimate", class = "loading dots")
@@ -310,12 +342,12 @@ mod_mean_watershed_time_serie_value_server <- function(id, bassin, interpolation
 
       bv<- bassin
       stations<- stations
-      interpolationData<- interpolationData
+      interpolationData<- filtered_data()
       proj<-3857
 
       # Notification
       id <- showNotification(
-        "Interpolation par Polygone de Thiessen...Peut prendre un certain temps en fonction de la longueur de la serie...",
+        "Interpolation par Polygone de Thiessen... Peut prendre un certain temps en fonction de la longueur de la serie et de la résolution de la grille...",
         duration = NULL, closeButton = FALSE
       )
       on.exit(removeNotification(id), add = TRUE)
@@ -371,7 +403,7 @@ mod_mean_watershed_time_serie_value_server <- function(id, bassin, interpolation
 
       }
 
-      req(interpolationData.UTM.wrap(), bassin.utm(), grid.model())
+      req(interpolationData.UTM.wrap(), bassin.utm(), grid.model(), test_nrow())
 
       # setting buttons with shinyjs
       shinyjs::addClass(id = "SplineAnimate", class = "loading dots")
@@ -384,7 +416,7 @@ mod_mean_watershed_time_serie_value_server <- function(id, bassin, interpolation
 
       # Notification
       id <- showNotification(
-        "Interpolation par Thin-Plate Spline...Peut prendre un certain temps en fonction de la longueur de la serie...",
+        "Interpolation par Thin-Plate Spline... Peut prendre un certain temps en fonction de la longueur de la serie et de la résolution de la grille...",
         duration = NULL, closeButton = FALSE
       )
       on.exit(removeNotification(id), add = TRUE)

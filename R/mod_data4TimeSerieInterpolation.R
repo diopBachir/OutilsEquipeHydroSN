@@ -240,21 +240,21 @@ mod_data4TimeSerieInterpolation_server <- function(id){
 
       # tester le nombre de lignes
       req(data_type_columns)
-      test_nb_row<- nrow(data_loaded()) <= 3660
+      test_nb_row<- nrow(data_loaded()) <= 14640
       # alert
       if(!test_nb_row){
         shinyFeedback::hideFeedback("dataInput")
         shinyFeedback::feedbackWarning(
           "dataInput", !test_nb_row,
           paste0(
-            "Limite (3660 lignes) dépassée !"
+            "Limite (14640 lignes) dépassée !"
           )
         )
 
         shinyalert::shinyalert(
           "Erreur Chargement !!",
           paste(
-            "Par précaution, il est impossible d'utiliser cet outil avec un fichier dépassant 3660 lignes.",
+            "Par précaution, il est impossible d'utiliser cet outil avec un fichier dépassant 14640 lignes.",
             "Ce comportement est délibéré pour ne pas bousiller le système utilisé ! Si vous avez un fichier ",
             "dépassant cette limite, veillez diviser le fichier en plusieurs parties pour les importer et les ",
             "traiter un à un !"

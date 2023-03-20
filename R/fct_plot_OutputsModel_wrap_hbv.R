@@ -1,3 +1,11 @@
+#' plot_OutputsModel_wrap_hbv
+#'
+#' @description A fct function
+#'
+#' @return The return value, if any, from executing the function.
+#'
+#' @noRd
+
 #' plot_OutputsModel_wrap
 #'
 #' @description A fct function
@@ -6,11 +14,11 @@
 #'
 #' @noRd
 
-plot_OutputsModel_wrap <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea = NULL, which = "synth", log_scale = FALSE,
-                                   cex.axis = 1, cex.lab = 0.9, cex.leg = 0.9, lwd = 1,
-                                   AxisTS = function(x) axis.POSIXct(side = 1, x = x$DatesR, ...),
-                                   LayoutMat = NULL, LayoutWidths = rep.int(1, ncol(LayoutMat)), LayoutHeights = rep.int(1, nrow(LayoutMat)),
-                                   verbose = TRUE, ...) {
+plot_OutputsModel_wrap_hbv <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea = NULL, which = "synth", log_scale = FALSE,
+                                       cex.axis = 1, cex.lab = 0.9, cex.leg = 0.9, lwd = 1,
+                                       AxisTS = function(x) axis.POSIXct(side = 1, x = x$DatesR, ...),
+                                       LayoutMat = NULL, LayoutWidths = rep.int(1, ncol(LayoutMat)), LayoutHeights = rep.int(1, nrow(LayoutMat)),
+                                       verbose = TRUE, ...) {
 
 
   ## save default graphical & time parameters and resetting on exit
@@ -867,7 +875,7 @@ plot_OutputsModel_wrap <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinA
     par(new = FALSE, mar = mar)
     if (any(SelectNotZero)) {
       ylim <- log(range(c(Qobs[SelectQobsNotZero & SelectQsimNotZero], OutputsModel$Qsim[SelectQobsNotZero & SelectQsimNotZero]), na.rm = TRUE))
-      plot(log(Qobs[SelectQobsNotZero & SelectQsimNotZero]),
+      base::plot(log(Qobs[SelectQobsNotZero & SelectQsimNotZero]),
            log(OutputsModel$Qsim[SelectQobsNotZero & SelectQsimNotZero]),
            type = "p", pch = 1, cex = 1.2, col = rgb(0,0,0,.5), lwd = lwd,
            xlim = ylim, ylim = ylim, xaxt = "n", yaxt = "n", xlab = "", ylab = "", ...)

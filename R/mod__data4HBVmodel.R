@@ -1,4 +1,4 @@
-#' data4GR4Jmodel UI Function
+#' _data4HBVmodel UI Function
 #'
 #' @description A shiny Module.
 #'
@@ -7,14 +7,14 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_data4GR4Jmodel_ui <- function(id){
+mod__data4HBVmodel_ui <- function(id){
   ns <- NS(id)
   tagList(
     fluidRow(align="left",
              column(12,
                     fileInput(
                       ns("dataInput"),
-                      label = div("Chargés Les Données Nécessaire : Pluies (mm), ETP (mm), Débits (mm)", style = "color:#gray;family:Georgia;font-size:95%"),
+                      label = div("Chargés Les Données Nécessaire : Pluies (mm), ETP (mm), Température (°C), Débits (mm)", style = "color:#gray;family:Georgia;font-size:95%"),
                       accept = c(".csv", ".xlsx", ".xls"),  buttonLabel = "Charger...",
                       placeholder = "fichier CSV ou Excel", width = "100%"
                     )
@@ -24,16 +24,16 @@ mod_data4GR4Jmodel_ui <- function(id){
     tags$hr(style="border-color:gray;"),
 
     fluidRow(
-      column(6,  div(DT::dataTableOutput(ns("used_data")), style="font-size:80%")),
-      column(6,  verbatimTextOutput(ns("used_data_summary"))),
+      column(8,  div(DT::dataTableOutput(ns("used_data")), style="font-size:80%")),
+      column(4,  verbatimTextOutput(ns("used_data_summary"))),
     )
   )
 }
 
-#' data4GR4Jmodel Server Functions
+#' _data4HBVmodel Server Functions
 #'
 #' @noRd
-mod_data4GR4Jmodel_server <- function(id){
+mod__data4HBVmodel_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
@@ -87,8 +87,8 @@ mod_data4GR4Jmodel_server <- function(id){
         }
       }
 
-
       req(extension_fichier())
+
       # load data
       data_loaded<-reactive({
         req(extension_fichier())
@@ -102,7 +102,7 @@ mod_data4GR4Jmodel_server <- function(id){
       })
 
       # validation du nom de la première colonne
-      colonne_names<- test_match_order(names(data_loaded()), c("date", "PmmObs", "ETP", "Qobs"))
+      colonne_names<- test_match_order(names(data_loaded()), c("date", "PmmObs", "ETP", "Temp", "Qobs"))
       # alert
       if(!colonne_names){
         shinyFeedback::hideFeedback("dataInput")
@@ -116,9 +116,9 @@ mod_data4GR4Jmodel_server <- function(id){
         shinyalert::shinyalert(
           "Erreur Chargement !!",
           paste(
-            "Les colonnes du fichier importé doivent se nommer dans cet ordre : [date, PmmObs, ETP, Qobs] ",
+            "Les colonnes du fichier importé doivent se nommer dans cet ordre : [date, PmmObs, ETP, Temp, Qobs] ",
             "pour, respectivement, la date (date), les pluies observés (PmmObs), l'évapotranspiration (ETP) ",
-            "et les débits observés (Qobs)."
+            "la température (Temp) et les débits observés (Qobs)."
           )
         )
       }
@@ -197,9 +197,9 @@ mod_data4GR4Jmodel_server <- function(id){
       if(data_type_columns){
         shinyFeedback::hideFeedback("dataInput")
         shinyFeedback::feedbackSuccess("dataInput", data_type_columns,
-          paste0(
-            "Fichier Chargé Avec Succès ", icon("check"), icon("check"), icon("check")
-          )
+                                       paste0(
+                                         "Fichier Chargé Avec Succès ", icon("check"), icon("check"), icon("check")
+                                       )
         )
         return(
           data_loaded() %>%
@@ -226,15 +226,14 @@ mod_data4GR4Jmodel_server <- function(id){
     #return
     return(
       list(
-        data_for_GR_modelisiation = reactive({data_for_dailyInventoryGraph()})
+        data_for_HBV_modelisiation = reactive({data_for_dailyInventoryGraph()})
       )
     )
-
   })
 }
 
 ## To be copied in the UI
-# mod_data4GR4Jmodel_ui("data4GR4Jmodel_1")
+# mod__data4HBVmodel_ui("data4HBVmodel_1")
 
 ## To be copied in the server
-# mod_data4GR4Jmodel_server("data4GR4Jmodel_1")
+# mod__data4HBVmodel_server("data4HBVmodel_1")

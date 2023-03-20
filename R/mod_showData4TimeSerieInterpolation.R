@@ -77,10 +77,10 @@ mod_showData4TimeSerieInterpolation_server <- function(id, interpolation_data, b
         )  %>%
         dplyr::group_by(Station) %>%
         dplyr::summarise(
-          Min. = min(Valeur, na.rm = T), Quart1 = quantile(Valeur, .25),
-          Médianne = median(Valeur), Quart3 = quantile(Valeur, .75),
-          Moyenne = mean(Valeur), Max = max(Valeur),
-          "Ecart type" = sd(Valeur)
+          Min. = min(Valeur, na.rm = T), Quart1 = quantile(Valeur, .25, na.rm = T),
+          Médianne = median(Valeur, na.rm = T), Quart3 = quantile(Valeur, .75, na.rm = T),
+          Moyenne = mean(Valeur, na.rm = T), Max = max(Valeur, na.rm = T),
+          "Ecart type" = sd(Valeur, na.rm = T)
         )  %>%
         dplyr::mutate(
           dplyr::across(tidyselect::where(is.numeric), ~round(., 2), .names = "{.col}")
