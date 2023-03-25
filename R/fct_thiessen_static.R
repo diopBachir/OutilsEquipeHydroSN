@@ -70,6 +70,6 @@ thiessen<- function(data, stations_db, bassin, epsg, target_col){
 
   final.thiessen.output<- tibble::tibble(
     Date = as.character(target_col),
-    THIESSEN=round(mean(data_to_interpole_sf_voronoi2[[2]]), 2)
+    THIESSEN=round(mean(data_to_interpole_sf_voronoi2[[2]], na.rm = TRUE), 4)
   )
 }

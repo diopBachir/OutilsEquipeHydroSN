@@ -12,7 +12,8 @@ app_server <- function(input, output, session) {
   #* limit by using the shiny.maxRequestSize option. For example, adding
   #* options(shiny.maxRequestSize=30*1024^2) to the top of server.R would
   #*increase the limit to 30MB.
-  options(shiny.maxRequestSize=100*1024^2)
+  options(shiny.maxRequestSize=2048*1024^2)
+  options(future.globals.maxSize= 2048*1024^2 )
 
   # ||||||||||||||||||||||||||||||||||||| BOXPLOTS MENSUELS
   # plot options
@@ -153,52 +154,65 @@ app_server <- function(input, output, session) {
   #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
 
   # |||||||||||||||||||||||||||||||||||||VALEUR MOYENNE D'UN BASSIN
-  # limites bassin versant
-  limites_bv_time_serie_interpolation <- mod_loading_VectorFile_server("loading_VectorFile_1")
-  # données
-  data4TimeSerieInterpolation <- mod_data4TimeSerieInterpolation_server("data4TimeSerieInterpolation_1")
+  # repertoire de travail
+  working_dir_time_serie_interpolation<- mod_set_project_folder_server("set_project_folder__temporal_interpolation")
+  working_directorytime_serie_interpolation<- working_dir_time_serie_interpolation$wdir
+  observeEvent(working_dir_time_serie_interpolation$wdir(), {
+    # limites bassin versant
+    limites_bv_time_serie_interpolation <- mod_loading_bassin_for_temporal_interpolation_server("loading_VectorFile_1", working_directorytime_serie_interpolation())
+    # données
+    data4TimeSerieInterpolation <-  mod_data4TimeSerieInterpolation_shinyFiles_server("data4TimeSerieInterpolation_shinyFiles_1", working_directorytime_serie_interpolation())
 
-  # events trigger
-  time_serie_interpolation_events_trigger <- reactive({
-    list(
-      limites_bv_time_serie_interpolation$limite_bassin_versant(),
-      data4TimeSerieInterpolation$data_for_time_serie_interpolation()
-    )
-  })
+    # events trigger
+    time_serie_interpolation_events_trigger <- reactive({
+      list(
+        limites_bv_time_serie_interpolation$limite_bassin_versant(),
+        data4TimeSerieInterpolation$data_for_time_serie_interpolation()
+      )
+    })
 
-  observeEvent(time_serie_interpolation_events_trigger(), {
-    # interpolation options
-    options<- mod_time_serie_interpolation_options_server("time_serie_interpolation_options_1")
-    # showing and getting data
-    readyData4TimeSerieInterpolation <- mod_showData4TimeSerieInterpolation_server(
-      "showData4TimeSerieInterpolation_1",
-      data4TimeSerieInterpolation$data_for_time_serie_interpolation(),
-      limites_bv_time_serie_interpolation$limite_bassin_versant()
-    )
-    # calcul de la valeur moyenne du bassin
-    time_serie_interpolation_result <- mod_mean_watershed_time_serie_value_server(
-      "mean_watershed_time_serie_value_1",
-      limites_bv_time_serie_interpolation$limite_bassin_versant(),
-      readyData4TimeSerieInterpolation$data_for_time_serie_interpolation(),
-      readyData4TimeSerieInterpolation$stations_for_time_serie_interpolation()
-    )
-    # Visualisation des résultats
-    mod_ShowTemporalInterpolationResults_server(
-      "ShowTemporalInterpolationResults_1",
-      time_serie_interpolation_result$kriging_output_df(),
-      time_serie_interpolation_result$idw_output_df(),
-      time_serie_interpolation_result$spline_output_df(),
-      time_serie_interpolation_result$thiessen_output_df()
-    )
-    # exportation des résultats
-    mod_time_serie_interpolation_result_exportation_server(
-      "time_serie_interpolation_result_exportation_1",
-      time_serie_interpolation_result$kriging_output_df(),
-      time_serie_interpolation_result$idw_output_df(),
-      time_serie_interpolation_result$spline_output_df(),
-      time_serie_interpolation_result$thiessen_output_df(),
-      readyData4TimeSerieInterpolation$data_for_time_serie_interpolation()
-    )
+    observeEvent(time_serie_interpolation_events_trigger(), {
+      # interpolation options
+      # options<- mod_time_serie_interpolation_options_server("time_serie_interpolation_options_1")
+      # showing and getting data
+      readyData4TimeSerieInterpolation <- mod_showData4TimeSerieInterpolation_server(
+        "showData4TimeSerieInterpolation_1",
+        data4TimeSerieInterpolation$data_for_time_serie_interpolation(),
+        limites_bv_time_serie_interpolation$limite_bassin_versant()
+      )
+
+      # grille d'interpolation
+      # options_for_time_serie_interpolation<- mod_time_serie_interpolation_options_server(
+      #   "time_serie_interpolation_options_1", readyData4TimeSerieInterpolation$data_for_time_serie_interpolation(),
+      #   limites_bv_time_serie_interpolation$limite_bassin_versant()
+      # )
+
+      # calcul de la valeur moyenne du bassin
+      time_serie_interpolation_result <- mod_mean_watershed_time_serie_value_server(
+        "mean_watershed_time_serie_value_1",
+        limites_bv_time_serie_interpolation$limite_bassin_versant(),
+        readyData4TimeSerieInterpolation$data_for_time_serie_interpolation(),
+        readyData4TimeSerieInterpolation$stations_for_time_serie_interpolation()
+      )
+      # Visualisation des résultats
+      mod_ShowTemporalInterpolationResults_server(
+        "ShowTemporalInterpolationResults_1",
+        time_serie_interpolation_result$kriging_output_df(),
+        time_serie_interpolation_result$idw_output_df(),
+        time_serie_interpolation_result$spline_output_df(),
+        time_serie_interpolation_result$thiessen_output_df()
+      )
+      # exportation des résultats
+      mod_time_serie_interpolation_result_exportation_server(
+        "time_serie_interpolation_result_exportation_1",
+        time_serie_interpolation_result$kriging_output_df(),
+        time_serie_interpolation_result$idw_output_df(),
+        time_serie_interpolation_result$spline_output_df(),
+        time_serie_interpolation_result$thiessen_output_df(),
+        readyData4TimeSerieInterpolation$data_for_time_serie_interpolation()
+      )
+    })
+
   })
 
   # ||||||||||||||||||||||||||||||||||||| INERPOLATION VALEUR MOYENNE

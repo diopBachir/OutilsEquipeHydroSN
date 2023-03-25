@@ -10,13 +10,15 @@
 spline.interpole<- function(bassin.utm, dataInterp.utm, resolution, colTarget, utm.proj){
   # éfinition de la résolution
   pixelsize<- resolution
+  # remove NA
+  dataInterp.utm_filtered<- dataInterp.utm[!is.na(dataInterp.utm[[colTarget]]),]
   # définition de l'étendue'
   box<- raster::extent(bassin.utm) / pixelsize * pixelsize
   template<- raster::raster(box, crs =  paste0("+init=epsg:", utm.proj),
                             nrows = (box@ymax - box@ymin) / pixelsize,
                             ncols = (box@xmax - box@xmin) / pixelsize)
   # ajustement ou modèle d'interpolation
-  spline<- fields::Tps(dataInterp.utm@coords, dataInterp.utm@data[[colTarget]])
+  spline<- fields::Tps(dataInterp.utm_filtered@coords, dataInterp.utm_filtered@data[[colTarget]])
   # interpolation
   splined<- raster::interpolate(template, spline)
   # transformation en objet {SpatialPointsDataFrame}

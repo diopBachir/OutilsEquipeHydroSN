@@ -90,10 +90,10 @@ mod_mean_watershed_time_serie_value_ui <- function(id){
                     h4("SPLINE", style = "color:#3474A7;text-align:center;background-color:lightgray"),
                     div(dataTableOutput(ns("splineResult")), style="font-size:75%")
              )
-    ),
+    )
 
     # valeurs NA infos
-    uiOutput(ns("removed_NA_info"))
+    # uiOutput(ns("removed_NA_info"))
 
   )
 }
@@ -136,34 +136,35 @@ mod_mean_watershed_time_serie_value_server <- function(id, bassin, interpolation
     # return
     filtered_data<- reactive({
       req(interpolationData)
-      interpolationData[which(rowMeans(!is.na(interpolationData)) > .01), ]
+      interpolationData
+      # interpolationData[which(rowMeans(!is.na(interpolationData)) > .01), ]
     })
 
-    # removed NA info
-    output$removed_NA_info<- renderUI({
-      req(filtered_data())
-      # modal dialog
-      showModal(modalDialog(
-        tags$h4("INFORMATION SUR LES VALEURS MANQUANTES [NA/NaN]", style="color:#3474A7;family:Georgia;text-align:left;"),
-        # affichage des résultats
-        fluidRow(
-          column(12,
-                 tags$h5(
-                   paste0(
-                     "Les enregistrements ne contenant aucune donnée dans toutes les stations sont ignorées dans l'interpolation. ",
-                     "Même si les dates de ces enregistrements apparaissent dans les résultats, elles contiendront des données manquantes !"
-                   ),
-                   style="color:#3474A7;family:Georgia;text-align:left;"
-                 )
-          ),
-        ),
-        footer=tagList(
-          modalButton('Fermer', icon = icon("power-off"))
-        ),
-
-        size = "m"
-      ))
-    })
+    # # removed NA info
+    # output$removed_NA_info<- renderUI({
+    #   req(filtered_data())
+    #   # modal dialog
+    #   showModal(modalDialog(
+    #     tags$h4("INFORMATION SUR LES VALEURS MANQUANTES [NA/NaN]", style="color:#3474A7;family:Georgia;text-align:left;"),
+    #     # affichage des résultats
+    #     fluidRow(
+    #       column(12,
+    #              tags$h5(
+    #                paste0(
+    #                  "Les enregistrements ne contenant aucune donnée dans toutes les stations sont ignorées dans l'interpolation. ",
+    #                  "Même si les dates de ces enregistrements apparaissent dans les résultats, elles contiendront des données manquantes !"
+    #                ),
+    #                style="color:#3474A7;family:Georgia;text-align:left;"
+    #              )
+    #       ),
+    #     ),
+    #     footer=tagList(
+    #       modalButton('Fermer', icon = icon("power-off"))
+    #     ),
+    #
+    #     size = "m"
+    #   ))
+    # })
 
     interpolationData.UTM<- reactive({
       req(filtered_data(), station.in.utm())

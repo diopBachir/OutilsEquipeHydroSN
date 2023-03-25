@@ -28,7 +28,7 @@ idw_loop<- function(gridded.points.utm, grid.mod, bassin, utmProj){
     purrr::map(
       ., ~ gstat::idw(
         stats::as.formula(paste(.x, "~ 1")),
-        locations = gridded.points.utm, newdata = grid.mod
+        locations = gridded.points.utm[!is.na(gridded.points.utm[[.x]]),], newdata = grid.mod
       )
     )
 
@@ -57,7 +57,7 @@ idw_loop<- function(gridded.points.utm, grid.mod, bassin, utmProj){
     ) %>%
     dplyr::group_by(Date) %>%
     dplyr::summarise(
-      IDW = round(mean(IDW_Valeurs, na.rm=TRUE), 2)
+      IDW = round(mean(IDW_Valeurs, na.rm=TRUE), 4)
     )
 
   return(

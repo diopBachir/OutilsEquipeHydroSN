@@ -22,6 +22,8 @@ thiessen.loop<- function(data, stations_db, bassin, epsg){
   # return
   return(
     ini.thiessen %>%
-      dplyr::mutate(Date = stringr::str_replace_all(Date, stringr::fixed("_"), "/"))
+      dplyr::mutate(
+        Date = stringr::str_replace_all(Date, stringr::fixed("_"), "/")
+      )
   )
 }

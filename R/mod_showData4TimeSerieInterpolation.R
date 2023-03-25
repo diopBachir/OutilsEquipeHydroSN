@@ -50,21 +50,27 @@ mod_showData4TimeSerieInterpolation_server <- function(id, interpolation_data, b
     myModal <- function() {
       modalDialog(
         title = "Zone D'étude",
-        plotOutput(ns("plotStudyArea")),
+        shinycssloaders::withSpinner(plotOutput(ns("plotStudyArea"))),
         footer = tagList(
           actionButton(ns("fermer"), "Fermer", class = "btn btn-info")
-        )
+        ),
+        size = "l"
       )
     }
 
     # getting data
     interpolation_data_fn <- reactive({
       req(interpolation_data)
-      dplyr::mutate(
+      data_temp<- dplyr::mutate(
         interpolation_data[-c(1:4),],
         dplyr::across(-1, as.numeric, .names = "{.col}")
       ) %>%
         dplyr::rename(Date = 1)
+      # remove columns without data
+      data_temp<- data_temp[,which(!colMeans(!is.na(data_temp)) == 0)]
+      # rows stations without data
+      data_temp<- data_temp[which(!rowMeans(!is.na(data_temp)) == 0),]
+      data_temp
     })
 
     ## Summarising data
@@ -121,11 +127,12 @@ mod_showData4TimeSerieInterpolation_server <- function(id, interpolation_data, b
 
       # affichage de la zone d'étude
       output$plotStudyArea <- renderPlot({
+        req(stations)
         ggplot2::ggplot(bassin) +
-          ggplot2::geom_sf(linewidth = 2, color = "black", fill="lightgray") +
+          ggplot2::geom_sf(linewidth = 1.3, color = "black", fill=NA) +
           ggplot2::geom_point(
             data = stations,
-            ggplot2::aes(x=Longitude, y=Latitude), shape = 15, color = "blue", size = 3
+            ggplot2::aes(x=Longitude, y=Latitude), shape = 15, color = "red", size = 4
           ) +
           ggthemes::theme_map()
       })
@@ -171,7 +178,7 @@ mod_showData4TimeSerieInterpolation_server <- function(id, interpolation_data, b
     #return
     return(
       list(
-        data_for_time_serie_interpolation = reactive({ interpolation_data_fn() }),
+        data_for_time_serie_interpolation = reactive({interpolation_data_fn()}),
         stations_for_time_serie_interpolation = reactive({
           req(interpolation_data)
           interpolation_data[c(1,2),] %>%

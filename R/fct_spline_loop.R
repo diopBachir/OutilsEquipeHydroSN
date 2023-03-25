@@ -64,7 +64,7 @@ spline.loop<- function(dataInterp.utm, bassin, epsg){
     ) %>%
     dplyr::group_by(Date) %>%
     dplyr::summarise(
-      TPS = round(mean(TPS), 2)
+      TPS = round(mean(TPS, na.rm=TRUE), 4)
     )
 
   return(

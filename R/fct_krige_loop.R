@@ -57,7 +57,7 @@ krige_loop<- function(gridded.points.utm, grid.mod, bassin, epsg){
     ) %>%
     dplyr::group_by(Date) %>%
     dplyr::summarise(
-      KRIGEAGE = round(mean(KRIGEAGE_Valeurs), 2)
+      KRIGEAGE = round(mean(KRIGEAGE_Valeurs, na.rm=TRUE), 4)
     )
 
   return(

@@ -512,7 +512,7 @@ app_ui <- function(request) {
                           tabPanel(div("Valeur Moyenne d'un Bassin", style = "color:black;font-size:110%;font-family:georgia;"),
 
                                    sidebarPanel(
-                                     style="position:fixed;width:25%;height:90vh;overflow-y:auto;",
+                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
 
                                      # logos
                                      # logoUI(),
@@ -527,10 +527,18 @@ app_ui <- function(request) {
                                      #==================================================================#
                                      # INPUTS
                                      h4("DONNEES", style = "color:#3474A7;background-color:lightgray;text-align:center;"),
+                                     # Dossier Courant
+                                     mod_set_project_folder_ui("set_project_folder__temporal_interpolation"),
                                      # limtes bassin versa,nt
-                                     mod_loading_VectorFile_ui("loading_VectorFile_1"),
+                                     mod_loading_bassin_for_temporal_interpolation_ui("loading_VectorFile_1"),
                                      # stations
-                                     mod_data4TimeSerieInterpolation_ui("data4TimeSerieInterpolation_1"),
+                                     mod_data4TimeSerieInterpolation_shinyFiles_ui("data4TimeSerieInterpolation_shinyFiles_1"),
+
+                                     tags$hr(style="border-color:blue;"),
+
+                                     # h4("CONFIGURATION", style = "color:#3474A7;background-color:lightgray;text-align:center;"),
+                                     # résolution de la grille
+                                     # mod_time_serie_interpolation_options_ui("time_serie_interpolation_options_1"),
 
                                      br(),br(), br(),br()
 
