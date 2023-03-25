@@ -10,7 +10,6 @@
 mod_gr4j_results_graphs_n_exportation_ui <- function(id){
   ns <- NS(id)
   tagList(
-    shinysuspend::useShinysuspend(),
 
     tags$head(tags$style(type="text/css", '
 
