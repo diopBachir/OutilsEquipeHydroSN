@@ -1209,7 +1209,7 @@ app_ui <- function(request) {
                                          mod_cru_data_extract_ui("cru_data_extract_1"),
                                        ), #tabPanel
                                        tabPanel(
-                                         div("Extraction Des données", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         div("Exportation Des données", style = "color:#3474A7;family:Georgia;font-size:120%"),
                                          # exportation
                                          mod_cru_data_export_extraction_ui("cru_data_export_extraction_1")
                                        ) #tabPanel
