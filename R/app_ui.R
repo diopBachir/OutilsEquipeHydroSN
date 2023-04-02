@@ -512,7 +512,7 @@ app_ui <- function(request) {
                           tabPanel(div("Valeur Moyenne d'un Bassin", style = "color:black;font-size:110%;font-family:georgia;"),
 
                                    sidebarPanel(
-                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     style="position:fixed;width:26%;height:90vh;overflow-y:auto;",
 
                                      # logos
                                      # logoUI(),
@@ -528,17 +528,19 @@ app_ui <- function(request) {
                                      # INPUTS
                                      h4("DONNEES", style = "color:#3474A7;background-color:lightgray;text-align:center;"),
                                      # Dossier Courant
-                                     mod_set_project_folder_ui("set_project_folder__temporal_interpolation"),
-                                     # limtes bassin versa,nt
-                                     mod_loading_bassin_for_temporal_interpolation_ui("loading_VectorFile_1"),
+                                     # mod_set_project_folder_ui("set_project_folder__temporal_interpolation"),
+                                     # limtes bassin versant
+                                     # mod_loading_bassin_for_temporal_interpolation_ui("loading_VectorFile_1"),
+                                     mod_loading_VectorFile_ui("loading_VectorFile_1"),
                                      # stations
-                                     mod_data4TimeSerieInterpolation_shinyFiles_ui("data4TimeSerieInterpolation_shinyFiles_1"),
+                                     # mod_data4TimeSerieInterpolation_shinyFiles_ui("data4TimeSerieInterpolation_shinyFiles_1"),
+                                     mod_data4TimeSerieInterpolation_ui("data4TimeSerieInterpolation_1"),
 
                                      tags$hr(style="border-color:blue;"),
 
-                                     # h4("CONFIGURATION", style = "color:#3474A7;background-color:lightgray;text-align:center;"),
+                                     h4("CONFIGURATION", style = "color:#3474A7;background-color:lightgray;text-align:center;"),
                                      # résolution de la grille
-                                     # mod_time_serie_interpolation_options_ui("time_serie_interpolation_options_1"),
+                                     mod_time_serie_interpolation_options_ui("time_serie_interpolation_options_1"),
 
                                      br(),br(), br(),br()
 
@@ -1086,13 +1088,80 @@ app_ui <- function(request) {
 
                navbarMenu(div("Extraction", style = "color:white;font-size:90%;font-family:georgia"),
 
+                          # #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||,||||||||||||||||||||||||||||||||||||||||||#
+                          # # Bassin Versant
+                          # tabPanel(div("Extraction de Bassin(s) Versants(s)", style = "color:black;font-size:110%;font-family:georgia;"),
+                          #          sidebarPanel(
+                          #            style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                          #            h3(
+                          #              "Extraction de BVs",
+                          #              style=paste0(
+                          #                "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                          #              )
+                          #            ),
+                          #
+                          #            h4(
+                          #              "IMPORTATION DES DONNEES",
+                          #              style=paste0(
+                          #                "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                          #              )
+                          #            ),
+                          #            # repertoire de travail
+                          #            mod_set_watershed_delienation_project_folder_ui("set_watershed_delienation_project_folder_1"),
+                          #            span("_____________________________________________________________", style="color:lightgray"),
+                          #            # chargement du MNT
+                          #            mod_loading_RasterFile_ui("loading_RasterFile_1"),
+                          #            span("_____________________________________________________________", style="color:lightgray"),
+                          #            # # Exutoires
+                          #            mod_loading_bassin_outlet_ui("loading_bassin_outlet_1"),
+                          #
+                          #            tags$hr(style="border-color:gray;"),
+                          #
+                          #           #---------------------------------------------------------------
+                          #            h4(
+                          #              "OPTIONS  | CONFIGURATION",
+                          #              style=paste0(
+                          #                "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                          #              )
+                          #            ),
+                          #            # module
+                          #            mod_whitebox_options_ui("whitebox_options_1"),
+                          #
+                          #            br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
+                          #          ), # sidebarPanel
+                          #          mainPanel(
+                          #            tabsetPanel(
+                          #              tabPanel(
+                          #                div("Données", style = "color:#3474A7;family:Georgia;font-size:100%"),
+                          #                # données
+                          #                mod_MNT_VIZ_ui("MNT_VIZ_1")
+                          #              ), #tabPanel
+                          #              tabPanel(
+                          #                div("Préparation du DEM", style = "color:#3474A7;family:Georgia;font-size:100%"),
+                          #                # préparation du MNT pour les analyses hydrologiques
+                          #                mod_DEM_Preparation_4_Hydrology_Analyses_ui("DEM_Preparation_4_Hydrology_Analyses_1")
+                          #              ), #tabPanel
+                          #              tabPanel(
+                          #                div("FlowAccumulation & PourPoints", style = "color:#3474A7;family:Georgia;font-size:100%"),
+                          #                # flow accumulation and pointer grids
+                          #                mod_flow_accumulation_pointer_grids_ui("flow_accumulation_pointer_grids_1")
+                          #              ), #tabPanel
+                          #              # tabPanel(
+                          #              #   div("Points D'écoulement", style = "color:#3474A7;family:Georgia;font-size:100%"),
+                          #              #   # génération des points d'écoulements
+                          #              #   # mod_flow_accumulation_pointer_grids_ui("flow_accumulation_pointer_grids_1")
+                          #              # )#tabPanel
+                          #              )# tabsetPanel
+                          #          ) # mainPanel
+                          # ), # tabPanel
+
                           #|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||,||||||||||||||||||||||||||||||||||||||||||#
-                          # Bassin Versant
-                          tabPanel(div("Extraction de Bassin(s) Versants(s)", style = "color:black;font-size:110%;font-family:georgia;"),
+                          # Données CRU
+                          tabPanel(div("Extraction Des Données NetCDF", style = "color:black;font-size:110%;font-family:georgia;"),
                                    sidebarPanel(
-                                     style="position:fixed;width:32%;height:90vh;overflow-y:auto;",
+                                     style="position:fixed;width:26%;height:90vh;overflow-y:auto;",
                                      h3(
-                                       "Extraction de BVs",
+                                       "Extraction Données NetCDF",
                                        style=paste0(
                                          "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
                                        )
@@ -1105,53 +1174,48 @@ app_ui <- function(request) {
                                        )
                                      ),
                                      # repertoire de travail
-                                     mod_set_watershed_delienation_project_folder_ui("set_watershed_delienation_project_folder_1"),
+                                     mod_set_project_folder_ui("set_project_folder_1"),
                                      span("_____________________________________________________________", style="color:lightgray"),
                                      # chargement du MNT
-                                     mod_loading_RasterFile_ui("loading_RasterFile_1"),
+                                     mod_loading_RasterFile_ui("loading_RasterFile_CRU"),
                                      span("_____________________________________________________________", style="color:lightgray"),
-                                     # # Exutoires
-                                     mod_loading_bassin_outlet_ui("loading_bassin_outlet_1"),
+                                     # # Stations
+                                     mod_loading_scv_excel_layer_ui("loading_scv_excel_layer_1"),
 
                                      tags$hr(style="border-color:gray;"),
 
-                                    #---------------------------------------------------------------
-                                     h4(
-                                       "OPTIONS  | CONFIGURATION",
-                                       style=paste0(
-                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
-                                       )
-                                     ),
+                                     #---------------------------------------------------------------
+                                     # h4(
+                                     #   "OPTIONS  | CONFIGURATION",
+                                     #   style=paste0(
+                                     #     "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                     #   )
+                                     # ),
                                      # module
-                                     mod_whitebox_options_ui("whitebox_options_1"),
+                                     # mod_whitebox_options_ui("whitebox_options_1"),
 
                                      br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br()
                                    ), # sidebarPanel
                                    mainPanel(
                                      tabsetPanel(
                                        tabPanel(
-                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:100%"),
+                                         div("Données", style = "color:#3474A7;family:Georgia;font-size:120%"),
                                          # données
-                                         mod_MNT_VIZ_ui("MNT_VIZ_1")
+                                         mod_raster_VIZ_ui("raster_VIZ_1")
                                        ), #tabPanel
                                        tabPanel(
-                                         div("Préparation du DEM", style = "color:#3474A7;family:Georgia;font-size:100%"),
-                                         # préparation du MNT pour les analyses hydrologiques
-                                         mod_DEM_Preparation_4_Hydrology_Analyses_ui("DEM_Preparation_4_Hydrology_Analyses_1")
+                                         div("Extraction Des données", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # extraction
+                                         mod_cru_data_extract_ui("cru_data_extract_1"),
                                        ), #tabPanel
                                        tabPanel(
-                                         div("FlowAccumulation & PourPoints", style = "color:#3474A7;family:Georgia;font-size:100%"),
-                                         # flow accumulation and pointer grids
-                                         mod_flow_accumulation_pointer_grids_ui("flow_accumulation_pointer_grids_1")
-                                       ), #tabPanel
-                                       # tabPanel(
-                                       #   div("Points D'écoulement", style = "color:#3474A7;family:Georgia;font-size:100%"),
-                                       #   # génération des points d'écoulements
-                                       #   # mod_flow_accumulation_pointer_grids_ui("flow_accumulation_pointer_grids_1")
-                                       # )#tabPanel
-                                       )# tabsetPanel
-                                   ) # mainPanel
-                          ) # tabPanel
+                                         div("Extraction Des données", style = "color:#3474A7;family:Georgia;font-size:120%"),
+                                         # exportation
+                                         mod_cru_data_export_extraction_ui("cru_data_export_extraction_1")
+                                       ) #tabPanel
+                                     )
+                                   )
+                          )
                ) # navbarMenu
     )
   )

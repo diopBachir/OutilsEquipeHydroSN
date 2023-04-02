@@ -49,7 +49,7 @@ mod_gr5j_model_options_server <- function(id, ready_data_4_gr5j_application){
 
         column(12, h4("Options || Configuration", style="font-family=georgia;color:blue;")),
         column(12,  numericInput(ns("nbWarmUpYear"), div("Période D'échauffement [Nombre de jours]", style="font-size:85%;"),
-                                 min=10, max = round(nrow(ready_data_4_gr4j_application)*50/100), value = 730,
+                                 min=10, max = round(nrow(ready_data_4_gr5j_application)*50/100), value = 730,
                                 step = 1, width="100%")),
         column(12,  selectInput(
           ns("calibrationType"), div("Type De Calibration", style="font-size:85%;"),

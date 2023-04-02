@@ -154,66 +154,134 @@ app_server <- function(input, output, session) {
   #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
 
   # |||||||||||||||||||||||||||||||||||||VALEUR MOYENNE D'UN BASSIN
-  # repertoire de travail
-  working_dir_time_serie_interpolation<- mod_set_project_folder_server("set_project_folder__temporal_interpolation")
-  working_directorytime_serie_interpolation<- working_dir_time_serie_interpolation$wdir
-  observeEvent(working_dir_time_serie_interpolation$wdir(), {
-    # limites bassin versant
-    limites_bv_time_serie_interpolation <- mod_loading_bassin_for_temporal_interpolation_server("loading_VectorFile_1", working_directorytime_serie_interpolation())
-    # données
-    data4TimeSerieInterpolation <-  mod_data4TimeSerieInterpolation_shinyFiles_server("data4TimeSerieInterpolation_shinyFiles_1", working_directorytime_serie_interpolation())
+  # limites bassin versant
+  # limites_bv_time_serie_interpolation <- mod_loading_bassin_for_temporal_interpolation_server("loading_VectorFile_1", working_directorytime_serie_interpolation())
+  limites_bv_time_serie_interpolation <- mod_loading_VectorFile_server("loading_VectorFile_1")
+  # données
+  # data4TimeSerieInterpolation <-  mod_data4TimeSerieInterpolation_shinyFiles_server("data4TimeSerieInterpolation_shinyFiles_1", working_directorytime_serie_interpolation())
+  data4TimeSerieInterpolation <-  mod_data4TimeSerieInterpolation_server("data4TimeSerieInterpolation_1")
 
-    # events trigger
-    time_serie_interpolation_events_trigger <- reactive({
-      list(
-        limites_bv_time_serie_interpolation$limite_bassin_versant(),
-        data4TimeSerieInterpolation$data_for_time_serie_interpolation()
-      )
-    })
-
-    observeEvent(time_serie_interpolation_events_trigger(), {
-      # interpolation options
-      # options<- mod_time_serie_interpolation_options_server("time_serie_interpolation_options_1")
-      # showing and getting data
-      readyData4TimeSerieInterpolation <- mod_showData4TimeSerieInterpolation_server(
-        "showData4TimeSerieInterpolation_1",
-        data4TimeSerieInterpolation$data_for_time_serie_interpolation(),
-        limites_bv_time_serie_interpolation$limite_bassin_versant()
-      )
-
-      # grille d'interpolation
-      # options_for_time_serie_interpolation<- mod_time_serie_interpolation_options_server(
-      #   "time_serie_interpolation_options_1", readyData4TimeSerieInterpolation$data_for_time_serie_interpolation(),
-      #   limites_bv_time_serie_interpolation$limite_bassin_versant()
-      # )
-
-      # calcul de la valeur moyenne du bassin
-      time_serie_interpolation_result <- mod_mean_watershed_time_serie_value_server(
-        "mean_watershed_time_serie_value_1",
-        limites_bv_time_serie_interpolation$limite_bassin_versant(),
-        readyData4TimeSerieInterpolation$data_for_time_serie_interpolation(),
-        readyData4TimeSerieInterpolation$stations_for_time_serie_interpolation()
-      )
-      # Visualisation des résultats
-      mod_ShowTemporalInterpolationResults_server(
-        "ShowTemporalInterpolationResults_1",
-        time_serie_interpolation_result$kriging_output_df(),
-        time_serie_interpolation_result$idw_output_df(),
-        time_serie_interpolation_result$spline_output_df(),
-        time_serie_interpolation_result$thiessen_output_df()
-      )
-      # exportation des résultats
-      mod_time_serie_interpolation_result_exportation_server(
-        "time_serie_interpolation_result_exportation_1",
-        time_serie_interpolation_result$kriging_output_df(),
-        time_serie_interpolation_result$idw_output_df(),
-        time_serie_interpolation_result$spline_output_df(),
-        time_serie_interpolation_result$thiessen_output_df(),
-        readyData4TimeSerieInterpolation$data_for_time_serie_interpolation()
-      )
-    })
-
+  # events trigger
+  time_serie_interpolation_events_trigger <- reactive({
+    list(
+      limites_bv_time_serie_interpolation$limite_bassin_versant(),
+      data4TimeSerieInterpolation$data_for_time_serie_interpolation()
+    )
   })
+
+  observeEvent(time_serie_interpolation_events_trigger(), {
+    # interpolation options
+    # options<- mod_time_serie_interpolation_options_server("time_serie_interpolation_options_1")
+    # showing and getting data
+    readyData4TimeSerieInterpolation <- mod_showData4TimeSerieInterpolation_server(
+      "showData4TimeSerieInterpolation_1",
+      data4TimeSerieInterpolation$data_for_time_serie_interpolation(),
+      limites_bv_time_serie_interpolation$limite_bassin_versant()
+    )
+
+    # grille et pédiode d'interpolation
+    options_for_time_serie_interpolation<- mod_time_serie_interpolation_options_server(
+      "time_serie_interpolation_options_1", readyData4TimeSerieInterpolation$data_for_time_serie_interpolation(),
+      limites_bv_time_serie_interpolation$limite_bassin_versant()
+    )
+
+    # calcul de la valeur moyenne du bassin
+    time_serie_interpolation_result <- mod_mean_watershed_time_serie_value_server(
+      "mean_watershed_time_serie_value_1",
+      limites_bv_time_serie_interpolation$limite_bassin_versant(),
+      readyData4TimeSerieInterpolation$data_for_time_serie_interpolation(),
+      readyData4TimeSerieInterpolation$stations_for_time_serie_interpolation(),
+      options_for_time_serie_interpolation$gridRes,
+      options_for_time_serie_interpolation$startDate,
+      options_for_time_serie_interpolation$endDate,
+      options_for_time_serie_interpolation$modele_de_grille
+    )
+    # Visualisation des résultats
+    mod_ShowTemporalInterpolationResults_server(
+      "ShowTemporalInterpolationResults_1",
+      time_serie_interpolation_result$kriging_output_df(),
+      time_serie_interpolation_result$idw_output_df(),
+      time_serie_interpolation_result$spline_output_df(),
+      time_serie_interpolation_result$thiessen_output_df()
+    )
+    # exportation des résultats
+    mod_time_serie_interpolation_result_exportation_server(
+      "time_serie_interpolation_result_exportation_1",
+      time_serie_interpolation_result$kriging_output_df(),
+      time_serie_interpolation_result$idw_output_df(),
+      time_serie_interpolation_result$spline_output_df(),
+      time_serie_interpolation_result$thiessen_output_df(),
+      readyData4TimeSerieInterpolation$data_for_time_serie_interpolation()
+    )
+  })
+
+
+  # repertoire de travail
+  # working_dir_time_serie_interpolation<- mod_set_project_folder_server("set_project_folder__temporal_interpolation")
+  # working_directorytime_serie_interpolation<- working_dir_time_serie_interpolation$wdir
+  # observeEvent(working_dir_time_serie_interpolation$wdir(), {
+  #   # limites bassin versant
+  #   # limites_bv_time_serie_interpolation <- mod_loading_bassin_for_temporal_interpolation_server("loading_VectorFile_1", working_directorytime_serie_interpolation())
+  #   limites_bv_time_serie_interpolation <- mod_loading_VectorFile_server("loading_VectorFile_1")
+  #   # données
+  #   # data4TimeSerieInterpolation <-  mod_data4TimeSerieInterpolation_shinyFiles_server("data4TimeSerieInterpolation_shinyFiles_1", working_directorytime_serie_interpolation())
+  #   data4TimeSerieInterpolation <-  mod_data4TimeSerieInterpolation_server("data4TimeSerieInterpolation_1")
+  #
+  #   # events trigger
+  #   time_serie_interpolation_events_trigger <- reactive({
+  #     list(
+  #       limites_bv_time_serie_interpolation$limite_bassin_versant(),
+  #       data4TimeSerieInterpolation$data_for_time_serie_interpolation()
+  #     )
+  #   })
+  #
+  #   observeEvent(time_serie_interpolation_events_trigger(), {
+  #     # interpolation options
+  #     # options<- mod_time_serie_interpolation_options_server("time_serie_interpolation_options_1")
+  #     # showing and getting data
+  #     readyData4TimeSerieInterpolation <- mod_showData4TimeSerieInterpolation_server(
+  #       "showData4TimeSerieInterpolation_1",
+  #       data4TimeSerieInterpolation$data_for_time_serie_interpolation(),
+  #       limites_bv_time_serie_interpolation$limite_bassin_versant()
+  #     )
+  #
+  #     # grille et pédiode d'interpolation
+  #     options_for_time_serie_interpolation<- mod_time_serie_interpolation_options_server(
+  #       "time_serie_interpolation_options_1", readyData4TimeSerieInterpolation$data_for_time_serie_interpolation(),
+  #       limites_bv_time_serie_interpolation$limite_bassin_versant()
+  #     )
+  #
+  #     # calcul de la valeur moyenne du bassin
+  #     time_serie_interpolation_result <- mod_mean_watershed_time_serie_value_server(
+  #       "mean_watershed_time_serie_value_1",
+  #       limites_bv_time_serie_interpolation$limite_bassin_versant(),
+  #       readyData4TimeSerieInterpolation$data_for_time_serie_interpolation(),
+  #       readyData4TimeSerieInterpolation$stations_for_time_serie_interpolation(),
+  #       options_for_time_serie_interpolation$gridRes,
+  #       options_for_time_serie_interpolation$startDate,
+  #       options_for_time_serie_interpolation$endDate,
+  #       options_for_time_serie_interpolation$modele_de_grille
+  #     )
+  #     # Visualisation des résultats
+  #     mod_ShowTemporalInterpolationResults_server(
+  #       "ShowTemporalInterpolationResults_1",
+  #       time_serie_interpolation_result$kriging_output_df(),
+  #       time_serie_interpolation_result$idw_output_df(),
+  #       time_serie_interpolation_result$spline_output_df(),
+  #       time_serie_interpolation_result$thiessen_output_df()
+  #     )
+  #     # exportation des résultats
+  #     mod_time_serie_interpolation_result_exportation_server(
+  #       "time_serie_interpolation_result_exportation_1",
+  #       time_serie_interpolation_result$kriging_output_df(),
+  #       time_serie_interpolation_result$idw_output_df(),
+  #       time_serie_interpolation_result$spline_output_df(),
+  #       time_serie_interpolation_result$thiessen_output_df(),
+  #       readyData4TimeSerieInterpolation$data_for_time_serie_interpolation()
+  #     )
+  #   })
+  #
+  # })
 
   # ||||||||||||||||||||||||||||||||||||| INERPOLATION VALEUR MOYENNE
   # limites bassin versant
@@ -738,122 +806,105 @@ app_server <- function(input, output, session) {
   #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
   #|#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||#
 
-  # ||||||||||||||||||||||||||||||||||||| DELIMITATION DE BASSIN VERSANT
-  whitebox::wbt_init()
-  ## set tmap modeto interactive viewing
-  tmap::tmap_mode("plot")
+  # # ||||||||||||||||||||||||||||||||||||| DELIMITATION DE BASSIN VERSANT
+  # whitebox::wbt_init()
+  # ## set tmap modeto interactive viewing
+  # tmap::tmap_mode("plot")
+  #
+  # # repertoire de travail
+  # working_dir<- mod_set_watershed_delienation_project_folder_server("set_watershed_delienation_project_folder_1")
+  # working_directory<- working_dir$wdir
+  # # whitebox option
+  # whitebox_options<- mod_whitebox_options_server("whitebox_options_1")
+  # observeEvent(working_directory(), {
+  #   # repertoire de travail
+  #   # working_dir<- mod_set_watershed_delienation_project_folder_server("set_watershed_delienation_project_folder_1")
+  #   # working_directory<- working_dir$wdir
+  #   # whitebox option
+  #   whitebox_options<- mod_whitebox_options_server("whitebox_options_1")
+  #   # repertoire de travail
+  #   # working_dir<- mod_set_watershed_delienation_project_folder_server("set_watershed_delienation_project_folder_1")
+  #   # chargement du MNT
+  #   MNT<- mod_loading_RasterFile_server("loading_RasterFile_1", working_directory())
+  #   # getting georeferenced MNT
+  #   georeferenced_mnt<- MNT$mnt_georeferenced
+  #   # Exutoire des bassins
+  #   bassin_outlet<- mod_loading_bassin_outlet_server("loading_bassin_outlet_1", working_directory())
+  #   # getting outlet layer
+  #   exutoires<- bassin_outlet$exutoires_bassin_versants
+  #
+  #   ##==================================================================#
+  #   ##==================================================================#
+  #   events_trigger<- reactive({list(georeferenced_mnt(), exutoires()) })
+  #   observeEvent(ignoreInit = TRUE, ignoreNULL = TRUE, events_trigger(), {
+  #     # whitebox option
+  #     # whitebox_options<- mod_whitebox_options_server("whitebox_options_1")
+  #     # # repertoire de travail
+  #     # # working_dir<- mod_set_watershed_delienation_project_folder_server("set_watershed_delienation_project_folder_1")
+  #     # # working_directory<- working_dir$wdir
+  #     # # chargement du MNT
+  #     # MNT<- mod_loading_RasterFile_server("loading_RasterFile_1", working_directory())
+  #     # # getting georeferenced MNT
+  #     # georeferenced_mnt<- MNT$mnt_georeferenced
+  #     # # Exutoire des bassins
+  #     # bassin_outlet<- mod_loading_bassin_outlet_server("loading_bassin_outlet_1", working_directory())
+  #     # # getting outlet layer
+  #     # exutoires<- bassin_outlet$exutoires_bassin_versants
+  #
+  #     # visualisation du MNT
+  #     mod_MNT_VIZ_server("MNT_VIZ_1", georeferenced_mnt()[[1]], exutoires()[[1]])
+  #
+  #     # prepare DEM
+  #     dem_preparation<- mod_DEM_Preparation_4_Hydrology_Analyses_server(
+  #       "DEM_Preparation_4_Hydrology_Analyses_1", working_directory(), georeferenced_mnt()[[2]],
+  #       exutoires()[[1]], whitebox_options$breaching_max_dist
+  #     )
+  #
+  #     # flow accumulation & pointers grid
+  #     mod_flow_accumulation_pointer_grids_server(
+  #       "flow_accumulation_pointer_grids_1", working_directory(),
+  #       dem_preparation$path_to_filled_breached_DEM,
+  #       whitebox_options$bassin_thresold, exutoires()[[1]],
+  #       exutoires()[[2]], whitebox_options$pp_snap_dist
+  #     )
+  #   })
+  # })
 
   # repertoire de travail
-  working_dir<- mod_set_watershed_delienation_project_folder_server("set_watershed_delienation_project_folder_1")
-  working_directory<- working_dir$wdir
+  cru_extract_working_dir<- mod_set_project_folder_server("set_project_folder_1")
+  cru_working_directory<- cru_extract_working_dir$wdir
   # whitebox option
-  whitebox_options<- mod_whitebox_options_server("whitebox_options_1")
-  observeEvent(working_directory(), {
+  # whitebox_options<- mod_whitebox_options_server("whitebox_options_1")
+  observeEvent(cru_working_directory(), {
     # repertoire de travail
     # working_dir<- mod_set_watershed_delienation_project_folder_server("set_watershed_delienation_project_folder_1")
     # working_directory<- working_dir$wdir
     # whitebox option
-    whitebox_options<- mod_whitebox_options_server("whitebox_options_1")
+    # whitebox_options<- mod_whitebox_options_server("whitebox_options_1")
     # repertoire de travail
     # working_dir<- mod_set_watershed_delienation_project_folder_server("set_watershed_delienation_project_folder_1")
     # chargement du MNT
-    MNT<- mod_loading_RasterFile_server("loading_RasterFile_1", working_directory())
+    NetCDF<- mod_loading_RasterFile_server("loading_RasterFile_CRU", cru_working_directory())
     # getting georeferenced MNT
-    georeferenced_mnt<- MNT$mnt_georeferenced
+    georeferenced_NetCDF<- NetCDF$raster_georeferenced
     # Exutoire des bassins
-    bassin_outlet<- mod_loading_bassin_outlet_server("loading_bassin_outlet_1", working_directory())
+    stations<- mod_loading_scv_excel_layer_server("loading_scv_excel_layer_1",  cru_working_directory())
     # getting outlet layer
-    exutoires<- bassin_outlet$exutoires_bassin_versants
+    stations_georeferenced<- stations$stations_loaded
 
     ##==================================================================#
     ##==================================================================#
-    events_trigger<- reactive({list(georeferenced_mnt(), exutoires()) })
+    events_trigger<- reactive({list(georeferenced_NetCDF(), stations_georeferenced()) })
     observeEvent(ignoreInit = TRUE, ignoreNULL = TRUE, events_trigger(), {
-      # whitebox option
-      # whitebox_options<- mod_whitebox_options_server("whitebox_options_1")
-      # # repertoire de travail
-      # # working_dir<- mod_set_watershed_delienation_project_folder_server("set_watershed_delienation_project_folder_1")
-      # # working_directory<- working_dir$wdir
-      # # chargement du MNT
-      # MNT<- mod_loading_RasterFile_server("loading_RasterFile_1", working_directory())
-      # # getting georeferenced MNT
-      # georeferenced_mnt<- MNT$mnt_georeferenced
-      # # Exutoire des bassins
-      # bassin_outlet<- mod_loading_bassin_outlet_server("loading_bassin_outlet_1", working_directory())
-      # # getting outlet layer
-      # exutoires<- bassin_outlet$exutoires_bassin_versants
-
-      # visualisation du MNT
-      mod_MNT_VIZ_server("MNT_VIZ_1", georeferenced_mnt()[[1]], exutoires()[[1]])
-
-      # prepare DEM
-      dem_preparation<- mod_DEM_Preparation_4_Hydrology_Analyses_server(
-        "DEM_Preparation_4_Hydrology_Analyses_1", working_directory(), georeferenced_mnt()[[2]],
-        exutoires()[[1]], whitebox_options$breaching_max_dist
-      )
-
-      # flow accumulation & pointers grid
-      mod_flow_accumulation_pointer_grids_server(
-        "flow_accumulation_pointer_grids_1", working_directory(),
-        dem_preparation$path_to_filled_breached_DEM,
-        whitebox_options$bassin_thresold, exutoires()[[1]],
-        exutoires()[[2]], whitebox_options$pp_snap_dist
-      )
+      # visualisation du raster
+      mod_raster_VIZ_server("raster_VIZ_1", NetCDF$raster_georeferenced, stations$stations_loaded)
+      # extraction des résultats
+      extracted_cru_data<- mod_cru_data_extract_server("cru_data_extract_1", NetCDF$raster_path, stations$stations_loaded)
+      # exportation
+      mod_cru_data_export_extraction_server("cru_data_export_extraction_1", extracted_cru_data$cru_extracted_data, extracted_cru_data$variable_extracted)
     })
+
   })
-
-
-
-  # events_trigger<- reactive({ list(georeferenced_mnt(), exutoires()[[1]]) })
-  # observeEvent(events_trigger(), {
-  #   # actualisation des données
-  #   # chargement du MNT
-  #   MNT<- mod_loading_RasterFile_server("loading_RasterFile_1")
-  #   # getting georeferenced MNT
-  #   georeferenced_mnt<- MNT$mnt_georeferenced
-  #   # Exutoire des bassins
-  #   bassin_outlet<- mod_loading_bassin_outlet_server("loading_bassin_outlet_1")
-  #   # bassin_outlet<- mod_loading_bassin_outlet_2_server("loading_bassin_outlet_2_1")
-  #   # getting outlet layer
-  #   exutoires<- bassin_outlet$exutoires_bassin_versants
-  #
-  #   # visualisation du MNT
-  #   mod_MNT_VIZ_server("MNT_VIZ_1", georeferenced_mnt()[[1]], exutoires()[[1]])
-  #
-  #   # charment des résultats du processus de préparation du DEM
-  #   #* filled DEM
-  #   filled_dem<- mod_loading_whitebox_process_result_server("loading_whitebox_process_result_demFilled")
-  #   filled_dem_path<- filled_dem$raster_result_layer
-  #   #* breached DEM
-  #   breached_dem<- mod_loading_whitebox_process_result_server("loading_whitebox_process_result_breachedFilled")
-  #   breached_dem_path<- breached_dem$raster_result_layer
-  #   #* filled breached DEM
-  #   filled_breached_dem<- mod_loading_whitebox_process_result_server("loading_whitebox_process_result_filledBreachedFilled")
-  #   filled_breached_dem_path<- filled_breached_dem$raster_result_layer
-  #   #* flow accumulation
-  #   flow_accumulation<- mod_loading_whitebox_process_result_server("loading_whitebox_process_result_flow_accumulation")
-  #   flow_accumulation_path<- flow_accumulation$raster_result_layer
-  #   #* flow accumulation
-  #   pointer_grid<- mod_loading_whitebox_process_result_server("loading_whitebox_process_result_pointer_grid")
-  #   pointer_grid_path<- pointer_grid$raster_result_layer
-  #
-  #   # DEM preparation 4 hdrological analyses
-  #   mod_DEM_Preparation_4_Hydrology_Analyses_server(
-  #     "DEM_Preparation_4_Hydrology_Analyses_1", georeferenced_mnt()[[2]], exutoires()[[1]],
-  #     filled_dem_path()[[2]], breached_dem_path()[[2]]
-  #   )
-  #
-  #   # whitebox option
-  #   whitebox_options<- mod_whitebox_options_server("whitebox_options_1")
-  #   bassin_thresold<- whitebox_options$bassin_thresold
-
-    # flow accumulation & pointers grid
-    # mod_flow_accumulation_pointer_grids_server(
-    #   "flow_accumulation_pointer_grids_1", filled_breached_dem_path()[[2]],
-    #   flow_accumulation_path()[[2]], bassin_thresold(), exutoires()[[2]], raster_stream_path()[[2]]
-    # )
-
-  # })
 
 }
 

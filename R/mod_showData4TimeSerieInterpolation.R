@@ -67,10 +67,7 @@ mod_showData4TimeSerieInterpolation_server <- function(id, interpolation_data, b
       ) %>%
         dplyr::rename(Date = 1)
       # remove columns without data
-      data_temp<- data_temp[,which(!colMeans(!is.na(data_temp)) == 0)]
-      # rows stations without data
-      data_temp<- data_temp[which(!rowMeans(!is.na(data_temp)) == 0),]
-      data_temp
+     data_temp[which(base::rowSums(!is.na(data_temp)) > 1), which(base::colSums(!is.na(data_temp)) > 1)]
     })
 
     ## Summarising data
@@ -132,7 +129,7 @@ mod_showData4TimeSerieInterpolation_server <- function(id, interpolation_data, b
           ggplot2::geom_sf(linewidth = 1.3, color = "black", fill=NA) +
           ggplot2::geom_point(
             data = stations,
-            ggplot2::aes(x=Longitude, y=Latitude), shape = 15, color = "red", size = 4
+            ggplot2::aes(x=Longitude, y=Latitude), shape = 15, color = "blue", size = 2
           ) +
           ggthemes::theme_map()
       })
@@ -143,9 +140,9 @@ mod_showData4TimeSerieInterpolation_server <- function(id, interpolation_data, b
     })
 
     # show all time serie dataset
-    event_trigger <- reactive({list(input$showDataset, interpolation_data)}) # events trigger
+    event_trigger <- reactive({list(input$showDataset, interpolation_data_fn())}) # events trigger
     observeEvent(event_trigger(), {
-      req(interpolation_data)
+      req(interpolation_data_fn())
 
       # Notification
       id <- showNotification(
@@ -154,8 +151,8 @@ mod_showData4TimeSerieInterpolation_server <- function(id, interpolation_data, b
       on.exit(removeNotification(id), add = TRUE)
 
       output$used_time_serie_interpolation_data <- renderDataTable({
-        req(interpolation_data)
-        interpolation_data
+        req(interpolation_data_fn())
+        interpolation_data_fn()
       })
     })
 

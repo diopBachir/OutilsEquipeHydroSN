@@ -21,19 +21,16 @@ ordinary_krige<- function(gridded.points.utm, target_col, grid_mod){
   # verbose
   cat(target_col, ":::=======||--------")
 
-  data_krige<- gridded.points.utm[!is.na(gridded.points.utm[[target_col]]),]
-  data_krige <- data_krige[-sp::zerodist(data_krige)[,1],]
-
   # automap's autofitVariogram actually produces more info than we need.
   # I will only keep the var_model part.
   v_mod_OK <- automap::autofitVariogram(
-    as.formula(paste(target_col, "~1")), data_krige
+    as.formula(paste(target_col, "~1")), gridded.points.utm
   )$var_mode
 
   # Ordinary Kriging
   OK <- gstat::krige(
     stats::as.formula(paste(target_col, "~1")),
-    data_krige,                      # input data in {sp} format
+    gridded.points.utm,                      # input data in {sp} format
     grid_mod,                                                                           # locations to interpolate at
     model = v_mod_OK                                                                    # the variogram model fitted above
   )

@@ -13,8 +13,8 @@ mod_loading_RasterFile_ui <- function(id){
     fluidRow(align = "center",
              column(12,
                     shinyFiles::shinyFilesButton(
-                      id = ns("raster_file"), label = "MNT [EPSG:4326]",
-                      title = "Sélectionner un Modèle Numérique de Terrain !",
+                      id = ns("raster_file"), label = "Raster [EPSG:4326]",
+                      title = "Sélectionner un Ficher Raster !",
                       multiple = FALSE, icon = icon("layer-group"), buttonType = "info",
                       width = "100%"
                     )
@@ -32,6 +32,7 @@ mod_loading_RasterFile_server <- function(id, workingDirectory){
     ns <- session$ns
 
     load_raster <- reactiveVal()
+    raster_path<- reactiveVal()
     observeEvent(input$raster_file, {
 
       # chemin du repertoire courant
@@ -51,7 +52,7 @@ mod_loading_RasterFile_server <- function(id, workingDirectory){
       # vérification de l'extention du fichier
       extension_fichier<-  reactive({
         req(file.exists(volumes_default_dir(), parseFilePaths(volumes_default_dir(), input$raster_file)$datapath))
-        tools::file_ext(parseFilePaths(volumes_default_dir(), input$raster_file)$datapath) %in% c('tif','tiff','TIF','TIFF')
+        tools::file_ext(parseFilePaths(volumes_default_dir(), input$raster_file)$datapath) == "nc"
       })
 
       req(extension_fichier())
@@ -67,34 +68,31 @@ mod_loading_RasterFile_server <- function(id, workingDirectory){
       # chargement du MNT
       fichier_raster <- reactive({
         req(file.exists(parseFilePaths(volumes_default_dir(), input$raster_file)$datapath), extension_fichier())
-        raster::raster(parseFilePaths(volumes_default_dir(), input$raster_file)$datapath, crs = '+init=EPSG:4326')
+        raster::raster(parseFilePaths(volumes_default_dir(), input$raster_file)$datapath)
       })
 
       # Vérification de la projection du shapefile
-      req(fichier_raster())
-      proj_file<- sf::st_crs(fichier_raster())$input == "WGS 84"
+      # req(fichier_raster())
+      # proj_file<- sf::st_crs(fichier_raster())$input == "WGS 84"
       # alert
-      if(!proj_file){
-        shinyalert::shinyalert(
-          "Erreur de chargement !",
-          "Veillez reprojeter la Couche Raster vers le EPSG 4326 (WGS84) !"
-        )
-      }else{
-        output$test_file_select_ready<- renderPrint({
-          req(volumes_default_dir(), proj_file, file.exists(shinyFiles::parseFilePaths(volumes_default_dir(), input$raster_file)$datapath))
-          shinyFiles::parseFilePaths(volumes_default_dir(), input$raster_file)$datapath
-        })
+      output$test_file_select_ready<- renderPrint({
+        req(volumes_default_dir(), file.exists(shinyFiles::parseFilePaths(volumes_default_dir(), input$raster_file)$datapath), extension_fichier())
+        shinyFiles::parseFilePaths(volumes_default_dir(), input$raster_file)$datapath
+      })
 
-        # send data
-        load_raster(list(
-          raster::raster(shinyFiles::parseFilePaths(volumes_default_dir(), input$raster_file)$datapath),
-          shinyFiles::parseFilePaths(volumes_default_dir(), input$raster_file)$datapath
-        ))
-      }
+      # send data
+      req(fichier_raster())
+      load_raster(list(
+        raster::raster(shinyFiles::parseFilePaths(volumes_default_dir(), input$raster_file)$datapath)
+      ))
+      raster_path(shinyFiles::parseFilePaths(volumes_default_dir(), input$raster_file)$datapath)
 
     })
 
-    return(list(mnt_georeferenced = reactive({ load_raster() })))
+    return(list(
+      raster_georeferenced = reactive({ load_raster() }),
+      raster_path = reactive({ raster_path() })
+    ))
 
   })
 }

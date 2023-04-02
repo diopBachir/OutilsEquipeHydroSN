@@ -462,7 +462,7 @@ mod_flow_accumulation_pointer_grids_server <- function(
         # plot
         tmap::tmap_mode("view")
         tmap::tm_shape(streams_vector2)+
-          tmap::tm_lines(col = "red", lwd = 1?2, legend.show = TRUE, midpoint = NA)+
+          tmap::tm_lines(col = "red", lwd = 1.2, legend.show = TRUE, midpoint = NA)+
           tmap::tm_scale_bar()+
           tmap::tm_shape(pp)+
           tmap::tm_dots(col = "red", size = .05, title = "Snapped Pourpoints", legend.show = TRUE)+

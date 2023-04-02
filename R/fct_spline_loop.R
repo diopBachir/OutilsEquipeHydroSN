@@ -7,7 +7,7 @@
 #' @noRd
 
 # TPS [Thin-Plate Spline] : looping through every temporal step
-spline.loop<- function(dataInterp.utm, bassin, epsg){
+spline.loop<- function(dataInterp.utm, bassin, epsg, resolution){
 
   #----------------------------------------------------------------------------#
   ## Parametres:
@@ -28,7 +28,7 @@ spline.loop<- function(dataInterp.utm, bassin, epsg){
   list.spline <- colnames(prec.df)[-1] %>%
     purrr::set_names() %>%
     purrr::map(
-      ., ~ spline.interpole(bassin, dataInterp.utm, 3000, .x, epsg)
+      ., ~ spline.interpole(bassin, dataInterp.utm, resolution, .x, epsg)
     )
 
   # nettoyage (2nd)
@@ -64,7 +64,7 @@ spline.loop<- function(dataInterp.utm, bassin, epsg){
     ) %>%
     dplyr::group_by(Date) %>%
     dplyr::summarise(
-      TPS = round(mean(TPS, na.rm=TRUE), 4)
+      TPS = round(mean(ifelse(TPS<0, TPS*(-1), TPS), na.rm=TRUE), 4)
     )
 
   return(
