@@ -870,6 +870,7 @@ app_server <- function(input, output, session) {
   #   })
   # })
 
+  ##==================================================================# NetCDF Extraction
   # repertoire de travail
   cru_extract_working_dir<- mod_set_project_folder_server("set_project_folder_1")
   cru_working_directory<- cru_extract_working_dir$wdir
@@ -903,6 +904,9 @@ app_server <- function(input, output, session) {
       # exportation
       mod_cru_data_export_extraction_server("cru_data_export_extraction_1", extracted_cru_data$cru_extracted_data, extracted_cru_data$variable_extracted)
     })
+
+    ##==================================================================# NasaPower Extraction
+    mod_nasapower_api_embedding_server("nasapower_api_embedding_1")
 
   })
 

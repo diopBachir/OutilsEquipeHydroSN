@@ -1215,6 +1215,23 @@ app_ui <- function(request) {
                                        ) #tabPanel
                                      )
                                    )
+                          ), # tabPanel
+
+                          tabPanel(div("Téléchargement Données NasaPower", style = "color:black;font-size:110%;font-family:georgia;"),
+                                   sidebarPanel(
+                                     style="position:fixed;width:26%;height:90vh;overflow-y:auto;",
+                                     h3(
+                                       "NasaPower Download",
+                                       style=paste0(
+                                         "color:#3474A7;text-align:center;font-family:Georgia;background-color:lightgray;"
+                                       )
+                                     ),
+                                   ), # sidebarPanel
+                                   mainPanel(
+                                     tabsetPanel(
+                                       htmlOutput("frame")
+                                     )
+                                   ) # mainPanel
                           )
                ) # navbarMenu
     )

@@ -107,7 +107,7 @@ mod_time_serie_interpolation_result_exportation_server <- function(
 
     result_krige<- reactive({
       req(resultKrigeage)
-      krige_temp<- future::value(resultKrigeage) %>%
+      krige_temp<- resultKrigeage %>%
         dplyr::mutate(Date = lubridate::ymd(Date))
       date_range()  %>%
         dplyr::left_join(krige_temp, by = c("date" = "Date")) %>%
@@ -116,7 +116,7 @@ mod_time_serie_interpolation_result_exportation_server <- function(
 
     result_idw<- reactive({
       req(resultIDW, date_range())
-      idw_tmp<- future::value(resultIDW) %>%
+      idw_tmp<- resultIDW %>%
         dplyr::mutate(Date = lubridate::ymd(Date))
       date_range()  %>%
         dplyr::left_join(idw_tmp, by = c("date" = "Date")) %>%
@@ -125,7 +125,7 @@ mod_time_serie_interpolation_result_exportation_server <- function(
 
     result_thiessen<- reactive({
       req(resultThiessen)
-      thiessen_tmp<- future::value(resultThiessen) %>%
+      thiessen_tmp<- resultThiessen %>%
         dplyr::mutate(Date = lubridate::ymd(Date))
       date_range()  %>%
         dplyr::left_join(thiessen_tmp, by = c("date" = "Date")) %>%
@@ -134,7 +134,7 @@ mod_time_serie_interpolation_result_exportation_server <- function(
 
     result_spline<- reactive({
       req(resultSpline)
-      spline_tmp<- future::value(resultSpline) %>%
+      spline_tmp<- resultSpline %>%
         dplyr::mutate(Date = lubridate::ymd(Date))
       date_range()  %>%
         dplyr::left_join(spline_tmp, by = c("date" = "Date")) %>%
