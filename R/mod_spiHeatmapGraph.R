@@ -176,7 +176,7 @@ mod_spiHeatmapGraph_server <- function(id, spi_result, spiHeatmapOptions){
 
           ggplot2::scale_y_discrete(expand = c(0, 0)) +
 
-          ggplot2::coord_cartesian()+
+          ggplot2::coord_cartesian()+ # tuiles rectangulaires
 
           ggplot2::guides(
             y.sec = ggh4x::guide_axis_manual(
