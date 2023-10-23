@@ -170,7 +170,7 @@ mod_spiHeatmapGraph_server <- function(id, spi_result, spiHeatmapOptions){
 
           ggplot2::scale_x_continuous(
             breaks = seq(
-              min(spi_result$Date), max(spi_result$Date), as.numeric(spiHeatmapOptions$xAxisBreakStep())
+              min(spi_result$Date, na.rm=TRUE), max(spi_result$Date, na.rm=TRUE), as.numeric(spiHeatmapOptions$xAxisBreakStep())
             ), expand = c(0, 0)
           ) +
 
@@ -197,9 +197,9 @@ mod_spiHeatmapGraph_server <- function(id, spi_result, spiHeatmapOptions){
 
           ggplot2::scale_fill_gradientn(
             colours = couleurMap,
-            limits = c(min(spi_result$SPI), max(spi_result$SPI)),
-            breaks = round(seq(min(spi_result$SPI), max(spi_result$SPI), 1)+.5),
-            labels = round(seq(min(spi_result$SPI), max(spi_result$SPI), 1)+.5)
+            limits = c(min(spi_result$SPI, na.rm=TRUE), max(spi_result$SPI, na.rm=TRUE)),
+            breaks = round(seq(min(spi_result$SPI, na.rm=TRUE), max(spi_result$SPI, na.rm=TRUE), 1)+.5),
+            labels = round(seq(min(spi_result$SPI, na.rm=TRUE), max(spi_result$SPI, na.rm=TRUE), 1)+.5)
           ) +
 
           ggplot2::labs(x=NULL, y=NULL, fill=NULL)+
