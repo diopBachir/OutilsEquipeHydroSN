@@ -54,14 +54,23 @@ mod_cru_data_export_extraction_server <- function(id, cru_extracted_table, varia
     donnees<- reactive({
       req(cru_extracted_table())
       # extraction des données pour toutes les stations
-      data.frame(cru_extracted_table()) %>%
-        tibble::rownames_to_column(var = "Date") %>%
-        dplyr::mutate(
-          Date = stringr::str_replace(Date, stringr::fixed("X"), ""),
-          Date = stringr::str_replace(Date, stringr::fixed("."), "-"),
-          Date = lubridate::ymd(Date),
-          dplyr::across(tidyselect::where(is.numeric), ~round(.x, 4), .names = "{.col}")
-        )
+      tryCatch({
+        data.frame(cru_extracted_table()) %>%
+          tibble::rownames_to_column(var = "Date") %>%
+          dplyr::mutate(
+            Date = stringr::str_replace(Date, stringr::fixed("X"), ""),
+            Date = stringr::str_replace(Date, stringr::fixed("."), "-"),
+            Date = lubridate::ymd(Date),
+            dplyr::across(tidyselect::where(is.numeric), ~round(.x, 4), .names = "{.col}")
+          )
+      }, error = function(e) {
+          shinyalert("Error !", e$message, type = "error")
+          return()
+        }, warning = function(w) {
+          shinyalert("Warning !", w$message, type = "warning")
+          return()
+        }
+      )
     })
 
     # données

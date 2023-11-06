@@ -906,7 +906,7 @@ app_server <- function(input, output, session) {
     })
 
     ##==================================================================# NasaPower Extraction
-    mod_nasapower_api_embedding_server("nasapower_api_embedding_1")
+    # mod_nasapower_api_embedding_server("nasapower_api_embedding_1")
 
   })
 
